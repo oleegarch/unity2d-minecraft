@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17eafd19ac997ec45a19fe595171cdef, type: 3}
+  m_Name: Surface
+  m_EditorClassIdentifier: 
+  Category: 3
+  Texture: {fileID: 2800000, guid: bcace04f7a7f56e40903d00dfc6901c0, type: 2}
+  Material: {fileID: 2100000, guid: a55780e448c7b7b4db869196c226073d, type: 2}
+  TextureUVs:
+  - Id: 1
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.25
+  - Id: 27
+    Rect:
+      serializedVersion: 2
+      x: 0.3125
+      y: 0
+      width: 0.25
+      height: 0.25
+  - Id: 28
+    Rect:
+      serializedVersion: 2
+      x: 0.625
+      y: 0
+      width: 0.25
+      height: 0.25
+  - Id: 25
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.3125
+      width: 0.25
+      height: 0.25
+  - Id: 26
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.625
+      width: 0.25
+      height: 0.25
+  Epsilon: 0.015625

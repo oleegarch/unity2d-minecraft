@@ -1,0 +1,149 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b700c709394c25d4787e6e60faa5d100, type: 3}
+  m_Name: EarthGeneratorConfig
+  m_EditorClassIdentifier: 
+  BlockDatabase: {fileID: 11400000, guid: c1425d5beff14834aae34abf0b9ef484, type: 2}
+  ChunkSize: 16
+  BiomeWidth: 200
+  SurfaceBlendWidth: 20
+  Biomes:
+  - Name: forest
+    SurfaceBlockName: grass
+    SurfaceScale: 0.025
+    SurfaceBaseHeight: 0
+    SurfaceHeightRange: 20
+    DepthBlockName: dirt
+    Depth: 10
+  - Name: forest_snow
+    SurfaceBlockName: grass_snow
+    SurfaceScale: 0.025
+    SurfaceBaseHeight: 0
+    SurfaceHeightRange: 20
+    DepthBlockName: dirt
+    Depth: 10
+  - Name: desert
+    SurfaceBlockName: sand
+    SurfaceScale: 0.0125
+    SurfaceBaseHeight: 0
+    SurfaceHeightRange: 20
+    DepthBlockName: sand
+    Depth: 12
+  - Name: desert_red
+    SurfaceBlockName: sand_red
+    SurfaceScale: 0.0125
+    SurfaceBaseHeight: 0
+    SurfaceHeightRange: 20
+    DepthBlockName: sand_red
+    Depth: 13
+  Plants:
+  - BiomeName: forest
+    Interval: 10
+    OffsetRange: 2
+    Plants:
+    - TrunkBlockName: trunk_oak
+      LeafBlockName: leaf_oak
+      Type: 0
+      MinHeight: 4
+      MaxHeight: 9
+    - TrunkBlockName: trunk_birch
+      LeafBlockName: leaf_birch
+      Type: 0
+      MinHeight: 4
+      MaxHeight: 9
+  - BiomeName: forest_snow
+    Interval: 10
+    OffsetRange: 2
+    Plants:
+    - TrunkBlockName: trunk_oak
+      LeafBlockName: leaf_oak
+      Type: 0
+      MinHeight: 4
+      MaxHeight: 9
+    - TrunkBlockName: trunk_birch
+      LeafBlockName: leaf_birch
+      Type: 0
+      MinHeight: 4
+      MaxHeight: 10
+  - BiomeName: desert
+    Interval: 9
+    OffsetRange: 4
+    Plants:
+    - TrunkBlockName: cactus
+      LeafBlockName: 
+      Type: 1
+      MinHeight: 2
+      MaxHeight: 4
+  - BiomeName: desert_red
+    Interval: 9
+    OffsetRange: 4
+    Plants:
+    - TrunkBlockName: cactus
+      LeafBlockName: 
+      Type: 1
+      MinHeight: 2
+      MaxHeight: 5
+  CaveLevels:
+  - BlockName: stone
+    Height: 100
+    Ores:
+    - OreBlockName: stone_coal_ore
+      Threshold: 0.8
+      Scale: 0.2
+    - OreBlockName: stone_copper_ore
+      Threshold: 0.8
+      Scale: 0.2
+    - OreBlockName: stone_diamond_ore
+      Threshold: 0.95
+      Scale: 0.15
+    - OreBlockName: stone_emerald_ore
+      Threshold: 0.95
+      Scale: 0.15
+    - OreBlockName: stone_gold_ore
+      Threshold: 0.9
+      Scale: 0.2
+    - OreBlockName: stone_iron_ore
+      Threshold: 0.85
+      Scale: 0.2
+    - OreBlockName: stone_lapis_ore
+      Threshold: 0.9
+      Scale: 0.2
+    - OreBlockName: stone_redstone_ore
+      Threshold: 0.9
+      Scale: 0.2
+  - BlockName: deepslate
+    Height: 200
+    Ores:
+    - OreBlockName: deepslate_coal_ore
+      Threshold: 0.9
+      Scale: 0.15
+    - OreBlockName: deepslate_copper_ore
+      Threshold: 0.9
+      Scale: 0.15
+    - OreBlockName: deepslate_diamond_ore
+      Threshold: 0.9
+      Scale: 0.15
+    - OreBlockName: deepslate_emerald_ore
+      Threshold: 0.9
+      Scale: 0.15
+    - OreBlockName: deepslate_gold_ore
+      Threshold: 0.8
+      Scale: 0.2
+    - OreBlockName: deepslate_iron_ore
+      Threshold: 0.8
+      Scale: 0.2
+    - OreBlockName: deepslate_lapis_ore
+      Threshold: 0.9
+      Scale: 0.2
+    - OreBlockName: deepslate_redstone_ore
+      Threshold: 0.85
+      Scale: 0.2

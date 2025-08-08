@@ -1,0 +1,18 @@
+— Реализовать события удаления/установки блока в Chunk'е (такой же как BlockEvents, а затем возможно сам BlockEvents переименовать в ChunksBlockEvents)
+— В ChunkColliderBuilder и ChunkMeshBuilder подписаться на события удаления/установки блоков в Chunk'е (реализованные выше)
+— В chunk.TrySetBlock и подобные методы можно передавать BlockIndex как ref/in
+— В SkyController добавить фазы луны.
+— В SkyController солнце и луна должны сразу появлятся после отсутствия видимости на экране другого (а не за горизонтом).
+— CameraSpectatorController отделить функционал зуммирования (так как в PlayerMode он отключается).
+— GameMode заменить на CameraMode и отделить эту логику от WorldController (создать компонент ~CameraModeSystem).
+— WorldController это компонент жизненного цикла. Всю логику "Startup" реализовать в нём (как-нибудь с переменной ~[SerializeField] private MonoBehaviour[] components; и вызовом последовательно Initialize).
+— Отказаться от синхронного IChunkGenerator.GenerateChunk().
+— ChunkColliderBuilder реализовать полноценные AddSquare+RemoveSquare.
+— Если снизу блок у кактуса отсутствует = ломаются все верхние блоки кактуса (реализовать отдельную систему ~BreakSameAboveSystem которая следит за событием BlockEvents и добавляет логику поломки дополнительных блоков).
+— Бывает баг что в редакторе unity в иерархии объектов остаётся не сгенерированный ChunkRenderer prefab.
+— Создать папки для интерфейсов.
+...
+— Освещение.
+— Предметы.
+— Дроп предметов с блоков.
+— Инвентарь.

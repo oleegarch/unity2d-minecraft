@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17eafd19ac997ec45a19fe595171cdef, type: 3}
+  m_Name: MainTerrain
+  m_EditorClassIdentifier: 
+  Category: 1
+  Texture: {fileID: 2800000, guid: df10bdec5638f8c4ebc84418609eef75, type: 2}
+  Material: {fileID: 2100000, guid: 1ceb5f08ed557a44db5b95dd282544ff, type: 2}
+  TextureUVs:
+  - Id: 2
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.25
+  - Id: 11
+    Rect:
+      serializedVersion: 2
+      x: 0.3125
+      y: 0
+      width: 0.25
+      height: 0.25
+  - Id: 12
+    Rect:
+      serializedVersion: 2
+      x: 0.625
+      y: 0
+      width: 0.25
+      height: 0.25
+  - Id: 13
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.3125
+      width: 0.25
+      height: 0.25
+  - Id: 14
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.625
+      width: 0.25
+      height: 0.25
+  - Id: 15
+    Rect:
+      serializedVersion: 2
+      x: 0.3125
+      y: 0.3125
+      width: 0.25
+      height: 0.25
+  - Id: 16
+    Rect:
+      serializedVersion: 2
+      x: 0.625
+      y: 0.3125
+      width: 0.25
+      height: 0.25
+  Epsilon: 0.015625

@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17eafd19ac997ec45a19fe595171cdef, type: 3}
+  m_Name: Ores
+  m_EditorClassIdentifier: 
+  Category: 2
+  Texture: {fileID: 2800000, guid: 1c276e43b914dab408ec128ec860b8de, type: 2}
+  Material: {fileID: 2100000, guid: bee586c4a93045741bf82018fa4e558c, type: 2}
+  TextureUVs:
+  - Id: 3
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.125
+  - Id: 4
+    Rect:
+      serializedVersion: 2
+      x: 0.3125
+      y: 0
+      width: 0.25
+      height: 0.125
+  - Id: 5
+    Rect:
+      serializedVersion: 2
+      x: 0.625
+      y: 0
+      width: 0.25
+      height: 0.125
+  - Id: 6
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.15625
+      width: 0.25
+      height: 0.125
+  - Id: 7
+    Rect:
+      serializedVersion: 2
+      x: 0.3125
+      y: 0.15625
+      width: 0.25
+      height: 0.125
+  - Id: 8
+    Rect:
+      serializedVersion: 2
+      x: 0.625
+      y: 0.15625
+      width: 0.25
+      height: 0.125
+  - Id: 9
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.3125
+      width: 0.25
+      height: 0.125
+  - Id: 10
+    Rect:
+      serializedVersion: 2
+      x: 0.3125
+      y: 0.3125
+      width: 0.25
+      height: 0.125
+  - Id: 17
+    Rect:
+      serializedVersion: 2
+      x: 0.625
+      y: 0.3125
+      width: 0.25
+      height: 0.125
+  - Id: 18
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.46875
+      width: 0.25
+      height: 0.125
+  - Id: 19
+    Rect:
+      serializedVersion: 2
+      x: 0.3125
+      y: 0.46875
+      width: 0.25
+      height: 0.125
+  - Id: 20
+    Rect:
+      serializedVersion: 2
+      x: 0.625
+      y: 0.46875
+      width: 0.25
+      height: 0.125
+  - Id: 21
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.625
+      width: 0.25
+      height: 0.125
+  - Id: 22
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.78125
+      width: 0.25
+      height: 0.125
+  - Id: 23
+    Rect:
+      serializedVersion: 2
+      x: 0.3125
+      y: 0.625
+      width: 0.25
+      height: 0.125
+  - Id: 24
+    Rect:
+      serializedVersion: 2
+      x: 0.625
+      y: 0.625
+      width: 0.25
+      height: 0.125
+  Epsilon: 0.015625

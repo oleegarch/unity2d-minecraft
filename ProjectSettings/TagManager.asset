@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Chunk
+  - Player
+  - Sun
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Sun
+    uniqueID: 2400009569
+    locked: 0
+  - name: Chunks
+    uniqueID: 278559775
+    locked: 0
+  - name: BlockUI
+    uniqueID: 2693136387
+    locked: 0
+  - name: Player
+    uniqueID: 4075600203
+    locked: 0
+  m_RenderingLayers:
+  - Default
