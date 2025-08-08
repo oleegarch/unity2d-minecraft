@@ -3,7 +3,7 @@ using World.Chunks.BlocksStorage;
 
 namespace World.Chunks
 {
-    public interface IBlockModifier
+    public interface IChunksBlockModifier
     {
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main);
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer);
@@ -11,16 +11,16 @@ namespace World.Chunks
         public bool Break(WorldPosition worldPosition, BlockLayer layer);
         public bool BreakVisible(WorldPosition worldPosition);
     }
-    public class BlockModifier : IBlockModifier
+    public class ChunksBlockModifier : IChunksBlockModifier
     {
         private readonly IChunksStorage _chunksStorage;
 
-        public BlockEvents Events { get; private set; }
+        public ChunksBlockEvents Events { get; private set; }
 
-        public BlockModifier(IChunksStorage storage)
+        public ChunksBlockModifier(IChunksStorage storage)
         {
             _chunksStorage = storage;
-            Events = new BlockEvents();
+            Events = new ChunksBlockEvents();
         }
 
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main)
@@ -28,7 +28,7 @@ namespace World.Chunks
             if (_chunksStorage.TryGetChunk(worldPosition, out Chunk chunk))
             {
                 BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-                Block mainBlock = chunk.GetBlock(blockIndex, blockLayer);
+                Block mainBlock = chunk.Blocks.Get(blockIndex, blockLayer);
 
                 return mainBlock;
             }
@@ -42,12 +42,12 @@ namespace World.Chunks
             if (_chunksStorage.TryGetChunk(worldPosition, out Chunk chunk))
             {
                 BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-                Block mainBlock = chunk.GetBlock(blockIndex, blockLayer);
+                Block mainBlock = chunk.Blocks.Get(blockIndex, blockLayer);
 
                 if (mainBlock.IsAir())
                 {
                     blockLayer = BlockLayer.Behind;
-                    return chunk.GetBlock(blockIndex, blockLayer);
+                    return chunk.Blocks.Get(blockIndex, blockLayer);
                 }
 
                 return mainBlock;
@@ -62,7 +62,7 @@ namespace World.Chunks
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-            if (!chunk.TrySetBlock(blockIndex, block, layer))
+            if (!chunk.Blocks.TrySet(blockIndex, block, layer))
                 return false;
 
             if (_chunksStorage.TryGetRenderer(worldPosition, out var renderer))
@@ -82,12 +82,12 @@ namespace World.Chunks
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-            if (!chunk.TryUnsetBlock(blockIndex, layer))
+            if (!chunk.Blocks.TryUnset(blockIndex, layer))
                 return false;
 
             if (_chunksStorage.TryGetRenderer(worldPosition, out var renderer))
             {
-                Block block = chunk.GetBlock(blockIndex, layer);
+                Block block = chunk.Blocks.Get(blockIndex, layer);
                 renderer.Mesh.EraseBlock(blockIndex);
                 renderer.Collider.RemoveSquare(blockIndex);
                 Events.InvokeBlockBroken(worldPosition, block, layer);
@@ -104,15 +104,15 @@ namespace World.Chunks
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
             BlockLayer layer = BlockLayer.Main;
-            Block block = chunk.GetBlock(blockIndex, layer);
+            Block block = chunk.Blocks.Get(blockIndex, layer);
 
             if (block.IsAir())
             {
                 layer = BlockLayer.Behind;
-                block = chunk.GetBlock(blockIndex, layer);
+                block = chunk.Blocks.Get(blockIndex, layer);
             }
 
-            if (!chunk.TryUnsetBlock(blockIndex, layer))
+            if (!chunk.Blocks.TryUnset(blockIndex, layer))
                 return false;
 
             if (_chunksStorage.TryGetRenderer(worldPosition, out var renderer))

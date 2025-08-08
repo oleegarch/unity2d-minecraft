@@ -25,8 +25,8 @@ namespace World.Chunks.Generator.Steps
                     int worldX = worldChunkX + x;
                     int worldY = worldChunkY + y;
                     var (mainId, behindId) = _provider.GenerateBlock(worldX, worldY, seed);
-                    chunk.SetBlock(x, y, mainId, BlockLayer.Main);
-                    chunk.SetBlock(x, y, behindId, BlockLayer.Behind);
+                    chunk.Blocks.Set(x, y, mainId, BlockLayer.Main);
+                    chunk.Blocks.Set(x, y, behindId, BlockLayer.Behind);
                 }
 
             return chunk;

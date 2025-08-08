@@ -38,7 +38,7 @@ namespace World.Chunks
             int size = chunk.Size;
             var edges = new List<Edge>(size * size * 4);
 
-            bool IsFilled(int x, int y) => !chunk.GetBlock((byte)x, (byte)y, BlockLayer.Main).IsAir();
+            bool IsFilled(int x, int y) => !chunk.Blocks.Get((byte)x, (byte)y, BlockLayer.Main).IsAir();
 
             // собрираем все рёбра, отделяющие заполненные клетки от пустых
             for (int x = 0; x < size; x++)

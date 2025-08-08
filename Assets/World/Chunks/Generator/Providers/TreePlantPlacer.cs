@@ -129,8 +129,8 @@ namespace World.Chunks.Generator.Providers
                     new WorldPosition(worldX, y),
                     out BlockIndex blockIndex))
                 {
-                    chunk.SetBlock(blockIndex, trunkBlock, BlockLayer.Behind);
-                    chunk.DisableDarkeningToBlockBehind(blockIndex);
+                    chunk.Blocks.Set(blockIndex, trunkBlock, BlockLayer.Behind);
+                    chunk.Render.DisableDarkening(blockIndex);
                 }
             }
 
@@ -157,8 +157,8 @@ namespace World.Chunks.Generator.Providers
                             new WorldPosition(leafX, leafY),
                             out BlockIndex blockIndex))
                         {
-                            chunk.SetBlock(blockIndex, leafBlock, BlockLayer.Behind);
-                            chunk.DisableDarkeningToBlockBehind(blockIndex);
+                            chunk.Blocks.Set(blockIndex, leafBlock, BlockLayer.Behind);
+                            chunk.Render.DisableDarkening(blockIndex);
                         }
                     }
                 }

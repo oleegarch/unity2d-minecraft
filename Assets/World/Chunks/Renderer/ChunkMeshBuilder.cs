@@ -40,7 +40,7 @@ namespace World.Chunks
                 for (byte y = 0; y < chunk.Size; y++)
                 {
                     BlockIndex index = new BlockIndex(x, y);
-                    if (!chunk.TryGetBlockRenderId(index, out ushort id, out bool behind)) continue;
+                    if (!chunk.Render.TryGetBlockRenderId(index, out ushort id, out bool behind)) continue;
 
                     BlockInfo info = _blockDatabase.Get(id);
                     BlockAtlasInfo atlas = _blockAtlasDatabase.Get(info.AtlasCategory);
@@ -71,7 +71,7 @@ namespace World.Chunks
 
         public void DrawBlock(BlockIndex index)
         {
-            if (!_chunk.TryGetBlockRenderId(index, out ushort id, out bool behind)) return;
+            if (!_chunk.Render.TryGetBlockRenderId(index, out ushort id, out bool behind)) return;
 
             ChunkMeshData meshData;
 
@@ -92,7 +92,7 @@ namespace World.Chunks
 
             ChunkMeshData meshData;
 
-            if (_chunk.TryGetBlockRenderId(index, out ushort id, out bool behind))
+            if (_chunk.Render.TryGetBlockRenderId(index, out ushort id, out bool behind))
             {
                 meshData = _RedrawBlock(index, renderInfo, id, behind);
             }

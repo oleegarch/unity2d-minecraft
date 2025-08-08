@@ -20,7 +20,7 @@ namespace World.Chunks
         private int _version;
 
         public event Action OnVisibleChunksUpdated;
-        public IBlockModifier Block { get; private set; }
+        public IChunksBlockModifier Block { get; private set; }
         public IChunksStorage Storage { get; private set; }
 
         [NonSerialized] public bool Loaded = false;
@@ -29,7 +29,7 @@ namespace World.Chunks
         {
             var generator = _chunkGeneratorConfig.GetChunkGenerator();
             Storage = new ChunksStorage(generator, _chunkRendererPrefab, _chunksParent);
-            Block = new BlockModifier(Storage);
+            Block = new ChunksBlockModifier(Storage);
         }
 
         private void OnEnable()
