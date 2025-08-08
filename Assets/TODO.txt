@@ -4,11 +4,9 @@
 — CameraSpectatorController отделить функционал зуммирования (так как в PlayerMode он отключается).
 — GameMode заменить на CameraMode и отделить эту логику от WorldController (создать компонент ~CameraModeSystem).
 — WorldController это компонент жизненного цикла. Всю логику "Startup" реализовать в нём (как-нибудь с переменной ~[SerializeField] private MonoBehaviour[] components; и вызовом последовательно Initialize).
-— Отказаться от синхронного IChunkGenerator.GenerateChunk().
 — ChunkColliderBuilder реализовать полноценные AddSquare+RemoveSquare.
 — Если снизу блок у кактуса отсутствует = ломаются все верхние блоки кактуса (реализовать отдельную систему ~BreakSameAboveSystem которая следит за событием BlockEvents и добавляет логику поломки дополнительных блоков).
 — Бывает баг что в редакторе unity в иерархии объектов остаётся не сгенерированный ChunkRenderer prefab.
-— Создать папки для интерфейсов.
 — Обновить сцены.
 ...
 — Освещение.

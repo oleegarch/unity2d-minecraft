@@ -18,7 +18,6 @@ namespace World.Chunks.Generator
     public interface IChunkGenerator
     {
         public byte ChunkSize { get; }
-        public Chunk GenerateChunk(ChunkIndex index, int seed);
         public Task<Chunk> GenerateChunkAsync(ChunkIndex index, int seed);
     }
     
@@ -40,7 +39,7 @@ namespace World.Chunks.Generator
             _postProcessingSteps = chunkPostProcessingSteps.ToList();
         }
 
-        public Chunk GenerateChunk(ChunkIndex index, int seed)
+        private Chunk GenerateChunk(ChunkIndex index, int seed)
         {
             // chunk creation step
             Chunk chunk = _creationStep.Execute(index, ChunkSize, seed);
