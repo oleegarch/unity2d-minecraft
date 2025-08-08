@@ -12,7 +12,7 @@ namespace World.BlockHovered
 {
     public class BlockBreakingProcess : MonoBehaviour
     {
-        [SerializeField] private WorldController _worldController;
+        [SerializeField] private CameraModeController _cameraModeController;
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
         [SerializeField] private ChunksManager _chunksManager;
@@ -44,10 +44,10 @@ namespace World.BlockHovered
             actions.PointerPress.canceled += OnPointerPress;
             actions.Enable();
             
-            _worldController.OnGameModeChanged += OnGameModeChanged;
+            _cameraModeController.OnCameraModeChanged += OnCameraModeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged += OnBlockHoveredChanged;
 
-            if (_worldController.GameMode == GameMode.Spectator)
+            if (_cameraModeController.CameraMode == CameraMode.Spectator)
             {
                 _cameraObserver.OnPositionChanged += OnCameraPositionChanged;
             }
@@ -59,17 +59,17 @@ namespace World.BlockHovered
             actions.PointerPress.canceled -= OnPointerPress;
             actions.Disable();
 
-            _worldController.OnGameModeChanged -= OnGameModeChanged;
+            _cameraModeController.OnCameraModeChanged -= OnCameraModeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged -= OnBlockHoveredChanged;
 
             _cameraObserver.OnPositionChanged -= OnCameraPositionChanged;
         }
 
-        private void OnGameModeChanged(GameMode gameMode)
+        private void OnCameraModeChanged(CameraMode cameraMode)
         {
             _cameraObserver.OnPositionChanged -= OnCameraPositionChanged;
 
-            if (gameMode == GameMode.Spectator)
+            if (cameraMode == CameraMode.Spectator)
             {
                 _cameraObserver.OnPositionChanged += OnCameraPositionChanged;
             }

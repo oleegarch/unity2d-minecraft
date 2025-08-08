@@ -1,4 +1,5 @@
 using UnityEngine;
+using World.Cameras;
 using World.Chunks;
 
 namespace World
@@ -6,7 +7,7 @@ namespace World
     public class WorldControllerGUI : MonoBehaviour
     {
         [SerializeField] private ChunksManager _chunksManager;
-        [SerializeField] private WorldController _worldController;
+        [SerializeField] private CameraModeController _cameraModeController;
         [SerializeField] private WorldTime _worldTime;
 
         private int _popupIndex;
@@ -16,7 +17,7 @@ namespace World
 
         private void Start()
         {
-            _popupIndex = (int)_worldController.GameMode;
+            _popupIndex = (int)_cameraModeController.CameraMode;
             _dayDurationSlider = _worldTime.DayDuration;
         }
 
@@ -37,15 +38,15 @@ namespace World
             // Game Mode Changing
             GUILayout.Label("Game Mode", GUI.skin.label);
 
-            string[] modeNames = System.Enum.GetNames(typeof(GameMode));
+            string[] modeNames = System.Enum.GetNames(typeof(CameraMode));
             Rect popupRect = GUILayoutUtility.GetRect(200, 20);
             int newIndex = GUI.SelectionGrid(popupRect, _popupIndex, modeNames, modeNames.Length);
 
             if (newIndex != _popupIndex)
             {
                 _popupIndex = newIndex;
-                GameMode selectedMode = (GameMode)_popupIndex;
-                _worldController.SetGameMode(selectedMode);
+                CameraMode selectedMode = (CameraMode)_popupIndex;
+                _cameraModeController.SetGameMode(selectedMode);
             }
 
             GUILayout.Space(10);
