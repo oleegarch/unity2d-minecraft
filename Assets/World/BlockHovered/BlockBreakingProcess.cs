@@ -47,6 +47,9 @@ namespace World.BlockHovered
             _cameraModeController.OnCameraModeChanged += OnCameraModeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged += OnBlockHoveredChanged;
 
+            // подписываемся на изменение позиции камеры только когда режим камеры включён на наблюдателя
+            // так как в режиме наблюдателя нам требуется отменять процесс ломания блока при передвижении камеры
+            // событиями движения курсором или тачами пользователя
             if (_cameraModeController.CameraMode == CameraMode.Spectator)
             {
                 _cameraObserver.OnPositionChanged += OnCameraPositionChanged;
@@ -61,7 +64,6 @@ namespace World.BlockHovered
 
             _cameraModeController.OnCameraModeChanged -= OnCameraModeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged -= OnBlockHoveredChanged;
-
             _cameraObserver.OnPositionChanged -= OnCameraPositionChanged;
         }
 
@@ -134,7 +136,7 @@ namespace World.BlockHovered
                 holdPassed += Time.deltaTime;
             }
 
-            Block hoveredBlock = _chunksManager.Block.GetBreakable(worldPosition, out BlockLayer blockLayer);
+            Block hoveredBlock = _chunksManager.Blocks.GetBreakable(worldPosition, out BlockLayer blockLayer);
             BlockInfo hoveredInfo = _blockDatabase.Get(hoveredBlock.Id);
 
             _targetSpriteRenderer.color = hoveredInfo.OutlineColor;

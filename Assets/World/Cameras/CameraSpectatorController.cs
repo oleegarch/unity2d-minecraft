@@ -7,7 +7,6 @@ namespace World.Cameras
     [RequireComponent(typeof(CameraObserver))]
     public class CameraSpectatorController : MonoBehaviour
     {
-        [SerializeField] private Camera _targetCamera;
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
 
@@ -23,7 +22,7 @@ namespace World.Cameras
             if(_moveKeyboardDirection != Vector2.zero)
             {
                 Vector3 delta = new Vector3(_moveKeyboardDirection.x, _moveKeyboardDirection.y, 0) * keyboardMoveSpeed * Time.deltaTime;
-                _cameraObserver.SetPosition(_targetCamera.transform.position + delta);
+                _cameraObserver.SetPosition(_cameraObserver.GetPosition() + delta);
             }
         }
 
@@ -36,8 +35,6 @@ namespace World.Cameras
             actions.KeyboardMove.performed += OnKeyboardMove;
             actions.KeyboardMove.canceled += OnKeyboardMoveCanceled;
             actions.Enable();
-
-            _cameraObserver.HasSpectatorController = true;
         }
 
         private void OnDisable()
@@ -49,8 +46,6 @@ namespace World.Cameras
             actions.KeyboardMove.performed -= OnKeyboardMove;
             actions.KeyboardMove.canceled -= OnKeyboardMoveCanceled;
             actions.Disable();
-
-            _cameraObserver.HasSpectatorController = false;
         }
 
         private void OnPointerStart(InputAction.CallbackContext context)
@@ -70,14 +65,15 @@ namespace World.Cameras
             Vector2 pointerPosition = context.ReadValue<Vector2>();
 
             // Конвертируем обе в мировые
-            Vector3 prevWorld = _targetCamera.ScreenToWorldPoint(new Vector3(_prevPointerPosition.x, _prevPointerPosition.y, _targetCamera.nearClipPlane));
-            Vector3 currWorld = _targetCamera.ScreenToWorldPoint(new Vector3(pointerPosition.x,  pointerPosition.y,  _targetCamera.nearClipPlane));
+            Camera camera = _cameraObserver.Camera;
+            Vector3 prevWorld = camera.ScreenToWorldPoint(new Vector3(_prevPointerPosition.x, _prevPointerPosition.y, camera.nearClipPlane));
+            Vector3 currWorld = camera.ScreenToWorldPoint(new Vector3(pointerPosition.x,  pointerPosition.y,  camera.nearClipPlane));
 
             // Дельта в мировых координатах
             Vector3 worldDelta = prevWorld - currWorld;
 
             // Сдвигаем камеру
-            _cameraObserver.SetPosition(_targetCamera.transform.position - worldDelta);
+            _cameraObserver.SetPosition(_cameraObserver.GetPosition() - worldDelta);
 
             // Запоминаем текущую для следующего кадра
             _prevPointerPosition = pointerPosition;

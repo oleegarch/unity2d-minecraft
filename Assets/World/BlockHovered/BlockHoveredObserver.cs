@@ -10,7 +10,6 @@ namespace World.BlockHovered
 {
     public class BlockHoveredObserver : MonoBehaviour
     {
-        [SerializeField] private Camera _targetCamera;
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
         [SerializeField] private BlockDatabase _blockDatabase;
@@ -41,7 +40,7 @@ namespace World.BlockHovered
 
         private void SetHovered(Vector2 screenPosition)
         {
-            Vector3 chunksPosition = _targetCamera.ScreenToWorldPoint(screenPosition) - _chunksParent.position;
+            Vector3 chunksPosition = _cameraObserver.Camera.ScreenToWorldPoint(screenPosition) - _chunksParent.position;
             WorldPosition worldPosition = new WorldPosition(Mathf.FloorToInt(chunksPosition.x), Mathf.FloorToInt(chunksPosition.y));
 
             if (worldPosition == _hovered)

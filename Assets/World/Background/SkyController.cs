@@ -6,7 +6,6 @@ namespace World.Background
 {
     public class SkyController : MonoBehaviour
     {
-        [SerializeField] private WorldController _worldController;
         [SerializeField] private WorldTime _worldTime;
         [SerializeField] private Transform _sun;
         [SerializeField] private Transform _moon;
@@ -23,29 +22,19 @@ namespace World.Background
         private void Awake()
         {
             SetPivotPosition(_cameraObserver.GetPosition());
-            SetScaleByOrthoSize(_cameraObserver.GetSize());
+            SetScaleByOrthoSize(_cameraObserver.GetOrthographicSize());
         }
         private void OnEnable()
         {
-            _worldController.OnWorldInited += OnWorldInited;
-            _worldController.OnWorldDestroyed += OnWorldDestroyed;
+            _cameraObserver.OnPositionChanged += OnCameraPositionChanged;
+            _cameraObserver.OnOrthographicSizeChanged += OnCameraSizeChanged;
             _worldTime.OnTimeChanged += OnTimeChanged;
         }
         private void OnDisable()
         {
-            _worldController.OnWorldInited -= OnWorldInited;
-            _worldController.OnWorldDestroyed -= OnWorldDestroyed;
-            _worldTime.OnTimeChanged -= OnTimeChanged;
-        }
-        private void OnWorldInited()
-        {
-            _cameraObserver.OnPositionChanged += OnCameraPositionChanged;
-            _cameraObserver.OnOrthographicSizeChanged += OnCameraSizeChanged;
-        }
-        private void OnWorldDestroyed()
-        {
             _cameraObserver.OnPositionChanged -= OnCameraPositionChanged;
             _cameraObserver.OnOrthographicSizeChanged -= OnCameraSizeChanged;
+            _worldTime.OnTimeChanged -= OnTimeChanged;
         }
 
         private void OnTimeChanged(float dayRatio)

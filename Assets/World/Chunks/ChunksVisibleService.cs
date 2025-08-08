@@ -12,7 +12,6 @@ namespace World.Chunks
     }
     public class ChunksVisibleService : MonoBehaviour, IChunksVisible
     {
-        [SerializeField] private Camera _targetCamera;
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
 
@@ -24,7 +23,7 @@ namespace World.Chunks
 
         private void Start()
         {
-            OnCameraPositionChanged(_targetCamera.transform.position);
+            OnCameraPositionChanged(_cameraObserver.GetPosition());
         }
         private void OnEnable()
         {
@@ -54,8 +53,8 @@ namespace World.Chunks
 
         private void UpdateRenderRect()
         {
-            float camHeight = _targetCamera.orthographicSize * 2f;
-            float camWidth = camHeight * _targetCamera.aspect;
+            float camHeight = _cameraObserver.GetOrthographicSize() * 2f;
+            float camWidth = _cameraObserver.GetOrthographicWidth() * 2f;
 
             int halfChunksCountX = Mathf.CeilToInt(camWidth / _chunkSize / 2f);
             int halfChunksCountY = Mathf.CeilToInt(camHeight / _chunkSize / 2f);

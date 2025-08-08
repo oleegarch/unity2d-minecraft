@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using World.Blocks;
 using World.Chunks;
@@ -9,37 +8,32 @@ namespace World.Entities.Player
     {
         [SerializeField] private ChunksManager _chunksManager;
         [SerializeField] private Transform _playerTransform;
-        [SerializeField] private SpriteRenderer _spriteRenderer;
-
-        private Coroutine _waitCoroutine;
+        [SerializeField] private Rigidbody2D _playerRb2;
+        [SerializeField] private SpriteRenderer _playerSprite;
 
         private void Start()
         {
-            _waitCoroutine = StartCoroutine(WaitForSpawnPlayer());
-            _spriteRenderer.enabled = false;
+            _playerSprite.enabled = false;
+            _playerRb2.simulated = false;
+            _chunksManager.OnVisibleChunksLoaded += SpawnPlayer;
         }
         private void OnDestroy()
         {
-            if (_waitCoroutine != null)
-                StopCoroutine(_waitCoroutine);
+            _chunksManager.OnVisibleChunksLoaded -= SpawnPlayer;
         }
 
-        private IEnumerator WaitForSpawnPlayer()
-        {
-            yield return new WaitUntil(() => _chunksManager.Loaded);
-            SpawnPlayer();
-        }
         private void SpawnPlayer()
         {
             int y = 0;
             while (true)
             {
-                Block block = _chunksManager.Block.Get(new WorldPosition(0, y));
+                Block block = _chunksManager.Blocks.Get(new WorldPosition(0, y));
 
                 if (block.IsAir())
                 {
                     _playerTransform.position = new Vector3(0, y, 0);
-                    _spriteRenderer.enabled = true;
+                    _playerSprite.enabled = true;
+                    _playerRb2.simulated = true;
                     break;
                 }
 

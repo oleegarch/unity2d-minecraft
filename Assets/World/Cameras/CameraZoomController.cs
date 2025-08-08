@@ -7,7 +7,6 @@ namespace World.Cameras
     [RequireComponent(typeof(CameraObserver))]
     public class CameraZoomController : MonoBehaviour
     {
-        [SerializeField] private Camera _targetCamera;
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
 
@@ -33,7 +32,7 @@ namespace World.Cameras
         private void OnMouseZoom(InputAction.CallbackContext context)
         {
             float scrollDelta = context.ReadValue<float>();
-            var newSize = _targetCamera.orthographicSize - scrollDelta * mouseZoomSpeed * Time.deltaTime;
+            var newSize = _cameraObserver.GetOrthographicSize() - scrollDelta * mouseZoomSpeed * Time.deltaTime;
             _cameraObserver.SetOrthographicSize(Mathf.Clamp(newSize, minZoom, maxZoom));
         }
     }

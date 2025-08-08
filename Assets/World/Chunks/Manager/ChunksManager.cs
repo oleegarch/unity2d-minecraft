@@ -19,8 +19,11 @@ namespace World.Chunks
 
         private int _version;
 
+        public event Action OnVisibleChunksLoaded;
         public event Action OnVisibleChunksUpdated;
-        public IChunksBlockModifier Block { get; private set; }
+        public event Action OnVisibleChunksDestroyed;
+
+        public IChunksBlockModifier Blocks { get; private set; }
         public IChunksStorage Storage { get; private set; }
 
         [NonSerialized] public bool Loaded = false;
@@ -29,7 +32,7 @@ namespace World.Chunks
         {
             var generator = _chunkGeneratorConfig.GetChunkGenerator();
             Storage = new ChunksStorage(generator, _chunkRendererPrefab, _chunksParent);
-            Block = new ChunksBlockModifier(Storage);
+            Blocks = new ChunksBlockModifier(Storage);
         }
 
         private void OnEnable()
@@ -37,11 +40,15 @@ namespace World.Chunks
             _visibility.OnVisibleChunksChanged += HandleVisibleChanged;
             _breaker.OnBlockBroken += HandleBlockBroken;
         }
-
         private void OnDisable()
         {
             _visibility.OnVisibleChunksChanged -= HandleVisibleChanged;
             _breaker.OnBlockBroken -= HandleBlockBroken;
+        }
+        private void OnDestroy()
+        {
+            Storage.DisposeAll();
+            OnVisibleChunksDestroyed?.Invoke();
         }
 
         private void HandleVisibleChanged(RectInt viewRect)
@@ -73,7 +80,12 @@ namespace World.Chunks
             foreach (ChunkIndex index in toRemove)
                 Storage.Dispose(index);
 
-            Loaded = true;
+            if (Loaded == false)
+            {
+                Loaded = true;
+                OnVisibleChunksLoaded?.Invoke();
+            }
+
             OnVisibleChunksUpdated?.Invoke();
         }
 
@@ -84,6 +96,6 @@ namespace World.Chunks
             HandleVisibleChanged(_visibility.VisibleRect);
         }
 
-        private void HandleBlockBroken(WorldPosition wc) => Block.BreakVisible(wc);
+        private void HandleBlockBroken(WorldPosition wc) => Blocks.BreakVisible(wc);
     }
 }

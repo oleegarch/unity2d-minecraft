@@ -127,26 +127,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 75138438775379441, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: _cameraFollow
-      value: 
-      objectReference: {fileID: 361995173}
-    - target: {fileID: 75138438775379441, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: _cameraSpectatorController
-      value: 
-      objectReference: {fileID: 361995174}
-    - target: {fileID: 167939084089460052, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: _targetCamera
-      value: 
-      objectReference: {fileID: 361995171}
     - target: {fileID: 167939084089460052, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: _cameraObserver
       value: 
       objectReference: {fileID: 361995168}
-    - target: {fileID: 2519934639846788326, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: _targetCamera
-      value: 
-      objectReference: {fileID: 361995171}
     - target: {fileID: 2519934639846788326, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: _cameraObserver
       value: 
@@ -159,10 +143,6 @@ PrefabInstance:
       propertyPath: _cameraModeController
       value: 
       objectReference: {fileID: 361995175}
-    - target: {fileID: 3421474599134605749, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: _targetCamera
-      value: 
-      objectReference: {fileID: 361995171}
     - target: {fileID: 3421474599134605749, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: _cameraObserver
       value: 
@@ -418,7 +398,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27ff5f66291f0fb4f8c1829c40760419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetCamera: {fileID: 361995171}
   _cameraObserver: {fileID: 361995168}
   _inputManager: {fileID: 201376901}
   keyboardMoveSpeed: 20
@@ -450,7 +429,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59f4599f6960e1248abedd99765d61c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetCamera: {fileID: 361995171}
   _cameraObserver: {fileID: 361995168}
   _inputManager: {fileID: 201376901}
   mouseZoomSpeed: 200

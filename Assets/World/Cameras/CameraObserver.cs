@@ -7,7 +7,7 @@ namespace World.Cameras
     {
         [SerializeField] private Camera _targetCamera;
 
-        [NonSerialized] public bool HasSpectatorController = false;
+        public Camera Camera => _targetCamera;
 
         public event Action<Vector3> OnPositionChanged;
         public event Action<float> OnOrthographicSizeChanged;
@@ -36,7 +36,7 @@ namespace World.Cameras
         }
 
         public Vector3 GetPosition() => _targetCamera.transform.position;
-        public float GetSize() => _targetCamera.orthographicSize;
+        public float GetOrthographicSize() => _targetCamera.orthographicSize;
         public float GetOrthographicWidth() => _targetCamera.orthographicSize * _targetCamera.aspect;
     }
 }

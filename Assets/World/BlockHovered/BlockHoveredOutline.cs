@@ -7,7 +7,6 @@ namespace World.BlockHovered
 {
     public class BlockHoveredOutline : MonoBehaviour
     {
-        [SerializeField] private Camera _targetCamera;
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private BlockHoveredObserver _blockHoveredObserver;
         [SerializeField] private BlockBreakingProcess _blockBreakingProcess;
@@ -18,7 +17,7 @@ namespace World.BlockHovered
 
         private void Awake()
         {
-            OnCameraSizeChanged(_targetCamera.orthographicSize);
+            OnCameraSizeChanged(_cameraObserver.GetOrthographicSize());
         }
         private void OnEnable()
         {
@@ -35,7 +34,7 @@ namespace World.BlockHovered
 
         private void SetOutline(WorldPosition worldPosition)
         {
-            Block hoveredBlock = _chunksManager.Block.GetBreakable(worldPosition, out BlockLayer blockLayer);
+            Block hoveredBlock = _chunksManager.Blocks.GetBreakable(worldPosition, out BlockLayer blockLayer);
             bool enabled = !hoveredBlock.IsAir();
 
             _targetSpriteRenderer.enabled = enabled;
