@@ -1,6 +1,6 @@
 using World.Blocks;
 
-namespace World.Chunks.BlocksStorage
+namespace World.Chunks.BlocksStorage.Storages
 {
     public interface IBlockLayerStorage
     {

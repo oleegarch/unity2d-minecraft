@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using World.Blocks;
 
-namespace World.Chunks.BlocksStorage
+namespace World.Chunks.BlocksStorage.Storages
 {
     public class SparseBlockStorage : IBlockLayerStorage
     {
