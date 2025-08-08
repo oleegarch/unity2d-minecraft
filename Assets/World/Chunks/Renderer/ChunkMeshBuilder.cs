@@ -35,6 +35,7 @@ namespace World.Chunks
             _chunk = chunk;
 
             Dispose();
+            SubscribeToChunkChanges();
 
             for (byte x = 0; x < chunk.Size; x++)
                 for (byte y = 0; y < chunk.Size; y++)
@@ -154,9 +155,30 @@ namespace World.Chunks
 
             return meshData;
         }
+
+        private void OnChunkBlockSet(BlockIndex index, Block block, BlockLayer layer)
+        {
+            DrawBlock(index);
+        }
+        private void OnChunkBlockBroken(BlockIndex index, Block block, BlockLayer layer)
+        {
+            EraseBlock(index);
+        }
+        private void SubscribeToChunkChanges()
+        {
+            _chunk.Blocks.Events.OnBlockSet += OnChunkBlockSet;
+            _chunk.Blocks.Events.OnBlockBroken += OnChunkBlockBroken;
+        }
+        private void UnsubscribeFromChunkChanges()
+        {
+            _chunk.Blocks.Events.OnBlockSet -= OnChunkBlockSet;
+            _chunk.Blocks.Events.OnBlockBroken -= OnChunkBlockBroken;
+        }
         
         public void Dispose()
         {
+            UnsubscribeFromChunkChanges();
+
             _categoryObjects.ForEach(Object.DestroyImmediate);
             _categoryObjects.Clear();
             _blockIndexes.Clear();

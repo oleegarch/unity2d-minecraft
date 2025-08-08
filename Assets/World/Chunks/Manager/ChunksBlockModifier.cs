@@ -62,13 +62,8 @@ namespace World.Chunks
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-            if (!chunk.Blocks.TrySet(blockIndex, block, layer))
-                return false;
-
-            if (_chunksStorage.TryGetRenderer(worldPosition, out var renderer))
+            if (chunk.Blocks.TrySet(blockIndex, block, layer))
             {
-                renderer.Mesh.DrawBlock(blockIndex);
-                renderer.Collider.AddSquare(blockIndex);
                 Events.InvokeBlockSet(worldPosition, block, layer);
                 return true;
             }
@@ -82,14 +77,9 @@ namespace World.Chunks
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-            if (!chunk.Blocks.TryUnset(blockIndex, layer))
-                return false;
-
-            if (_chunksStorage.TryGetRenderer(worldPosition, out var renderer))
+            Block block = chunk.Blocks.Get(blockIndex, layer);
+            if (chunk.Blocks.TryUnset(blockIndex, layer))
             {
-                Block block = chunk.Blocks.Get(blockIndex, layer);
-                renderer.Mesh.EraseBlock(blockIndex);
-                renderer.Collider.RemoveSquare(blockIndex);
                 Events.InvokeBlockBroken(worldPosition, block, layer);
                 return true;
             }
@@ -112,13 +102,8 @@ namespace World.Chunks
                 block = chunk.Blocks.Get(blockIndex, layer);
             }
 
-            if (!chunk.Blocks.TryUnset(blockIndex, layer))
-                return false;
-
-            if (_chunksStorage.TryGetRenderer(worldPosition, out var renderer))
+            if (chunk.Blocks.TryUnset(blockIndex, layer))
             {
-                renderer.Mesh.EraseBlock(blockIndex);
-                renderer.Collider.RemoveSquare(blockIndex);
                 Events.InvokeBlockBroken(worldPosition, block, layer);
                 return true;
             }

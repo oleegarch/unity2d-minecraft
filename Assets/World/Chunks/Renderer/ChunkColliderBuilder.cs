@@ -34,6 +34,7 @@ namespace World.Chunks
             _chunk = chunk;
             
             Dispose();
+            SubscribeToChunkChanges();
 
             int size = chunk.Size;
             var edges = new List<Edge>(size * size * 4);
@@ -150,8 +151,29 @@ namespace World.Chunks
             ApplyCollider();
         }
 
+        private void OnChunkBlockSet(BlockIndex index, Block block, BlockLayer layer)
+        {
+            AddSquare(index);
+        }
+        private void OnChunkBlockBroken(BlockIndex index, Block block, BlockLayer layer)
+        {
+            RemoveSquare(index);
+        }
+        private void SubscribeToChunkChanges()
+        {
+            _chunk.Blocks.Events.OnBlockSet += OnChunkBlockSet;
+            _chunk.Blocks.Events.OnBlockBroken += OnChunkBlockBroken;
+        }
+        private void UnsubscribeFromChunkChanges()
+        {
+            _chunk.Blocks.Events.OnBlockSet -= OnChunkBlockSet;
+            _chunk.Blocks.Events.OnBlockBroken -= OnChunkBlockBroken;
+        }
+
         public void Dispose()
         {
+            UnsubscribeFromChunkChanges();
+
             _paths.Clear();
         }
     }
