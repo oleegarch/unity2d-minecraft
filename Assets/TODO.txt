@@ -1,3 +1,6 @@
+— ??? Перенести Camera объект в World структуру префаба
+— Везде приходится прокидывать текущий BlockDatabase. Думаю ChunksManager должен иметь поле public Generator (ChunkGeneratorConfig), а сам генератор должен иметь публичное поле с базой данных блоков.
+— Если реализовывать таску сверху, тогда BlockHovered, BlockBreaking, ChunkRenderer системы должны перестать принимать BlockDatabase и начнут зависить только от ChunksManager
 — В chunk.TrySetBlock и подобные методы можно передавать BlockIndex как ref/in
 — В SkyController добавить фазы луны.
 — В SkyController солнце и луна должны сразу появлятся после отсутствия видимости на экране другого (а не за горизонтом).
