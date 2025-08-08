@@ -120,15 +120,6 @@ namespace World.InputActions
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""MouseZoom"",
-                    ""type"": ""Value"",
-                    ""id"": ""9b7e2983-dcae-4f69-b667-71729c08a0e6"",
-                    ""expectedControlType"": ""Axis"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -244,17 +235,6 @@ namespace World.InputActions
                 },
                 {
                     ""name"": """",
-                    ""id"": ""69158597-c6c4-424e-99bd-f95a6a02a1a2"",
-                    ""path"": ""<Mouse>/scroll/y"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""MouseZoom"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""54b32a13-c7c6-49b8-a26a-796fb7a32ef4"",
                     ""path"": ""<Pointer>/position"",
                     ""interactions"": """",
@@ -272,6 +252,34 @@ namespace World.InputActions
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""PointerStart"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""CameraZoom"",
+            ""id"": ""80e9546f-5ac0-4223-83c0-13e45da9dc0a"",
+            ""actions"": [
+                {
+                    ""name"": ""MouseZoom"",
+                    ""type"": ""Value"",
+                    ""id"": ""5a4e486c-12d3-4abf-a9d1-a426059d3351"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""80295b8d-72e2-4607-aa73-6ad7683ca5fe"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseZoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -466,7 +474,9 @@ namespace World.InputActions
             m_CameraSpectator_PointerStart = m_CameraSpectator.FindAction("PointerStart", throwIfNotFound: true);
             m_CameraSpectator_PointerMove = m_CameraSpectator.FindAction("PointerMove", throwIfNotFound: true);
             m_CameraSpectator_KeyboardMove = m_CameraSpectator.FindAction("KeyboardMove", throwIfNotFound: true);
-            m_CameraSpectator_MouseZoom = m_CameraSpectator.FindAction("MouseZoom", throwIfNotFound: true);
+            // CameraZoom
+            m_CameraZoom = asset.FindActionMap("CameraZoom", throwIfNotFound: true);
+            m_CameraZoom_MouseZoom = m_CameraZoom.FindAction("MouseZoom", throwIfNotFound: true);
             // BlockHovered
             m_BlockHovered = asset.FindActionMap("BlockHovered", throwIfNotFound: true);
             m_BlockHovered_PointerMove = m_BlockHovered.FindAction("PointerMove", throwIfNotFound: true);
@@ -482,6 +492,7 @@ namespace World.InputActions
         ~@WorldInputActions()
         {
             UnityEngine.Debug.Assert(!m_CameraSpectator.enabled, "This will cause a leak and performance issues, WorldInputActions.CameraSpectator.Disable() has not been called.");
+            UnityEngine.Debug.Assert(!m_CameraZoom.enabled, "This will cause a leak and performance issues, WorldInputActions.CameraZoom.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_BlockHovered.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockHovered.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_BlockBreaking.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockBreaking.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, WorldInputActions.Player.Disable() has not been called.");
@@ -563,7 +574,6 @@ namespace World.InputActions
         private readonly InputAction m_CameraSpectator_PointerStart;
         private readonly InputAction m_CameraSpectator_PointerMove;
         private readonly InputAction m_CameraSpectator_KeyboardMove;
-        private readonly InputAction m_CameraSpectator_MouseZoom;
         /// <summary>
         /// Provides access to input actions defined in input action map "CameraSpectator".
         /// </summary>
@@ -587,10 +597,6 @@ namespace World.InputActions
             /// Provides access to the underlying input action "CameraSpectator/KeyboardMove".
             /// </summary>
             public InputAction @KeyboardMove => m_Wrapper.m_CameraSpectator_KeyboardMove;
-            /// <summary>
-            /// Provides access to the underlying input action "CameraSpectator/MouseZoom".
-            /// </summary>
-            public InputAction @MouseZoom => m_Wrapper.m_CameraSpectator_MouseZoom;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -626,9 +632,6 @@ namespace World.InputActions
                 @KeyboardMove.started += instance.OnKeyboardMove;
                 @KeyboardMove.performed += instance.OnKeyboardMove;
                 @KeyboardMove.canceled += instance.OnKeyboardMove;
-                @MouseZoom.started += instance.OnMouseZoom;
-                @MouseZoom.performed += instance.OnMouseZoom;
-                @MouseZoom.canceled += instance.OnMouseZoom;
             }
 
             /// <summary>
@@ -649,9 +652,6 @@ namespace World.InputActions
                 @KeyboardMove.started -= instance.OnKeyboardMove;
                 @KeyboardMove.performed -= instance.OnKeyboardMove;
                 @KeyboardMove.canceled -= instance.OnKeyboardMove;
-                @MouseZoom.started -= instance.OnMouseZoom;
-                @MouseZoom.performed -= instance.OnMouseZoom;
-                @MouseZoom.canceled -= instance.OnMouseZoom;
             }
 
             /// <summary>
@@ -685,6 +685,102 @@ namespace World.InputActions
         /// Provides a new <see cref="CameraSpectatorActions" /> instance referencing this action map.
         /// </summary>
         public CameraSpectatorActions @CameraSpectator => new CameraSpectatorActions(this);
+
+        // CameraZoom
+        private readonly InputActionMap m_CameraZoom;
+        private List<ICameraZoomActions> m_CameraZoomActionsCallbackInterfaces = new List<ICameraZoomActions>();
+        private readonly InputAction m_CameraZoom_MouseZoom;
+        /// <summary>
+        /// Provides access to input actions defined in input action map "CameraZoom".
+        /// </summary>
+        public struct CameraZoomActions
+        {
+            private @WorldInputActions m_Wrapper;
+
+            /// <summary>
+            /// Construct a new instance of the input action map wrapper class.
+            /// </summary>
+            public CameraZoomActions(@WorldInputActions wrapper) { m_Wrapper = wrapper; }
+            /// <summary>
+            /// Provides access to the underlying input action "CameraZoom/MouseZoom".
+            /// </summary>
+            public InputAction @MouseZoom => m_Wrapper.m_CameraZoom_MouseZoom;
+            /// <summary>
+            /// Provides access to the underlying input action map instance.
+            /// </summary>
+            public InputActionMap Get() { return m_Wrapper.m_CameraZoom; }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+            public void Enable() { Get().Enable(); }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+            public void Disable() { Get().Disable(); }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+            public bool enabled => Get().enabled;
+            /// <summary>
+            /// Implicitly converts an <see ref="CameraZoomActions" /> to an <see ref="InputActionMap" /> instance.
+            /// </summary>
+            public static implicit operator InputActionMap(CameraZoomActions set) { return set.Get(); }
+            /// <summary>
+            /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+            /// </summary>
+            /// <param name="instance">Callback instance.</param>
+            /// <remarks>
+            /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+            /// </remarks>
+            /// <seealso cref="CameraZoomActions" />
+            public void AddCallbacks(ICameraZoomActions instance)
+            {
+                if (instance == null || m_Wrapper.m_CameraZoomActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_CameraZoomActionsCallbackInterfaces.Add(instance);
+                @MouseZoom.started += instance.OnMouseZoom;
+                @MouseZoom.performed += instance.OnMouseZoom;
+                @MouseZoom.canceled += instance.OnMouseZoom;
+            }
+
+            /// <summary>
+            /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+            /// </summary>
+            /// <remarks>
+            /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+            /// </remarks>
+            /// <seealso cref="CameraZoomActions" />
+            private void UnregisterCallbacks(ICameraZoomActions instance)
+            {
+                @MouseZoom.started -= instance.OnMouseZoom;
+                @MouseZoom.performed -= instance.OnMouseZoom;
+                @MouseZoom.canceled -= instance.OnMouseZoom;
+            }
+
+            /// <summary>
+            /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="CameraZoomActions.UnregisterCallbacks(ICameraZoomActions)" />.
+            /// </summary>
+            /// <seealso cref="CameraZoomActions.UnregisterCallbacks(ICameraZoomActions)" />
+            public void RemoveCallbacks(ICameraZoomActions instance)
+            {
+                if (m_Wrapper.m_CameraZoomActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            /// <summary>
+            /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+            /// </summary>
+            /// <remarks>
+            /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+            /// </remarks>
+            /// <seealso cref="CameraZoomActions.AddCallbacks(ICameraZoomActions)" />
+            /// <seealso cref="CameraZoomActions.RemoveCallbacks(ICameraZoomActions)" />
+            /// <seealso cref="CameraZoomActions.UnregisterCallbacks(ICameraZoomActions)" />
+            public void SetCallbacks(ICameraZoomActions instance)
+            {
+                foreach (var item in m_Wrapper.m_CameraZoomActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_CameraZoomActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        /// <summary>
+        /// Provides a new <see cref="CameraZoomActions" /> instance referencing this action map.
+        /// </summary>
+        public CameraZoomActions @CameraZoom => new CameraZoomActions(this);
 
         // BlockHovered
         private readonly InputActionMap m_BlockHovered;
@@ -1012,6 +1108,14 @@ namespace World.InputActions
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnKeyboardMove(InputAction.CallbackContext context);
+        }
+        /// <summary>
+        /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "CameraZoom" which allows adding and removing callbacks.
+        /// </summary>
+        /// <seealso cref="CameraZoomActions.AddCallbacks(ICameraZoomActions)" />
+        /// <seealso cref="CameraZoomActions.RemoveCallbacks(ICameraZoomActions)" />
+        public interface ICameraZoomActions
+        {
             /// <summary>
             /// Method invoked when associated input action "MouseZoom" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
             /// </summary>

@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "World",
     "maps": [
         {
@@ -28,15 +29,6 @@
                     "type": "Value",
                     "id": "2dd1542d-923c-4bc1-b4d1-815f9a259b01",
                     "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "MouseZoom",
-                    "type": "Value",
-                    "id": "9b7e2983-dcae-4f69-b667-71729c08a0e6",
-                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -155,17 +147,6 @@
                 },
                 {
                     "name": "",
-                    "id": "69158597-c6c4-424e-99bd-f95a6a02a1a2",
-                    "path": "<Mouse>/scroll/y",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MouseZoom",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "54b32a13-c7c6-49b8-a26a-796fb7a32ef4",
                     "path": "<Pointer>/position",
                     "interactions": "",
@@ -183,6 +164,34 @@
                     "processors": "",
                     "groups": "",
                     "action": "PointerStart",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CameraZoom",
+            "id": "80e9546f-5ac0-4223-83c0-13e45da9dc0a",
+            "actions": [
+                {
+                    "name": "MouseZoom",
+                    "type": "Value",
+                    "id": "5a4e486c-12d3-4abf-a9d1-a426059d3351",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "80295b8d-72e2-4607-aa73-6ad7683ca5fe",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseZoom",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

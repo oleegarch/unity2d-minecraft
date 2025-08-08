@@ -250,6 +250,7 @@ GameObject:
   - component: {fileID: 361995168}
   - component: {fileID: 361995173}
   - component: {fileID: 361995174}
+  - component: {fileID: 361995176}
   - component: {fileID: 361995175}
   m_Layer: 0
   m_Name: Camera
@@ -420,9 +421,6 @@ MonoBehaviour:
   _targetCamera: {fileID: 361995171}
   _cameraObserver: {fileID: 361995168}
   _inputManager: {fileID: 201376901}
-  mouseZoomSpeed: 200
-  minZoom: 5
-  maxZoom: 40
   keyboardMoveSpeed: 20
 --- !u!114 &361995175
 MonoBehaviour:
@@ -439,7 +437,25 @@ MonoBehaviour:
   _cameraFollow: {fileID: 361995173}
   _cameraSpectatorController: {fileID: 361995174}
   _playerController: {fileID: 2019264077}
-  _cameraMode: 0
+  _cameraMode: 1
+--- !u!114 &361995176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361995167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f4599f6960e1248abedd99765d61c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetCamera: {fileID: 361995171}
+  _cameraObserver: {fileID: 361995168}
+  _inputManager: {fileID: 201376901}
+  mouseZoomSpeed: 200
+  minZoom: 5
+  maxZoom: 40
 --- !u!50 &880403310 stripped
 Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 4219367044316629845, guid: 2b5352909a325cd4c876054a88654afe, type: 3}

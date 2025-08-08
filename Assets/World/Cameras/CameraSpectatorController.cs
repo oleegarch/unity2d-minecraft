@@ -11,11 +11,6 @@ namespace World.Cameras
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
 
-        [Header("Mouse Zoom Settings")]
-        public float mouseZoomSpeed = 200f;
-        public float minZoom = 5f;
-        public float maxZoom = 40f;
-
         [Header("Keyboard Movement Settings")]
         public float keyboardMoveSpeed = 20f;
 
@@ -40,7 +35,6 @@ namespace World.Cameras
             actions.PointerMove.performed += OnPointerMove;
             actions.KeyboardMove.performed += OnKeyboardMove;
             actions.KeyboardMove.canceled += OnKeyboardMoveCanceled;
-            actions.MouseZoom.performed += OnMouseZoom;
             actions.Enable();
 
             _cameraObserver.HasSpectatorController = true;
@@ -54,7 +48,6 @@ namespace World.Cameras
             actions.PointerMove.performed -= OnPointerMove;
             actions.KeyboardMove.performed -= OnKeyboardMove;
             actions.KeyboardMove.canceled -= OnKeyboardMoveCanceled;
-            actions.MouseZoom.performed -= OnMouseZoom;
             actions.Disable();
 
             _cameraObserver.HasSpectatorController = false;
@@ -97,13 +90,6 @@ namespace World.Cameras
         private void OnKeyboardMoveCanceled(InputAction.CallbackContext context)
         {
             _moveKeyboardDirection = Vector2.zero;
-        }
-
-        private void OnMouseZoom(InputAction.CallbackContext context)
-        {
-            float scrollDelta = context.ReadValue<float>();
-            var newSize = _targetCamera.orthographicSize - scrollDelta * mouseZoomSpeed * Time.deltaTime;
-            _cameraObserver.SetOrthographicSize(Mathf.Clamp(newSize, minZoom, maxZoom));
         }
     }
 }
