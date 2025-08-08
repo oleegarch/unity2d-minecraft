@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b700c709394c25d4787e6e60faa5d100, type: 3}
   m_Name: EarthGeneratorConfig
   m_EditorClassIdentifier: 
-  BlockDatabase: {fileID: 11400000, guid: c1425d5beff14834aae34abf0b9ef484, type: 2}
-  ChunkSize: 16
+  _blockDatabase: {fileID: 11400000, guid: c1425d5beff14834aae34abf0b9ef484, type: 2}
+  _blockAtlasDatabase: {fileID: 11400000, guid: c1d7be8b0c58ca04ba4f6990cb37966b, type: 2}
+  _chunkSize: 16
   BiomeWidth: 200
   SurfaceBlendWidth: 20
   Biomes:

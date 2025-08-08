@@ -11,7 +11,6 @@ namespace World.BlockHovered
         [SerializeField] private BlockHoveredObserver _blockHoveredObserver;
         [SerializeField] private BlockBreakingProcess _blockBreakingProcess;
         [SerializeField] private ChunksManager _chunksManager;
-        [SerializeField] private BlockDatabase _blockDatabase;
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private Material _blockHoveredMaterial;
 
@@ -41,7 +40,7 @@ namespace World.BlockHovered
 
             if (enabled)
             {
-                BlockInfo hoveredInfo = _blockDatabase.Get(hoveredBlock.Id);
+                BlockInfo hoveredInfo = _chunksManager.BlockDatabase.Get(hoveredBlock.Id);
                 transform.position = new Vector3(worldPosition.x, worldPosition.y, 0f);
                 _targetSpriteRenderer.color = hoveredInfo.OutlineColor;
             }

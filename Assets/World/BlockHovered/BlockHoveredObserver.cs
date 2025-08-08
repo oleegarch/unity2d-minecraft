@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
-using World.Blocks;
 using World.Chunks;
 using World.Cameras;
 using World.InputActions;
@@ -12,7 +11,6 @@ namespace World.BlockHovered
     {
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
-        [SerializeField] private BlockDatabase _blockDatabase;
         [SerializeField] private ChunksManager _chunksManager;
         [SerializeField] private Transform _chunksParent;
 

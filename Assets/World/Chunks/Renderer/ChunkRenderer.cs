@@ -11,18 +11,17 @@ namespace World.Chunks
     [RequireComponent(typeof(Transform))]
     public class ChunkRenderer : MonoBehaviour
     {
-        [SerializeField] private BlockDatabase _blockDatabase;
-        [SerializeField] private BlockAtlasDatabase _blockAtlasDatabase;
+        [SerializeField] private PolygonCollider2D _polygonCollider2D;
 
         public ChunkMeshBuilder Mesh { get; private set; }
         public ChunkColliderBuilder Collider { get; private set; }
 
         private CancellationTokenSource _cts;
 
-        public void Initialize()
+        public void Initialize(BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase)
         {
-            Mesh = new ChunkMeshBuilder(gameObject, _blockDatabase, _blockAtlasDatabase);
-            Collider = new ChunkColliderBuilder(GetComponent<PolygonCollider2D>());
+            Mesh = new ChunkMeshBuilder(gameObject, blockDatabase, blockAtlasDatabase);
+            Collider = new ChunkColliderBuilder(_polygonCollider2D);
         }
 
         public void Render(Chunk chunk)

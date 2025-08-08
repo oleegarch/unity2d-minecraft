@@ -30,15 +30,15 @@ namespace World.Chunks.Generator
             var surfaceProvider = new PerlinSurfaceHeightProvider(biomeProvider, BiomeWidth, SurfaceBlendWidth);
 
             // Create steps
-            var blockGenerator = new ProceduralEarthBlockGenerator(BlockDatabase, biomeProvider, surfaceProvider, CaveLevels); // Procedural Earth generation
+            var blockGenerator = new ProceduralEarthBlockGenerator(_blockDatabase, biomeProvider, surfaceProvider, CaveLevels); // Procedural Earth generation
             var creationStep = new ChunkProceduralCreation(blockGenerator);
 
             // Post processing steps
-            var plants = new IPlantPlacer[] { new TreePlantPlacer(Plants, biomeProvider, surfaceProvider, BlockDatabase) }; // Plant placers
+            var plants = new IPlantPlacer[] { new TreePlantPlacer(Plants, biomeProvider, surfaceProvider, _blockDatabase) }; // Plant placers
             var postSteps = new IChunkPostStep[] { new PlantPlaceStep(plants) };
 
             // Compose generator
-            var settings = new ChunkGeneratorSettings(chunkSize: 16);
+            var settings = new ChunkGeneratorSettings(_chunkSize);
             var composite = new ChunkGeneratorPipeline(settings, creationStep, postSteps);
 
             // Inject into manager

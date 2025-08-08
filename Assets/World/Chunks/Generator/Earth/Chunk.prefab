@@ -93,8 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e0ac6281beb9944681e32bbc20afa40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _blockDatabase: {fileID: 11400000, guid: c1425d5beff14834aae34abf0b9ef484, type: 2}
-  _blockAtlasDatabase: {fileID: 11400000, guid: c1d7be8b0c58ca04ba4f6990cb37966b, type: 2}
+  _polygonCollider2D: {fileID: 4940255073894758775}
 --- !u!210 &-2965209285558554568
 SortingGroup:
   m_ObjectHideFlags: 0

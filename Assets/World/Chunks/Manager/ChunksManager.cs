@@ -2,9 +2,11 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using World.Blocks;
+using World.Blocks.Atlases;
 using World.BlockHovered;
 using World.Chunks.Generator;
-using System.Linq;
 
 namespace World.Chunks
 {
@@ -23,6 +25,9 @@ namespace World.Chunks
         public event Action OnVisibleChunksUpdated;
         public event Action OnVisibleChunksDestroyed;
 
+        public BlockDatabase BlockDatabase => _chunkGeneratorConfig.BlockDatabase;
+        public BlockAtlasDatabase BlockAtlasDatabase => _chunkGeneratorConfig.BlockAtlasDatabase;
+        
         public IChunksBlockModifier Blocks { get; private set; }
         public IChunksStorage Storage { get; private set; }
 
@@ -31,7 +36,7 @@ namespace World.Chunks
         private void Awake()
         {
             var generator = _chunkGeneratorConfig.GetChunkGenerator();
-            Storage = new ChunksStorage(generator, _chunkRendererPrefab, _chunksParent);
+            Storage = new ChunksStorage(generator, _chunkRendererPrefab, _chunksParent, this);
             Blocks = new ChunksBlockModifier(Storage);
         }
 

@@ -28,17 +28,19 @@ namespace World.Chunks
     public class ChunksStorage : IChunksStorage
     {
         private readonly IChunkGenerator _generator;
+        private readonly ChunksManager _manager;
         private readonly GameObject _prefab;
         private readonly Transform _parent;
         private readonly Dictionary<ChunkIndex, Chunk> _chunks = new();
         private readonly Dictionary<ChunkIndex, ChunkRenderer> _renderers = new();
         private readonly HashSet<ChunkIndex> _loadings = new();
 
-        public ChunksStorage(IChunkGenerator generator, GameObject prefab, Transform parent)
+        public ChunksStorage(IChunkGenerator generator, GameObject prefab, Transform parent, ChunksManager manager)
         {
             _generator = generator;
             _prefab = prefab;
             _parent = parent;
+            _manager = manager;
         }
 
         public async Task<bool> GetOrCreateAsync(ChunkIndex index, int seed)
@@ -62,7 +64,7 @@ namespace World.Chunks
                 // Создаём рендерер чанка
                 var go = Object.Instantiate(_prefab, _parent);
                 var renderer = go.GetComponent<ChunkRenderer>();
-                renderer.Initialize();
+                renderer.Initialize(_manager.BlockDatabase, _manager.BlockAtlasDatabase);
                 go.name = index.ToString();
                 go.transform.localPosition = new Vector3(index.x * chunk.Size, index.y * chunk.Size, 0);
 
