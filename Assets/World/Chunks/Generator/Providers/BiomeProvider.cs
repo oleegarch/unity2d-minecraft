@@ -33,13 +33,13 @@ namespace World.Chunks.Generator.Providers
     // Biome provider implementation
     public class BiomeProvider : IBiomeProvider, IChunkCacheStep
     {
-        private readonly CacheHelper<Biome> _cacheHelper;
+        private readonly CacheComputationByX<Biome> _cacheHelper;
         private readonly List<Biome> _biomes;
         private readonly float _biomeWidth;
 
         public BiomeProvider(List<Biome> biomes, float biomeWidth)
         {
-            _cacheHelper = new CacheHelper<Biome>(MakeKey, ComputeBiome);
+            _cacheHelper = new CacheComputationByX<Biome>(MakeKey, ComputeBiome);
             _biomes = biomes;
             _biomeWidth = biomeWidth;
         }

@@ -6,7 +6,7 @@ namespace World.Chunks.Generator.Providers
     // Surface height provider with biome-based Perlin blending + caching
     public class SurfaceYProvider : ISurfaceHeightProvider, IChunkCacheStep
     {
-        private readonly CacheHelper<int> _cacheHelper;
+        private readonly CacheComputationByX<int> _cacheHelper;
         private readonly IBiomeProvider _biomeProvider;
         private readonly float _blendDistance;
         private readonly float _biomeWidth;
@@ -16,7 +16,7 @@ namespace World.Chunks.Generator.Providers
             float biomeWidth,
             float blendDistance)
         {
-            _cacheHelper = new CacheHelper<int>(MakeKey, ComputeSurfaceY);
+            _cacheHelper = new CacheComputationByX<int>(MakeKey, ComputeSurfaceY);
             _biomeProvider = biomeProvider;
             _biomeWidth = biomeWidth;
             _blendDistance = blendDistance;

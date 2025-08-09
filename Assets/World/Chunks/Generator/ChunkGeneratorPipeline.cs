@@ -1,11 +1,10 @@
+using UnityEngine;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using World.Chunks.Generator.Steps;
 using World.Chunks.BlocksStorage;
-
-using System.Diagnostics;
-using UnityEngine;
+using World.Chunks.Generator.Providers;
 
 namespace World.Chunks.Generator
 {
@@ -37,8 +36,6 @@ namespace World.Chunks.Generator
         private readonly IReadOnlyList<IChunkPostStep> _postProcessingSteps;
         private readonly IReadOnlyList<IChunkCacheStep> _chunkCachingSteps;
 
-        private Stopwatch _stopwatch = new Stopwatch();
-
         public ChunkGeneratorPipeline(
             ChunkGeneratorSettings settings,
             IChunkCreationStep chunkCreationStep,
@@ -51,34 +48,27 @@ namespace World.Chunks.Generator
             _chunkCachingSteps = chunkCachingSteps.ToList();
         }
 
-        public void CacheComputation(RectInt rect, int seed)
+        public void CacheComputation(RectInt chunksVisibleRect, int seed)
         {
-            rect.xMin = rect.xMin * ChunkSize;
-            rect.xMax = rect.xMax * ChunkSize;
-            rect.yMin = rect.yMin * ChunkSize;
-            rect.yMax = rect.yMax * ChunkSize;
-
-            UnityEngine.Debug.Log($"Chunk Pipeline rect in world position {rect}");
+            RectInt blocksVisibleRect = new RectInt(
+                chunksVisibleRect.xMin * ChunkSize,
+                chunksVisibleRect.yMin * ChunkSize,
+                chunksVisibleRect.width * ChunkSize,
+                chunksVisibleRect.height * ChunkSize
+            );
 
             foreach (var step in _chunkCachingSteps)
-                step.CacheComputation(rect, seed);
+                step.CacheComputation(blocksVisibleRect, seed);
         }
 
         private Chunk GenerateChunk(ChunkIndex index, int seed)
         {
-            _stopwatch.Restart();
-            
             // chunk creation step
             Chunk chunk = _creationStep.Execute(index, ChunkSize, seed);
 
             // chunk post processing steps
             foreach (var step in _postProcessingSteps)
                 step.Execute(chunk, seed);
-
-            _stopwatch.Stop();
-
-            ProfilerChunksGenerationTicks.Add(_stopwatch.ElapsedTicks);
-            ProfilerChunksGenerationMS.Add(_stopwatch.ElapsedMilliseconds);
 
             return chunk;
         }
