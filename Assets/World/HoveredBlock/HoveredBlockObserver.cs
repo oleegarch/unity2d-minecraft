@@ -23,18 +23,18 @@ namespace World.HoveredBlock
         private void OnEnable()
         {
             var actions = _inputManager.Controls.BlockHovered;
-            actions.PointerMove.performed += OnPointerMove;
+            actions.PointerMove.performed += HandlePointerMove;
             actions.Enable();
 
-            _cameraObserver.OnPositionChanged += OnCameraPositionChanged;
+            _cameraObserver.OnPositionChanged += HandleCameraPositionChanged;
         }
         private void OnDisable()
         {
             var actions = _inputManager.Controls.BlockHovered;
-            actions.PointerMove.performed -= OnPointerMove;
+            actions.PointerMove.performed -= HandlePointerMove;
             actions.Disable();
 
-            _cameraObserver.OnPositionChanged -= OnCameraPositionChanged;
+            _cameraObserver.OnPositionChanged -= HandleCameraPositionChanged;
         }
 
         private void SetHovered(Vector2 screenPosition)
@@ -50,11 +50,11 @@ namespace World.HoveredBlock
             OnBlockHoveredChanged?.Invoke(_hovered);
         }
 
-        private void OnCameraPositionChanged(Vector3 position)
+        private void HandleCameraPositionChanged(Vector3 position)
         {
             SetHovered(_pointerPosition);
         }
-        private void OnPointerMove(InputAction.CallbackContext context)
+        private void HandlePointerMove(InputAction.CallbackContext context)
         {
             _pointerPosition = context.ReadValue<Vector2>();
             SetHovered(_pointerPosition);

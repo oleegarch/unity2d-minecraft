@@ -15,16 +15,16 @@ namespace World.HoveredBlock
         private void OnEnable()
         {
             var actions = _inputManager.Controls.HoveredBlockPlacer;
-            actions.MouseRightClick.performed += OnHoveredBlockPlacer;
+            actions.MouseRightClick.performed += HandleHoveredBlockPlace;
             actions.Enable();
         }
         private void OnDisable()
         {
             var actions = _inputManager.Controls.HoveredBlockPlacer;
-            actions.MouseRightClick.performed -= OnHoveredBlockPlacer;
+            actions.MouseRightClick.performed -= HandleHoveredBlockPlace;
             actions.Disable();
         }
-        private void OnHoveredBlockPlacer(InputAction.CallbackContext context)
+        private void HandleHoveredBlockPlace(InputAction.CallbackContext context)
         {
             OnBlockSetAttempt?.Invoke(_blockHoveredObserver.HoveredPosition);
         }

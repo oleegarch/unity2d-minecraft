@@ -23,16 +23,16 @@ namespace World.HoveredBlock
         private void OnEnable()
         {
             var actions = _inputManager.Controls.HoveredBlockPicker;
-            actions.MouseMiddleClick.performed += OnBlockSelect;
+            actions.MouseMiddleClick.performed += HandleBlockPick;
             actions.Enable();
         }
         private void OnDisable()
         {
             var actions = _inputManager.Controls.HoveredBlockPicker;
-            actions.MouseMiddleClick.performed -= OnBlockSelect;
+            actions.MouseMiddleClick.performed -= HandleBlockPick;
             actions.Disable();
         }
-        private void OnBlockSelect(InputAction.CallbackContext context)
+        private void HandleBlockPick(InputAction.CallbackContext context)
         {
             WorldPosition worldPosition = _blockHoveredObserver.HoveredPosition;
             _selectedBlock = _chunksManager.Blocks.GetBreakable(worldPosition, out _selectedLayer);

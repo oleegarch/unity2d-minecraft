@@ -16,19 +16,19 @@ namespace World.HoveredBlock
 
         private void Awake()
         {
-            OnCameraSizeChanged(_cameraObserver.GetOrthographicSize());
+            HandleCameraSizeChanged(_cameraObserver.GetOrthographicSize());
         }
         private void OnEnable()
         {
-            _cameraObserver.OnOrthographicSizeChanged += OnCameraSizeChanged;
-            _blockHoveredObserver.OnBlockHoveredChanged += OnBlockHoveredChanged;
-            _blockBreakingProcess.OnBlockBreakAttempt += OnBlockBreakAttempt;
+            _cameraObserver.OnOrthographicSizeChanged += HandleCameraSizeChanged;
+            _blockHoveredObserver.OnBlockHoveredChanged += HandleBlockHoveredChanged;
+            _blockBreakingProcess.OnBlockBreakAttempt += HandleBlockBreak;
         }
         private void OnDisable()
         {
-            _cameraObserver.OnOrthographicSizeChanged -= OnCameraSizeChanged;
-            _blockHoveredObserver.OnBlockHoveredChanged -= OnBlockHoveredChanged;
-            _blockBreakingProcess.OnBlockBreakAttempt -= OnBlockBreakAttempt;
+            _cameraObserver.OnOrthographicSizeChanged -= HandleCameraSizeChanged;
+            _blockHoveredObserver.OnBlockHoveredChanged -= HandleBlockHoveredChanged;
+            _blockBreakingProcess.OnBlockBreakAttempt -= HandleBlockBreak;
         }
 
         private void SetOutline(WorldPosition worldPosition)
@@ -46,15 +46,15 @@ namespace World.HoveredBlock
             }
         }
 
-        private void OnBlockHoveredChanged(WorldPosition worldPosition)
+        private void HandleBlockHoveredChanged(WorldPosition worldPosition)
         {
             SetOutline(worldPosition);
         }
-        private void OnBlockBreakAttempt(WorldPosition worldPosition)
+        private void HandleBlockBreak(WorldPosition worldPosition)
         {
             _targetSpriteRenderer.enabled = false;
         }
-        private void OnCameraSizeChanged(float newSize)
+        private void HandleCameraSizeChanged(float newSize)
         {
             _blockHoveredMaterial.SetFloat("_OrthoSize", newSize);
         }

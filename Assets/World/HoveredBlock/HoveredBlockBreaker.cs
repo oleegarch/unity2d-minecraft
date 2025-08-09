@@ -39,43 +39,43 @@ namespace World.HoveredBlock
         private void OnEnable()
         {
             var actions = _inputManager.Controls.BlockBreaking;
-            actions.PointerPress.performed += OnPointerPress;
-            actions.PointerPress.canceled += OnPointerPress;
+            actions.PointerPress.performed += HandlePointerPress;
+            actions.PointerPress.canceled += HandlePointerPress;
             actions.Enable();
             
-            _cameraModeController.OnCameraModeChanged += OnCameraModeChanged;
-            _blockHoveredObserver.OnBlockHoveredChanged += OnBlockHoveredChanged;
+            _cameraModeController.OnCameraModeChanged += HandleCameraMoveChanged;
+            _blockHoveredObserver.OnBlockHoveredChanged += HandleBlockHoveredChanged;
 
             // подписываемся на изменение позиции камеры только когда режим камеры включён на наблюдателя
             // так как в режиме наблюдателя нам требуется отменять процесс ломания блока при передвижении камеры
             // событиями движения курсором или тачами пользователя
             if (_cameraModeController.CameraMode == CameraMode.Spectator)
             {
-                _cameraObserver.OnPositionChanged += OnCameraPositionChanged;
+                _cameraObserver.OnPositionChanged += HandleCameraPositionChanged;
             }
         }
         private void OnDisable()
         {
             var actions = _inputManager.Controls.BlockBreaking;
-            actions.PointerPress.performed -= OnPointerPress;
-            actions.PointerPress.canceled -= OnPointerPress;
+            actions.PointerPress.performed -= HandlePointerPress;
+            actions.PointerPress.canceled -= HandlePointerPress;
             actions.Disable();
 
-            _cameraModeController.OnCameraModeChanged -= OnCameraModeChanged;
-            _blockHoveredObserver.OnBlockHoveredChanged -= OnBlockHoveredChanged;
-            _cameraObserver.OnPositionChanged -= OnCameraPositionChanged;
+            _cameraModeController.OnCameraModeChanged -= HandleCameraMoveChanged;
+            _blockHoveredObserver.OnBlockHoveredChanged -= HandleBlockHoveredChanged;
+            _cameraObserver.OnPositionChanged -= HandleCameraPositionChanged;
         }
 
-        private void OnCameraModeChanged(CameraMode cameraMode)
+        private void HandleCameraMoveChanged(CameraMode cameraMode)
         {
-            _cameraObserver.OnPositionChanged -= OnCameraPositionChanged;
+            _cameraObserver.OnPositionChanged -= HandleCameraPositionChanged;
 
             if (cameraMode == CameraMode.Spectator)
             {
-                _cameraObserver.OnPositionChanged += OnCameraPositionChanged;
+                _cameraObserver.OnPositionChanged += HandleCameraPositionChanged;
             }
         }
-        private void OnPointerPress(InputAction.CallbackContext context)
+        private void HandlePointerPress(InputAction.CallbackContext context)
         {
             _pointerPressing = context.performed;
 
@@ -88,7 +88,7 @@ namespace World.HoveredBlock
                 CancelBreaking();
             }
         }
-        private void OnBlockHoveredChanged(WorldPosition worldPosition)
+        private void HandleBlockHoveredChanged(WorldPosition worldPosition)
         {
             CancelBreaking();
             
@@ -97,7 +97,7 @@ namespace World.HoveredBlock
                 StartBreaking(worldPosition);
             }
         }
-        private void OnCameraPositionChanged(Vector3 newPosition)
+        private void HandleCameraPositionChanged(Vector3 newPosition)
         {
             float distance = Vector3.Distance(newPosition, _startBreakingCameraPosition);
 
