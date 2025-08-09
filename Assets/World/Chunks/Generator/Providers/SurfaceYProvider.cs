@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 using World.Chunks.Generator.Steps;
 
 namespace World.Chunks.Generator.Providers
@@ -7,78 +6,25 @@ namespace World.Chunks.Generator.Providers
     // Surface height provider with biome-based Perlin blending + caching
     public class SurfaceYProvider : ISurfaceHeightProvider, IChunkCacheStep
     {
+        private readonly CacheHelper<int> _cacheHelper;
         private readonly IBiomeProvider _biomeProvider;
         private readonly float _blendDistance;
         private readonly float _biomeWidth;
-
-        // Кеш высот: key = (worldX << 16) ^ seed
-        private readonly Dictionary<int, int> _surfaceYCache = new();
-        private RectInt? _prevRect;
 
         public SurfaceYProvider(
             IBiomeProvider biomeProvider,
             float biomeWidth,
             float blendDistance)
         {
+            _cacheHelper = new CacheHelper<int>(MakeKey, ComputeSurfaceY);
             _biomeProvider = biomeProvider;
             _biomeWidth = biomeWidth;
             _blendDistance = blendDistance;
         }
 
         private int MakeKey(int worldX, int seed) => (worldX << 16) ^ seed;
-
-        public void CacheComputation(RectInt rect, int seed)
-        {
-            if (_prevRect.HasValue)
-            {
-                var prev = _prevRect.Value;
-
-                // Удаляем слева
-                if (rect.xMin > prev.xMin)
-                {
-                    for (int x = prev.xMin; x < rect.xMin; x++)
-                        _surfaceYCache.Remove(MakeKey(x, seed));
-                }
-                // Удаляем справа
-                if (rect.xMax < prev.xMax)
-                {
-                    for (int x = rect.xMax + 1; x <= prev.xMax; x++)
-                        _surfaceYCache.Remove(MakeKey(x, seed));
-                }
-
-                // Добавляем слева
-                if (rect.xMin < prev.xMin)
-                {
-                    for (int x = rect.xMin; x < prev.xMin; x++)
-                        _surfaceYCache[MakeKey(x, seed)] = ComputeSurfaceY(x, seed);
-                }
-                // Добавляем справа
-                if (rect.xMax > prev.xMax)
-                {
-                    for (int x = prev.xMax + 1; x <= rect.xMax; x++)
-                        _surfaceYCache[MakeKey(x, seed)] = ComputeSurfaceY(x, seed);
-                }
-            }
-            else
-            {
-                // Первое заполнение
-                for (int x = rect.xMin; x <= rect.xMax; x++)
-                    _surfaceYCache[MakeKey(x, seed)] = ComputeSurfaceY(x, seed);
-            }
-
-            _prevRect = rect;
-        }
-
-        public int GetSurfaceY(int worldX, int seed)
-        {
-            int key = MakeKey(worldX, seed);
-            if (_surfaceYCache.TryGetValue(key, out var cachedY))
-                return cachedY;
-
-            int result = ComputeSurfaceY(worldX, seed);
-            _surfaceYCache[key] = result;
-            return result;
-        }
+        public void CacheComputation(RectInt rect, int seed) => _cacheHelper.CacheComputation(rect, seed);
+        public int GetSurfaceY(int worldX, int seed) => _cacheHelper.GetValue(worldX, seed);
 
         public int ComputeSurfaceY(int worldX, int seed)
         {
