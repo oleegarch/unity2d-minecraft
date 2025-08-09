@@ -17,6 +17,7 @@ namespace World.BlockHovered
         private Vector2 _pointerPosition;
         private WorldPosition _hovered = new WorldPosition(int.MinValue, int.MinValue);
 
+        public WorldPosition HoveredPosition => _hovered;
         public event Action<WorldPosition> OnBlockHoveredChanged;
 
         private void OnEnable()
@@ -47,10 +48,6 @@ namespace World.BlockHovered
             _hovered = worldPosition;
 
             OnBlockHoveredChanged?.Invoke(_hovered);
-        }
-        public WorldPosition GetHovered()
-        {
-            return _hovered;
         }
 
         private void OnCameraPositionChanged(Vector3 position)

@@ -254,6 +254,34 @@
             ]
         },
         {
+            "name": "BlockSetting",
+            "id": "77b51039-ba94-4576-b4fe-c659cd777e47",
+            "actions": [
+                {
+                    "name": "MouseRightClick",
+                    "type": "Button",
+                    "id": "ab00be39-48dd-4566-afab-99a651ef8b5f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "9435f2ca-5ced-45e9-933e-ca2574401f0e",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseRightClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
             "name": "Player",
             "id": "b575921d-9928-4311-b4e1-54065e32c53f",
             "actions": [

@@ -22,13 +22,13 @@ namespace World.BlockHovered
         {
             _cameraObserver.OnOrthographicSizeChanged += OnCameraSizeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged += OnBlockHoveredChanged;
-            _blockBreakingProcess.OnBlockBroken += OnBlockBroken;
+            _blockBreakingProcess.OnBlockBreakAttempt += OnBlockBreakAttempt;
         }
         private void OnDisable()
         {
             _cameraObserver.OnOrthographicSizeChanged -= OnCameraSizeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged -= OnBlockHoveredChanged;
-            _blockBreakingProcess.OnBlockBroken -= OnBlockBroken;
+            _blockBreakingProcess.OnBlockBreakAttempt -= OnBlockBreakAttempt;
         }
 
         private void SetOutline(WorldPosition worldPosition)
@@ -50,7 +50,7 @@ namespace World.BlockHovered
         {
             SetOutline(worldPosition);
         }
-        private void OnBlockBroken(WorldPosition worldPosition)
+        private void OnBlockBreakAttempt(WorldPosition worldPosition)
         {
             _targetSpriteRenderer.enabled = false;
         }

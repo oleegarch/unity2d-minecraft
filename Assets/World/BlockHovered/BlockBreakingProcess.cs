@@ -30,7 +30,7 @@ namespace World.BlockHovered
         private Coroutine _currentBreakingCoroutine;
         private bool _pointerPressing = false;
 
-        public event Action<WorldPosition> OnBlockBroken;
+        public event Action<WorldPosition> OnBlockBreakAttempt;
 
         private void Awake()
         {
@@ -81,7 +81,7 @@ namespace World.BlockHovered
 
             if (_pointerPressing)
             {
-                StartBreaking(_blockHoveredObserver.GetHovered());
+                StartBreaking(_blockHoveredObserver.HoveredPosition);
             }
             else
             {
@@ -154,7 +154,7 @@ namespace World.BlockHovered
                 _breakingMask.localScale = new Vector3(currentScale, currentScale, 1f);
             }
 
-            OnBlockBroken?.Invoke(worldPosition);
+            OnBlockBreakAttempt?.Invoke(worldPosition);
             _breakingMask.localScale = Vector3.zero;
         }
     }

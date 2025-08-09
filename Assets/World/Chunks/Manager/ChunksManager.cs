@@ -16,6 +16,7 @@ namespace World.Chunks
         [SerializeField] private Transform _chunksParent;
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
         [SerializeField] private BlockBreakingProcess _breaker;
+        [SerializeField] private BlockSetting _setter;
         [SerializeField] private ChunksVisibleService _visibility;
         [SerializeField] private int _seed;
 
@@ -27,7 +28,7 @@ namespace World.Chunks
 
         public BlockDatabase BlockDatabase => _chunkGeneratorConfig.BlockDatabase;
         public BlockAtlasDatabase BlockAtlasDatabase => _chunkGeneratorConfig.BlockAtlasDatabase;
-        
+
         public IChunksBlockModifier Blocks { get; private set; }
         public IChunksStorage Storage { get; private set; }
 
@@ -43,12 +44,14 @@ namespace World.Chunks
         private void OnEnable()
         {
             _visibility.OnVisibleChunksChanged += HandleVisibleChanged;
-            _breaker.OnBlockBroken += HandleBlockBroken;
+            _breaker.OnBlockBreakAttempt += HandleBlockBroken;
+            _setter.OnBlockSetAttempt += HandleBlockSet;
         }
         private void OnDisable()
         {
             _visibility.OnVisibleChunksChanged -= HandleVisibleChanged;
-            _breaker.OnBlockBroken -= HandleBlockBroken;
+            _breaker.OnBlockBreakAttempt -= HandleBlockBroken;
+            _setter.OnBlockSetAttempt -= HandleBlockSet;
         }
         private void OnDestroy()
         {
@@ -102,5 +105,6 @@ namespace World.Chunks
         }
 
         private void HandleBlockBroken(WorldPosition wc) => Blocks.BreakVisible(wc);
+        private void HandleBlockSet(WorldPosition wc) => Blocks.Set(wc, new Block(1), BlockLayer.Main);
     }
 }

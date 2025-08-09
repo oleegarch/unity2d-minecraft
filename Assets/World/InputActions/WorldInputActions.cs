@@ -342,6 +342,34 @@ namespace World.InputActions
             ]
         },
         {
+            ""name"": ""BlockSetting"",
+            ""id"": ""77b51039-ba94-4576-b4fe-c659cd777e47"",
+            ""actions"": [
+                {
+                    ""name"": ""MouseRightClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""ab00be39-48dd-4566-afab-99a651ef8b5f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""9435f2ca-5ced-45e9-933e-ca2574401f0e"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseRightClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
             ""name"": ""Player"",
             ""id"": ""b575921d-9928-4311-b4e1-54065e32c53f"",
             ""actions"": [
@@ -483,6 +511,9 @@ namespace World.InputActions
             // BlockBreaking
             m_BlockBreaking = asset.FindActionMap("BlockBreaking", throwIfNotFound: true);
             m_BlockBreaking_PointerPress = m_BlockBreaking.FindAction("PointerPress", throwIfNotFound: true);
+            // BlockSetting
+            m_BlockSetting = asset.FindActionMap("BlockSetting", throwIfNotFound: true);
+            m_BlockSetting_MouseRightClick = m_BlockSetting.FindAction("MouseRightClick", throwIfNotFound: true);
             // Player
             m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
             m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
@@ -495,6 +526,7 @@ namespace World.InputActions
             UnityEngine.Debug.Assert(!m_CameraZoom.enabled, "This will cause a leak and performance issues, WorldInputActions.CameraZoom.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_BlockHovered.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockHovered.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_BlockBreaking.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockBreaking.Disable() has not been called.");
+            UnityEngine.Debug.Assert(!m_BlockSetting.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockSetting.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, WorldInputActions.Player.Disable() has not been called.");
         }
 
@@ -974,6 +1006,102 @@ namespace World.InputActions
         /// </summary>
         public BlockBreakingActions @BlockBreaking => new BlockBreakingActions(this);
 
+        // BlockSetting
+        private readonly InputActionMap m_BlockSetting;
+        private List<IBlockSettingActions> m_BlockSettingActionsCallbackInterfaces = new List<IBlockSettingActions>();
+        private readonly InputAction m_BlockSetting_MouseRightClick;
+        /// <summary>
+        /// Provides access to input actions defined in input action map "BlockSetting".
+        /// </summary>
+        public struct BlockSettingActions
+        {
+            private @WorldInputActions m_Wrapper;
+
+            /// <summary>
+            /// Construct a new instance of the input action map wrapper class.
+            /// </summary>
+            public BlockSettingActions(@WorldInputActions wrapper) { m_Wrapper = wrapper; }
+            /// <summary>
+            /// Provides access to the underlying input action "BlockSetting/MouseRightClick".
+            /// </summary>
+            public InputAction @MouseRightClick => m_Wrapper.m_BlockSetting_MouseRightClick;
+            /// <summary>
+            /// Provides access to the underlying input action map instance.
+            /// </summary>
+            public InputActionMap Get() { return m_Wrapper.m_BlockSetting; }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+            public void Enable() { Get().Enable(); }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+            public void Disable() { Get().Disable(); }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+            public bool enabled => Get().enabled;
+            /// <summary>
+            /// Implicitly converts an <see ref="BlockSettingActions" /> to an <see ref="InputActionMap" /> instance.
+            /// </summary>
+            public static implicit operator InputActionMap(BlockSettingActions set) { return set.Get(); }
+            /// <summary>
+            /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+            /// </summary>
+            /// <param name="instance">Callback instance.</param>
+            /// <remarks>
+            /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+            /// </remarks>
+            /// <seealso cref="BlockSettingActions" />
+            public void AddCallbacks(IBlockSettingActions instance)
+            {
+                if (instance == null || m_Wrapper.m_BlockSettingActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_BlockSettingActionsCallbackInterfaces.Add(instance);
+                @MouseRightClick.started += instance.OnMouseRightClick;
+                @MouseRightClick.performed += instance.OnMouseRightClick;
+                @MouseRightClick.canceled += instance.OnMouseRightClick;
+            }
+
+            /// <summary>
+            /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+            /// </summary>
+            /// <remarks>
+            /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+            /// </remarks>
+            /// <seealso cref="BlockSettingActions" />
+            private void UnregisterCallbacks(IBlockSettingActions instance)
+            {
+                @MouseRightClick.started -= instance.OnMouseRightClick;
+                @MouseRightClick.performed -= instance.OnMouseRightClick;
+                @MouseRightClick.canceled -= instance.OnMouseRightClick;
+            }
+
+            /// <summary>
+            /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="BlockSettingActions.UnregisterCallbacks(IBlockSettingActions)" />.
+            /// </summary>
+            /// <seealso cref="BlockSettingActions.UnregisterCallbacks(IBlockSettingActions)" />
+            public void RemoveCallbacks(IBlockSettingActions instance)
+            {
+                if (m_Wrapper.m_BlockSettingActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            /// <summary>
+            /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+            /// </summary>
+            /// <remarks>
+            /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+            /// </remarks>
+            /// <seealso cref="BlockSettingActions.AddCallbacks(IBlockSettingActions)" />
+            /// <seealso cref="BlockSettingActions.RemoveCallbacks(IBlockSettingActions)" />
+            /// <seealso cref="BlockSettingActions.UnregisterCallbacks(IBlockSettingActions)" />
+            public void SetCallbacks(IBlockSettingActions instance)
+            {
+                foreach (var item in m_Wrapper.m_BlockSettingActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_BlockSettingActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        /// <summary>
+        /// Provides a new <see cref="BlockSettingActions" /> instance referencing this action map.
+        /// </summary>
+        public BlockSettingActions @BlockSetting => new BlockSettingActions(this);
+
         // Player
         private readonly InputActionMap m_Player;
         private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
@@ -1153,6 +1281,21 @@ namespace World.InputActions
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnPointerPress(InputAction.CallbackContext context);
+        }
+        /// <summary>
+        /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "BlockSetting" which allows adding and removing callbacks.
+        /// </summary>
+        /// <seealso cref="BlockSettingActions.AddCallbacks(IBlockSettingActions)" />
+        /// <seealso cref="BlockSettingActions.RemoveCallbacks(IBlockSettingActions)" />
+        public interface IBlockSettingActions
+        {
+            /// <summary>
+            /// Method invoked when associated input action "MouseRightClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnMouseRightClick(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Player" which allows adding and removing callbacks.

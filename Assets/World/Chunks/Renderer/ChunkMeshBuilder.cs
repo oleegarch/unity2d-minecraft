@@ -59,15 +59,17 @@ namespace World.Chunks
 
             return this;
         }
+        public void CreateMesh(ChunkMeshData meshData)
+        {
+            GameObject go = meshData.ApplyMesh();
+
+            go.transform.SetParent(_gameObject.transform, false);
+            _categoryObjects.Add(go);
+        }
         public void ApplyMesh()
         {
             foreach (var meshData in _meshDatas.Values)
-            {
-                GameObject go = meshData.ApplyMesh();
-
-                go.transform.SetParent(_gameObject.transform, false);
-                _categoryObjects.Add(go);
-            }
+                CreateMesh(meshData);
         }
 
         public void DrawBlock(BlockIndex index)
@@ -113,6 +115,8 @@ namespace World.Chunks
             if (!_meshDatas.TryGetValue(atlas.Category, out ChunkMeshData meshData))
             {
                 meshData = new ChunkMeshData(atlas);
+                CreateMesh(meshData);
+
                 _meshDatas[atlas.Category] = meshData;
             }
 
