@@ -1,14 +1,16 @@
 using UnityEngine;
-using World.HoveredBlock;
 
 namespace World.Chunks.Generator.Providers
 {
-    // Surface height provider with biome-based Perlin blending
+    // Surface height provider with biome-based Perlin blending + caching
     public class PerlinSurfaceHeightProvider : ISurfaceHeightProvider
     {
         private readonly IBiomeProvider _biomeProvider;
         private readonly float _blendDistance;
         private readonly float _biomeWidth;
+
+        // Кеш результатов: key = (worldX << 16) ^ seed
+        private readonly ComputationCache<int, int> _cache = new();
 
         public PerlinSurfaceHeightProvider(
             IBiomeProvider biomeProvider,
@@ -21,6 +23,12 @@ namespace World.Chunks.Generator.Providers
         }
 
         public int GetSurfaceY(int worldX, int seed)
+        {
+            int key = (worldX << 16) ^ seed;
+            return _cache.GetOrAdd(key, _ => CalculateSurfaceY(worldX, seed));
+        }
+
+        private int CalculateSurfaceY(int worldX, int seed)
         {
             Biome biome = _biomeProvider.GetBiome(worldX, seed);
             float rawNoise = CalculateHeightNoise(worldX, seed, biome);

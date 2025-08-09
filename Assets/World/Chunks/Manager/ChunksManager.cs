@@ -6,6 +6,7 @@ using System.Linq;
 using World.Blocks;
 using World.Blocks.Atlases;
 using World.Chunks.Generator;
+using World.Chunks.Generator.Providers;
 
 namespace World.Chunks
 {
@@ -88,6 +89,9 @@ namespace World.Chunks
             }
 
             OnVisibleChunksUpdated?.Invoke();
+
+            Debug.Log($"Ticks Average: {ChunkGeneratorPipeline.ProfilerChunksGenerationTicks.Average()}");
+            Debug.Log($"MilliSecs Average: {ChunkGeneratorPipeline.ProfilerChunksGenerationMS.Average()}");
         }
 
         public void RerenderAll()

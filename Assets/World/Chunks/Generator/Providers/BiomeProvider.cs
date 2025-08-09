@@ -28,12 +28,15 @@ namespace World.Chunks.Generator.Providers
         [Tooltip("глубина нижних блоков биома")]
         public int Depth = 15;
     }
-    
+
     // Biome provider implementation
     public class BiomeProvider : IBiomeProvider
     {
         private readonly List<Biome> _biomes;
         private readonly float _biomeWidth;
+
+        // Кеш результатов: key = (worldX << 16) ^ seed
+        private readonly ComputationCache<int, Biome> _cache = new();
 
         public BiomeProvider(List<Biome> biomes, float biomeWidth)
         {
@@ -42,6 +45,12 @@ namespace World.Chunks.Generator.Providers
         }
 
         public Biome GetBiome(int worldX, int seed)
+        {
+            int key = (worldX << 16) ^ seed;
+            return _cache.GetOrAdd(key, _ => CalculateBiome(worldX, seed));
+        }
+
+        private Biome CalculateBiome(int worldX, int seed)
         {
             int zone = Mathf.FloorToInt(worldX / _biomeWidth);
             var rand = new System.Random(seed + zone);
