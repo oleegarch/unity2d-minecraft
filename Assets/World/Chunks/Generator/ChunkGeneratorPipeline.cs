@@ -27,9 +27,6 @@ namespace World.Chunks.Generator
     // Composite generator orchestrates
     public class ChunkGeneratorPipeline : IChunkGenerator
     {
-        public static List<long> ProfilerChunksGenerationTicks = new();
-        public static List<long> ProfilerChunksGenerationMS = new();
-
         public byte ChunkSize { get; }
 
         private readonly IChunkCreationStep _creationStep;

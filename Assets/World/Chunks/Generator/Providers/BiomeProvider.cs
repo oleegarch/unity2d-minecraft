@@ -39,12 +39,11 @@ namespace World.Chunks.Generator.Providers
 
         public BiomeProvider(List<Biome> biomes, float biomeWidth)
         {
-            _cacheHelper = new CacheComputationByX<Biome>(MakeKey, ComputeBiome);
+            _cacheHelper = new CacheComputationByX<Biome>(ComputeBiome);
             _biomes = biomes;
             _biomeWidth = biomeWidth;
         }
 
-        private int MakeKey(int worldX, int seed) => (worldX << 16) ^ seed;
         public void CacheComputation(RectInt rect, int seed) => _cacheHelper.CacheComputation(rect, seed);
         public Biome GetBiome(int worldX, int seed) => _cacheHelper.GetValue(worldX, seed);
 

@@ -92,9 +92,6 @@ namespace World.Chunks
             }
 
             OnVisibleChunksUpdated?.Invoke();
-
-            Debug.Log($"Ticks Average: {ChunkGeneratorPipeline.ProfilerChunksGenerationTicks.Average()}");
-            Debug.Log($"MilliSecs Average: {ChunkGeneratorPipeline.ProfilerChunksGenerationMS.Average()}");
         }
 
         public void RerenderAll()

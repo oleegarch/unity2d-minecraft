@@ -16,13 +16,12 @@ namespace World.Chunks.Generator.Providers
             float biomeWidth,
             float blendDistance)
         {
-            _cacheHelper = new CacheComputationByX<int>(MakeKey, ComputeSurfaceY);
+            _cacheHelper = new CacheComputationByX<int>(ComputeSurfaceY);
             _biomeProvider = biomeProvider;
             _biomeWidth = biomeWidth;
             _blendDistance = blendDistance;
         }
 
-        private int MakeKey(int worldX, int seed) => (worldX << 16) ^ seed;
         public void CacheComputation(RectInt rect, int seed) => _cacheHelper.CacheComputation(rect, seed);
         public int GetSurfaceY(int worldX, int seed) => _cacheHelper.GetValue(worldX, seed);
 

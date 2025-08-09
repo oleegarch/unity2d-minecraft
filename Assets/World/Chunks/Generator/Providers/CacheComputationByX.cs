@@ -8,36 +8,34 @@ namespace World.Chunks.Generator.Providers
     {
         private readonly Dictionary<int, T> _cache = new();
 
-        private readonly Func<int, int, int> _makeKey;
         private readonly Func<int, int, T> _compute;
 
-        public CacheComputationByX(Func<int, int, int> makeKey, Func<int, int, T> compute)
+        public CacheComputationByX(Func<int, int, T> compute)
         {
-            _makeKey = makeKey;
             _compute = compute;
         }
 
         public void CacheComputation(RectInt rect, int seed)
         {
-            // Сначала собираем набор ключей, которые должны остаться
-            var neededKeys = new HashSet<int>();
+            // Собираем все ключи, которые нужны для текущего окна
+            int width = rect.width;
+            var neededKeys = new HashSet<int>(width);
             for (int x = rect.xMin; x <= rect.xMax; x++)
-                neededKeys.Add(_makeKey(x, seed));
+                neededKeys.Add(MakeKey(x, seed));
 
             // Удаляем все лишние ключи
-            var keysToRemove = new List<int>();
-            foreach (var key in _cache.Keys)
+            var keysSnapshot = new int[_cache.Count];
+            _cache.Keys.CopyTo(keysSnapshot, 0);
+            foreach (var key in keysSnapshot)
             {
                 if (!neededKeys.Contains(key))
-                    keysToRemove.Add(key);
+                    _cache.Remove(key);
             }
-            foreach (var key in keysToRemove)
-                _cache.Remove(key);
 
-            // Генерим всё, что должно быть, и добавляем недостающее
+            // Добавляем недостающие ключи
             for (int x = rect.xMin; x <= rect.xMax; x++)
             {
-                int key = _makeKey(x, seed);
+                int key = MakeKey(x, seed);
                 if (!_cache.ContainsKey(key))
                     _cache[key] = _compute(x, seed);
             }
@@ -45,7 +43,7 @@ namespace World.Chunks.Generator.Providers
 
         public T GetValue(int worldX, int seed)
         {
-            int key = _makeKey(worldX, seed);
+            int key = MakeKey(worldX, seed);
             if (_cache.TryGetValue(key, out var value))
                 return value;
 
@@ -53,5 +51,7 @@ namespace World.Chunks.Generator.Providers
             _cache[key] = result;
             return result;
         }
+
+        private int MakeKey(int worldX, int seed) => (worldX << 16) ^ seed;
     }
 }
