@@ -27,6 +27,7 @@ namespace World.Chunks
         public BlockDatabase BlockDatabase => _chunkGeneratorConfig.BlockDatabase;
         public BlockAtlasDatabase BlockAtlasDatabase => _chunkGeneratorConfig.BlockAtlasDatabase;
 
+        public IChunkGenerator Generator { get; private set; }
         public IChunksBlockModifier Blocks { get; private set; }
         public IChunksStorage Storage { get; private set; }
 
@@ -34,8 +35,8 @@ namespace World.Chunks
 
         private void Awake()
         {
-            var generator = _chunkGeneratorConfig.GetChunkGenerator();
-            Storage = new ChunksStorage(generator, _chunkRendererPrefab, _chunksParent, this);
+            Generator = _chunkGeneratorConfig.GetChunkGenerator();
+            Storage = new ChunksStorage(Generator, _chunkRendererPrefab, _chunksParent, this);
             Blocks = new ChunksBlockModifier(Storage);
         }
 
@@ -55,6 +56,8 @@ namespace World.Chunks
 
         private void HandleVisibleChanged(RectInt viewRect)
         {
+            Generator.CacheComputation(viewRect, _seed);
+            
             int version = ++_version;
             _ = UpdateVisibleAsync(viewRect, version);
         }

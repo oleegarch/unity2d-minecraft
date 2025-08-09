@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using World.Chunks.Generator.Steps;
 
 namespace World.Chunks.Generator.Providers
 {
@@ -30,13 +31,14 @@ namespace World.Chunks.Generator.Providers
     }
 
     // Biome provider implementation
-    public class BiomeProvider : IBiomeProvider
+    public class BiomeProvider : IBiomeProvider, IChunkCacheStep
     {
         private readonly List<Biome> _biomes;
         private readonly float _biomeWidth;
 
-        // Кеш результатов: key = (worldX << 16) ^ seed
-        private readonly ComputationCache<int, Biome> _cache = new();
+        // Кеш высот: key = (worldX << 16) ^ seed
+        private readonly Dictionary<int, Biome> _biomeCache = new();
+        private RectInt? _prevRect;
 
         public BiomeProvider(List<Biome> biomes, float biomeWidth)
         {
@@ -44,13 +46,61 @@ namespace World.Chunks.Generator.Providers
             _biomeWidth = biomeWidth;
         }
 
-        public Biome GetBiome(int worldX, int seed)
+        private int MakeKey(int worldX, int seed) => (worldX << 16) ^ seed;
+
+        public void CacheComputation(RectInt rect, int seed)
         {
-            int key = (worldX << 16) ^ seed;
-            return _cache.GetOrAdd(key, _ => CalculateBiome(worldX, seed));
+            if (_prevRect.HasValue)
+            {
+                var prev = _prevRect.Value;
+
+                // Удаляем слева
+                if (rect.xMin > prev.xMin)
+                {
+                    for (int x = prev.xMin; x < rect.xMin; x++)
+                        _biomeCache.Remove(MakeKey(x, seed));
+                }
+                // Удаляем справа
+                if (rect.xMax < prev.xMax)
+                {
+                    for (int x = rect.xMax + 1; x <= prev.xMax; x++)
+                        _biomeCache.Remove(MakeKey(x, seed));
+                }
+
+                // Добавляем слева
+                if (rect.xMin < prev.xMin)
+                {
+                    for (int x = rect.xMin; x < prev.xMin; x++)
+                        _biomeCache[MakeKey(x, seed)] = ComputeBiome(x, seed);
+                }
+                // Добавляем справа
+                if (rect.xMax > prev.xMax)
+                {
+                    for (int x = prev.xMax + 1; x <= rect.xMax; x++)
+                        _biomeCache[MakeKey(x, seed)] = ComputeBiome(x, seed);
+                }
+            }
+            else
+            {
+                // Первое заполнение
+                for (int x = rect.xMin; x <= rect.xMax; x++)
+                    _biomeCache[MakeKey(x, seed)] = ComputeBiome(x, seed);
+            }
+
+            _prevRect = rect;
         }
 
-        private Biome CalculateBiome(int worldX, int seed)
+        public Biome GetBiome(int worldX, int seed)
+        {
+            int key = MakeKey(worldX, seed);
+            if (_biomeCache.TryGetValue(key, out var cachedY))
+                return cachedY;
+
+            Biome result = ComputeBiome(worldX, seed);
+            _biomeCache[key] = result;
+            return result;
+        }
+        private Biome ComputeBiome(int worldX, int seed)
         {
             int zone = Mathf.FloorToInt(worldX / _biomeWidth);
             var rand = new System.Random(seed + zone);
