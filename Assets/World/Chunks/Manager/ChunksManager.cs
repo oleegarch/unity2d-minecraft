@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using World.Blocks;
 using World.Blocks.Atlases;
-using World.HoveredBlock;
 using World.Chunks.Generator;
 
 namespace World.Chunks

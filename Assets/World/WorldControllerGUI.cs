@@ -1,6 +1,8 @@
 using UnityEngine;
+using World.Blocks;
 using World.Cameras;
 using World.Chunks;
+using World.HoveredBlock;
 
 namespace World
 {
@@ -9,6 +11,7 @@ namespace World
         [SerializeField] private ChunksManager _chunksManager;
         [SerializeField] private CameraModeController _cameraModeController;
         [SerializeField] private WorldTime _worldTime;
+        [SerializeField] private HoveredBlockPicker _blockPicker;
 
         private int _popupIndex;
         private float _dayDurationSlider = 60f;
@@ -60,6 +63,13 @@ namespace World
                 _dayDurationSlider = newSlider;
                 _worldTime.DayDuration = _dayDurationSlider;
             }
+
+            GUILayout.Space(10);
+
+            // Current picked block
+            ushort blockId = _blockPicker.SelectedBlock.Id;
+            BlockLayer blockLayer = _blockPicker.SelectedLayer;
+            GUILayout.Label($"Picked block: {_chunksManager.BlockDatabase.Get(blockId).Name}(Id:{blockId},Layer:{blockLayer})");
 
             GUILayout.EndVertical();
             GUILayout.EndArea();

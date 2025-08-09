@@ -991,6 +991,7 @@ MonoBehaviour:
   _chunksManager: {fileID: 5868988553912566916}
   _cameraModeController: {fileID: 0}
   _worldTime: {fileID: 9144659093550293114}
+  _blockPicker: {fileID: 6203515626348112953}
 --- !u!1 &7606337856759248894
 GameObject:
   m_ObjectHideFlags: 0
