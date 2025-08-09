@@ -15,8 +15,6 @@ namespace World.Chunks
         [SerializeField] private GameObject _chunkRendererPrefab;
         [SerializeField] private Transform _chunksParent;
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
-        [SerializeField] private BlockBreakingProcess _breaker;
-        [SerializeField] private BlockSetting _setter;
         [SerializeField] private ChunksVisibleService _visibility;
         [SerializeField] private int _seed;
 
@@ -44,14 +42,10 @@ namespace World.Chunks
         private void OnEnable()
         {
             _visibility.OnVisibleChunksChanged += HandleVisibleChanged;
-            _breaker.OnBlockBreakAttempt += HandleBlockBroken;
-            _setter.OnBlockSetAttempt += HandleBlockSet;
         }
         private void OnDisable()
         {
             _visibility.OnVisibleChunksChanged -= HandleVisibleChanged;
-            _breaker.OnBlockBreakAttempt -= HandleBlockBroken;
-            _setter.OnBlockSetAttempt -= HandleBlockSet;
         }
         private void OnDestroy()
         {
@@ -103,8 +97,5 @@ namespace World.Chunks
 
             HandleVisibleChanged(_visibility.VisibleRect);
         }
-
-        private void HandleBlockBroken(WorldPosition wc) => Blocks.BreakVisible(wc);
-        private void HandleBlockSet(WorldPosition wc) => Blocks.Set(wc, new Block(1), BlockLayer.Main);
     }
 }

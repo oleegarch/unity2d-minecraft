@@ -370,6 +370,34 @@ namespace World.InputActions
             ]
         },
         {
+            ""name"": ""BlockSelector"",
+            ""id"": ""394ee511-d427-45f2-ba0d-15db1bad81bc"",
+            ""actions"": [
+                {
+                    ""name"": ""MouseMiddleClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""4175eeb0-f048-4646-9263-b9be6a6ba332"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""2ab3c094-633f-471a-8d70-5034b62592a3"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseMiddleClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
             ""name"": ""Player"",
             ""id"": ""b575921d-9928-4311-b4e1-54065e32c53f"",
             ""actions"": [
@@ -514,6 +542,9 @@ namespace World.InputActions
             // BlockSetting
             m_BlockSetting = asset.FindActionMap("BlockSetting", throwIfNotFound: true);
             m_BlockSetting_MouseRightClick = m_BlockSetting.FindAction("MouseRightClick", throwIfNotFound: true);
+            // BlockSelector
+            m_BlockSelector = asset.FindActionMap("BlockSelector", throwIfNotFound: true);
+            m_BlockSelector_MouseMiddleClick = m_BlockSelector.FindAction("MouseMiddleClick", throwIfNotFound: true);
             // Player
             m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
             m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
@@ -527,6 +558,7 @@ namespace World.InputActions
             UnityEngine.Debug.Assert(!m_BlockHovered.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockHovered.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_BlockBreaking.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockBreaking.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_BlockSetting.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockSetting.Disable() has not been called.");
+            UnityEngine.Debug.Assert(!m_BlockSelector.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockSelector.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, WorldInputActions.Player.Disable() has not been called.");
         }
 
@@ -1102,6 +1134,102 @@ namespace World.InputActions
         /// </summary>
         public BlockSettingActions @BlockSetting => new BlockSettingActions(this);
 
+        // BlockSelector
+        private readonly InputActionMap m_BlockSelector;
+        private List<IBlockSelectorActions> m_BlockSelectorActionsCallbackInterfaces = new List<IBlockSelectorActions>();
+        private readonly InputAction m_BlockSelector_MouseMiddleClick;
+        /// <summary>
+        /// Provides access to input actions defined in input action map "BlockSelector".
+        /// </summary>
+        public struct BlockSelectorActions
+        {
+            private @WorldInputActions m_Wrapper;
+
+            /// <summary>
+            /// Construct a new instance of the input action map wrapper class.
+            /// </summary>
+            public BlockSelectorActions(@WorldInputActions wrapper) { m_Wrapper = wrapper; }
+            /// <summary>
+            /// Provides access to the underlying input action "BlockSelector/MouseMiddleClick".
+            /// </summary>
+            public InputAction @MouseMiddleClick => m_Wrapper.m_BlockSelector_MouseMiddleClick;
+            /// <summary>
+            /// Provides access to the underlying input action map instance.
+            /// </summary>
+            public InputActionMap Get() { return m_Wrapper.m_BlockSelector; }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+            public void Enable() { Get().Enable(); }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+            public void Disable() { Get().Disable(); }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+            public bool enabled => Get().enabled;
+            /// <summary>
+            /// Implicitly converts an <see ref="BlockSelectorActions" /> to an <see ref="InputActionMap" /> instance.
+            /// </summary>
+            public static implicit operator InputActionMap(BlockSelectorActions set) { return set.Get(); }
+            /// <summary>
+            /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+            /// </summary>
+            /// <param name="instance">Callback instance.</param>
+            /// <remarks>
+            /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+            /// </remarks>
+            /// <seealso cref="BlockSelectorActions" />
+            public void AddCallbacks(IBlockSelectorActions instance)
+            {
+                if (instance == null || m_Wrapper.m_BlockSelectorActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_BlockSelectorActionsCallbackInterfaces.Add(instance);
+                @MouseMiddleClick.started += instance.OnMouseMiddleClick;
+                @MouseMiddleClick.performed += instance.OnMouseMiddleClick;
+                @MouseMiddleClick.canceled += instance.OnMouseMiddleClick;
+            }
+
+            /// <summary>
+            /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+            /// </summary>
+            /// <remarks>
+            /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+            /// </remarks>
+            /// <seealso cref="BlockSelectorActions" />
+            private void UnregisterCallbacks(IBlockSelectorActions instance)
+            {
+                @MouseMiddleClick.started -= instance.OnMouseMiddleClick;
+                @MouseMiddleClick.performed -= instance.OnMouseMiddleClick;
+                @MouseMiddleClick.canceled -= instance.OnMouseMiddleClick;
+            }
+
+            /// <summary>
+            /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="BlockSelectorActions.UnregisterCallbacks(IBlockSelectorActions)" />.
+            /// </summary>
+            /// <seealso cref="BlockSelectorActions.UnregisterCallbacks(IBlockSelectorActions)" />
+            public void RemoveCallbacks(IBlockSelectorActions instance)
+            {
+                if (m_Wrapper.m_BlockSelectorActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            /// <summary>
+            /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+            /// </summary>
+            /// <remarks>
+            /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+            /// </remarks>
+            /// <seealso cref="BlockSelectorActions.AddCallbacks(IBlockSelectorActions)" />
+            /// <seealso cref="BlockSelectorActions.RemoveCallbacks(IBlockSelectorActions)" />
+            /// <seealso cref="BlockSelectorActions.UnregisterCallbacks(IBlockSelectorActions)" />
+            public void SetCallbacks(IBlockSelectorActions instance)
+            {
+                foreach (var item in m_Wrapper.m_BlockSelectorActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_BlockSelectorActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        /// <summary>
+        /// Provides a new <see cref="BlockSelectorActions" /> instance referencing this action map.
+        /// </summary>
+        public BlockSelectorActions @BlockSelector => new BlockSelectorActions(this);
+
         // Player
         private readonly InputActionMap m_Player;
         private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
@@ -1296,6 +1424,21 @@ namespace World.InputActions
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnMouseRightClick(InputAction.CallbackContext context);
+        }
+        /// <summary>
+        /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "BlockSelector" which allows adding and removing callbacks.
+        /// </summary>
+        /// <seealso cref="BlockSelectorActions.AddCallbacks(IBlockSelectorActions)" />
+        /// <seealso cref="BlockSelectorActions.RemoveCallbacks(IBlockSelectorActions)" />
+        public interface IBlockSelectorActions
+        {
+            /// <summary>
+            /// Method invoked when associated input action "MouseMiddleClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnMouseMiddleClick(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Player" which allows adding and removing callbacks.

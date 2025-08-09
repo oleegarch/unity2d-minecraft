@@ -282,6 +282,34 @@
             ]
         },
         {
+            "name": "BlockSelector",
+            "id": "394ee511-d427-45f2-ba0d-15db1bad81bc",
+            "actions": [
+                {
+                    "name": "MouseMiddleClick",
+                    "type": "Button",
+                    "id": "4175eeb0-f048-4646-9263-b9be6a6ba332",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "2ab3c094-633f-471a-8d70-5034b62592a3",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseMiddleClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
             "name": "Player",
             "id": "b575921d-9928-4311-b4e1-54065e32c53f",
             "actions": [

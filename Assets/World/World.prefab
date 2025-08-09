@@ -135,7 +135,6 @@ MonoBehaviour:
   _cameraObserver: {fileID: 0}
   _inputManager: {fileID: 3319511144438469435}
   _chunksManager: {fileID: 5868988553912566916}
-  _blockDatabase: {fileID: 11400000, guid: c1425d5beff14834aae34abf0b9ef484, type: 2}
   _blockHoveredObserver: {fileID: 167939084089460052}
   _targetSpriteRenderer: {fileID: 6296743431323333631}
   _breakingMask: {fileID: 4355383292382658617}
@@ -550,7 +549,6 @@ MonoBehaviour:
   _chunkRendererPrefab: {fileID: 7660349154471805984, guid: 9c1e627da06ca184abf92a2ddfadb6c0, type: 3}
   _chunksParent: {fileID: 4278272002193004716}
   _chunkGeneratorConfig: {fileID: 11400000, guid: b37f629017ec25541a3290004e9b275f, type: 2}
-  _breaker: {fileID: 2572357408661218484}
   _visibility: {fileID: 2519934639846788326}
   _seed: 0
 --- !u!1 &3220699138569139539
@@ -739,6 +737,9 @@ GameObject:
   - component: {fileID: 1321473204780938483}
   - component: {fileID: 167939084089460052}
   - component: {fileID: 3421474599134605749}
+  - component: {fileID: 6203515626348112953}
+  - component: {fileID: 2604564451908335111}
+  - component: {fileID: 759517025759163068}
   m_Layer: 5
   m_Name: BlockHovered
   m_TagString: Untagged
@@ -832,7 +833,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cameraObserver: {fileID: 0}
   _inputManager: {fileID: 3319511144438469435}
-  _blockDatabase: {fileID: 11400000, guid: c1425d5beff14834aae34abf0b9ef484, type: 2}
   _chunksManager: {fileID: 5868988553912566916}
   _chunksParent: {fileID: 4278272002193004716}
 --- !u!114 &3421474599134605749
@@ -851,9 +851,55 @@ MonoBehaviour:
   _blockHoveredObserver: {fileID: 167939084089460052}
   _blockBreakingProcess: {fileID: 2572357408661218484}
   _chunksManager: {fileID: 5868988553912566916}
-  _blockDatabase: {fileID: 11400000, guid: c1425d5beff14834aae34abf0b9ef484, type: 2}
   _targetSpriteRenderer: {fileID: 1321473204780938483}
   _blockHoveredMaterial: {fileID: 2100000, guid: df08d6d1fa90de64ca01ae49c99aaad5, type: 2}
+--- !u!114 &6203515626348112953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6616233381623590662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 966adab86d3a49d438899f3d48a522b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inputManager: {fileID: 3319511144438469435}
+  _blockHoveredObserver: {fileID: 167939084089460052}
+  _chunksManager: {fileID: 5868988553912566916}
+--- !u!114 &2604564451908335111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6616233381623590662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 222999a03d1076942b8624baebf198df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inputManager: {fileID: 3319511144438469435}
+  _blockHoveredObserver: {fileID: 167939084089460052}
+--- !u!114 &759517025759163068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6616233381623590662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a83833eb9f0ae5f4cb6d6eca17f1fe81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outliner: {fileID: 3421474599134605749}
+  _observer: {fileID: 167939084089460052}
+  _breaker: {fileID: 2572357408661218484}
+  _selector: {fileID: 6203515626348112953}
+  _setting: {fileID: 2604564451908335111}
+  _chunksManager: {fileID: 5868988553912566916}
 --- !u!1 &7371231742770794637
 GameObject:
   m_ObjectHideFlags: 0
