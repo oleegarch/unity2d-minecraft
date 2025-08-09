@@ -254,7 +254,7 @@
             ]
         },
         {
-            "name": "BlockSetting",
+            "name": "HoveredBlockPlacer",
             "id": "77b51039-ba94-4576-b4fe-c659cd777e47",
             "actions": [
                 {
@@ -282,7 +282,7 @@
             ]
         },
         {
-            "name": "BlockSelector",
+            "name": "HoveredBlockPicker",
             "id": "394ee511-d427-45f2-ba0d-15db1bad81bc",
             "actions": [
                 {

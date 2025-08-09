@@ -1,15 +1,15 @@
 using UnityEngine;
 using World.Chunks;
 
-namespace World.BlockHovered
+namespace World.HoveredBlock
 {
-    public class BlockHoveredDispatcher : MonoBehaviour
+    public class HoveredBlockActionDispatcher : MonoBehaviour
     {
-        [SerializeField] private BlockHoveredOutline _outliner;
-        [SerializeField] private BlockHoveredObserver _observer;
-        [SerializeField] private BlockBreakingProcess _breaker;
-        [SerializeField] private BlockSelector _selector;
-        [SerializeField] private BlockSetting _setting;
+        [SerializeField] private HoveredBlockOutlineRenderer _outliner;
+        [SerializeField] private HoveredBlockObserver _observer;
+        [SerializeField] private HoveredBlockBreaker _breaker;
+        [SerializeField] private HoveredBlockPicker _selector;
+        [SerializeField] private HoveredBlockPlacer _setting;
         [SerializeField] private ChunksManager _chunksManager;
 
         private void OnEnable()

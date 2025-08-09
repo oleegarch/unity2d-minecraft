@@ -3,13 +3,13 @@ using World.Blocks;
 using World.Chunks;
 using World.Cameras;
 
-namespace World.BlockHovered
+namespace World.HoveredBlock
 {
-    public class BlockHoveredOutline : MonoBehaviour
+    public class HoveredBlockOutlineRenderer : MonoBehaviour
     {
         [SerializeField] private CameraObserver _cameraObserver;
-        [SerializeField] private BlockHoveredObserver _blockHoveredObserver;
-        [SerializeField] private BlockBreakingProcess _blockBreakingProcess;
+        [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
+        [SerializeField] private HoveredBlockBreaker _blockBreakingProcess;
         [SerializeField] private ChunksManager _chunksManager;
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private Material _blockHoveredMaterial;

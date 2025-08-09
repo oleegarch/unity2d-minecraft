@@ -342,7 +342,7 @@ namespace World.InputActions
             ]
         },
         {
-            ""name"": ""BlockSetting"",
+            ""name"": ""HoveredBlockPlacer"",
             ""id"": ""77b51039-ba94-4576-b4fe-c659cd777e47"",
             ""actions"": [
                 {
@@ -370,7 +370,7 @@ namespace World.InputActions
             ]
         },
         {
-            ""name"": ""BlockSelector"",
+            ""name"": ""HoveredBlockPicker"",
             ""id"": ""394ee511-d427-45f2-ba0d-15db1bad81bc"",
             ""actions"": [
                 {
@@ -539,12 +539,12 @@ namespace World.InputActions
             // BlockBreaking
             m_BlockBreaking = asset.FindActionMap("BlockBreaking", throwIfNotFound: true);
             m_BlockBreaking_PointerPress = m_BlockBreaking.FindAction("PointerPress", throwIfNotFound: true);
-            // BlockSetting
-            m_BlockSetting = asset.FindActionMap("BlockSetting", throwIfNotFound: true);
-            m_BlockSetting_MouseRightClick = m_BlockSetting.FindAction("MouseRightClick", throwIfNotFound: true);
-            // BlockSelector
-            m_BlockSelector = asset.FindActionMap("BlockSelector", throwIfNotFound: true);
-            m_BlockSelector_MouseMiddleClick = m_BlockSelector.FindAction("MouseMiddleClick", throwIfNotFound: true);
+            // HoveredBlockPlacer
+            m_HoveredBlockPlacer = asset.FindActionMap("HoveredBlockPlacer", throwIfNotFound: true);
+            m_HoveredBlockPlacer_MouseRightClick = m_HoveredBlockPlacer.FindAction("MouseRightClick", throwIfNotFound: true);
+            // HoveredBlockPicker
+            m_HoveredBlockPicker = asset.FindActionMap("HoveredBlockPicker", throwIfNotFound: true);
+            m_HoveredBlockPicker_MouseMiddleClick = m_HoveredBlockPicker.FindAction("MouseMiddleClick", throwIfNotFound: true);
             // Player
             m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
             m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
@@ -557,8 +557,8 @@ namespace World.InputActions
             UnityEngine.Debug.Assert(!m_CameraZoom.enabled, "This will cause a leak and performance issues, WorldInputActions.CameraZoom.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_BlockHovered.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockHovered.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_BlockBreaking.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockBreaking.Disable() has not been called.");
-            UnityEngine.Debug.Assert(!m_BlockSetting.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockSetting.Disable() has not been called.");
-            UnityEngine.Debug.Assert(!m_BlockSelector.enabled, "This will cause a leak and performance issues, WorldInputActions.BlockSelector.Disable() has not been called.");
+            UnityEngine.Debug.Assert(!m_HoveredBlockPlacer.enabled, "This will cause a leak and performance issues, WorldInputActions.HoveredBlockPlacer.Disable() has not been called.");
+            UnityEngine.Debug.Assert(!m_HoveredBlockPicker.enabled, "This will cause a leak and performance issues, WorldInputActions.HoveredBlockPicker.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, WorldInputActions.Player.Disable() has not been called.");
         }
 
@@ -1038,29 +1038,29 @@ namespace World.InputActions
         /// </summary>
         public BlockBreakingActions @BlockBreaking => new BlockBreakingActions(this);
 
-        // BlockSetting
-        private readonly InputActionMap m_BlockSetting;
-        private List<IBlockSettingActions> m_BlockSettingActionsCallbackInterfaces = new List<IBlockSettingActions>();
-        private readonly InputAction m_BlockSetting_MouseRightClick;
+        // HoveredBlockPlacer
+        private readonly InputActionMap m_HoveredBlockPlacer;
+        private List<IHoveredBlockPlacerActions> m_HoveredBlockPlacerActionsCallbackInterfaces = new List<IHoveredBlockPlacerActions>();
+        private readonly InputAction m_HoveredBlockPlacer_MouseRightClick;
         /// <summary>
-        /// Provides access to input actions defined in input action map "BlockSetting".
+        /// Provides access to input actions defined in input action map "HoveredBlockPlacer".
         /// </summary>
-        public struct BlockSettingActions
+        public struct HoveredBlockPlacerActions
         {
             private @WorldInputActions m_Wrapper;
 
             /// <summary>
             /// Construct a new instance of the input action map wrapper class.
             /// </summary>
-            public BlockSettingActions(@WorldInputActions wrapper) { m_Wrapper = wrapper; }
+            public HoveredBlockPlacerActions(@WorldInputActions wrapper) { m_Wrapper = wrapper; }
             /// <summary>
-            /// Provides access to the underlying input action "BlockSetting/MouseRightClick".
+            /// Provides access to the underlying input action "HoveredBlockPlacer/MouseRightClick".
             /// </summary>
-            public InputAction @MouseRightClick => m_Wrapper.m_BlockSetting_MouseRightClick;
+            public InputAction @MouseRightClick => m_Wrapper.m_HoveredBlockPlacer_MouseRightClick;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
-            public InputActionMap Get() { return m_Wrapper.m_BlockSetting; }
+            public InputActionMap Get() { return m_Wrapper.m_HoveredBlockPlacer; }
             /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
             public void Enable() { Get().Enable(); }
             /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -1068,9 +1068,9 @@ namespace World.InputActions
             /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
             public bool enabled => Get().enabled;
             /// <summary>
-            /// Implicitly converts an <see ref="BlockSettingActions" /> to an <see ref="InputActionMap" /> instance.
+            /// Implicitly converts an <see ref="HoveredBlockPlacerActions" /> to an <see ref="InputActionMap" /> instance.
             /// </summary>
-            public static implicit operator InputActionMap(BlockSettingActions set) { return set.Get(); }
+            public static implicit operator InputActionMap(HoveredBlockPlacerActions set) { return set.Get(); }
             /// <summary>
             /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
             /// </summary>
@@ -1078,11 +1078,11 @@ namespace World.InputActions
             /// <remarks>
             /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
             /// </remarks>
-            /// <seealso cref="BlockSettingActions" />
-            public void AddCallbacks(IBlockSettingActions instance)
+            /// <seealso cref="HoveredBlockPlacerActions" />
+            public void AddCallbacks(IHoveredBlockPlacerActions instance)
             {
-                if (instance == null || m_Wrapper.m_BlockSettingActionsCallbackInterfaces.Contains(instance)) return;
-                m_Wrapper.m_BlockSettingActionsCallbackInterfaces.Add(instance);
+                if (instance == null || m_Wrapper.m_HoveredBlockPlacerActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_HoveredBlockPlacerActionsCallbackInterfaces.Add(instance);
                 @MouseRightClick.started += instance.OnMouseRightClick;
                 @MouseRightClick.performed += instance.OnMouseRightClick;
                 @MouseRightClick.canceled += instance.OnMouseRightClick;
@@ -1094,8 +1094,8 @@ namespace World.InputActions
             /// <remarks>
             /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
             /// </remarks>
-            /// <seealso cref="BlockSettingActions" />
-            private void UnregisterCallbacks(IBlockSettingActions instance)
+            /// <seealso cref="HoveredBlockPlacerActions" />
+            private void UnregisterCallbacks(IHoveredBlockPlacerActions instance)
             {
                 @MouseRightClick.started -= instance.OnMouseRightClick;
                 @MouseRightClick.performed -= instance.OnMouseRightClick;
@@ -1103,12 +1103,12 @@ namespace World.InputActions
             }
 
             /// <summary>
-            /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="BlockSettingActions.UnregisterCallbacks(IBlockSettingActions)" />.
+            /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="HoveredBlockPlacerActions.UnregisterCallbacks(IHoveredBlockPlacerActions)" />.
             /// </summary>
-            /// <seealso cref="BlockSettingActions.UnregisterCallbacks(IBlockSettingActions)" />
-            public void RemoveCallbacks(IBlockSettingActions instance)
+            /// <seealso cref="HoveredBlockPlacerActions.UnregisterCallbacks(IHoveredBlockPlacerActions)" />
+            public void RemoveCallbacks(IHoveredBlockPlacerActions instance)
             {
-                if (m_Wrapper.m_BlockSettingActionsCallbackInterfaces.Remove(instance))
+                if (m_Wrapper.m_HoveredBlockPlacerActionsCallbackInterfaces.Remove(instance))
                     UnregisterCallbacks(instance);
             }
 
@@ -1118,45 +1118,45 @@ namespace World.InputActions
             /// <remarks>
             /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
             /// </remarks>
-            /// <seealso cref="BlockSettingActions.AddCallbacks(IBlockSettingActions)" />
-            /// <seealso cref="BlockSettingActions.RemoveCallbacks(IBlockSettingActions)" />
-            /// <seealso cref="BlockSettingActions.UnregisterCallbacks(IBlockSettingActions)" />
-            public void SetCallbacks(IBlockSettingActions instance)
+            /// <seealso cref="HoveredBlockPlacerActions.AddCallbacks(IHoveredBlockPlacerActions)" />
+            /// <seealso cref="HoveredBlockPlacerActions.RemoveCallbacks(IHoveredBlockPlacerActions)" />
+            /// <seealso cref="HoveredBlockPlacerActions.UnregisterCallbacks(IHoveredBlockPlacerActions)" />
+            public void SetCallbacks(IHoveredBlockPlacerActions instance)
             {
-                foreach (var item in m_Wrapper.m_BlockSettingActionsCallbackInterfaces)
+                foreach (var item in m_Wrapper.m_HoveredBlockPlacerActionsCallbackInterfaces)
                     UnregisterCallbacks(item);
-                m_Wrapper.m_BlockSettingActionsCallbackInterfaces.Clear();
+                m_Wrapper.m_HoveredBlockPlacerActionsCallbackInterfaces.Clear();
                 AddCallbacks(instance);
             }
         }
         /// <summary>
-        /// Provides a new <see cref="BlockSettingActions" /> instance referencing this action map.
+        /// Provides a new <see cref="HoveredBlockPlacerActions" /> instance referencing this action map.
         /// </summary>
-        public BlockSettingActions @BlockSetting => new BlockSettingActions(this);
+        public HoveredBlockPlacerActions @HoveredBlockPlacer => new HoveredBlockPlacerActions(this);
 
-        // BlockSelector
-        private readonly InputActionMap m_BlockSelector;
-        private List<IBlockSelectorActions> m_BlockSelectorActionsCallbackInterfaces = new List<IBlockSelectorActions>();
-        private readonly InputAction m_BlockSelector_MouseMiddleClick;
+        // HoveredBlockPicker
+        private readonly InputActionMap m_HoveredBlockPicker;
+        private List<IHoveredBlockPickerActions> m_HoveredBlockPickerActionsCallbackInterfaces = new List<IHoveredBlockPickerActions>();
+        private readonly InputAction m_HoveredBlockPicker_MouseMiddleClick;
         /// <summary>
-        /// Provides access to input actions defined in input action map "BlockSelector".
+        /// Provides access to input actions defined in input action map "HoveredBlockPicker".
         /// </summary>
-        public struct BlockSelectorActions
+        public struct HoveredBlockPickerActions
         {
             private @WorldInputActions m_Wrapper;
 
             /// <summary>
             /// Construct a new instance of the input action map wrapper class.
             /// </summary>
-            public BlockSelectorActions(@WorldInputActions wrapper) { m_Wrapper = wrapper; }
+            public HoveredBlockPickerActions(@WorldInputActions wrapper) { m_Wrapper = wrapper; }
             /// <summary>
-            /// Provides access to the underlying input action "BlockSelector/MouseMiddleClick".
+            /// Provides access to the underlying input action "HoveredBlockPicker/MouseMiddleClick".
             /// </summary>
-            public InputAction @MouseMiddleClick => m_Wrapper.m_BlockSelector_MouseMiddleClick;
+            public InputAction @MouseMiddleClick => m_Wrapper.m_HoveredBlockPicker_MouseMiddleClick;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
-            public InputActionMap Get() { return m_Wrapper.m_BlockSelector; }
+            public InputActionMap Get() { return m_Wrapper.m_HoveredBlockPicker; }
             /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
             public void Enable() { Get().Enable(); }
             /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -1164,9 +1164,9 @@ namespace World.InputActions
             /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
             public bool enabled => Get().enabled;
             /// <summary>
-            /// Implicitly converts an <see ref="BlockSelectorActions" /> to an <see ref="InputActionMap" /> instance.
+            /// Implicitly converts an <see ref="HoveredBlockPickerActions" /> to an <see ref="InputActionMap" /> instance.
             /// </summary>
-            public static implicit operator InputActionMap(BlockSelectorActions set) { return set.Get(); }
+            public static implicit operator InputActionMap(HoveredBlockPickerActions set) { return set.Get(); }
             /// <summary>
             /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
             /// </summary>
@@ -1174,11 +1174,11 @@ namespace World.InputActions
             /// <remarks>
             /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
             /// </remarks>
-            /// <seealso cref="BlockSelectorActions" />
-            public void AddCallbacks(IBlockSelectorActions instance)
+            /// <seealso cref="HoveredBlockPickerActions" />
+            public void AddCallbacks(IHoveredBlockPickerActions instance)
             {
-                if (instance == null || m_Wrapper.m_BlockSelectorActionsCallbackInterfaces.Contains(instance)) return;
-                m_Wrapper.m_BlockSelectorActionsCallbackInterfaces.Add(instance);
+                if (instance == null || m_Wrapper.m_HoveredBlockPickerActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_HoveredBlockPickerActionsCallbackInterfaces.Add(instance);
                 @MouseMiddleClick.started += instance.OnMouseMiddleClick;
                 @MouseMiddleClick.performed += instance.OnMouseMiddleClick;
                 @MouseMiddleClick.canceled += instance.OnMouseMiddleClick;
@@ -1190,8 +1190,8 @@ namespace World.InputActions
             /// <remarks>
             /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
             /// </remarks>
-            /// <seealso cref="BlockSelectorActions" />
-            private void UnregisterCallbacks(IBlockSelectorActions instance)
+            /// <seealso cref="HoveredBlockPickerActions" />
+            private void UnregisterCallbacks(IHoveredBlockPickerActions instance)
             {
                 @MouseMiddleClick.started -= instance.OnMouseMiddleClick;
                 @MouseMiddleClick.performed -= instance.OnMouseMiddleClick;
@@ -1199,12 +1199,12 @@ namespace World.InputActions
             }
 
             /// <summary>
-            /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="BlockSelectorActions.UnregisterCallbacks(IBlockSelectorActions)" />.
+            /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="HoveredBlockPickerActions.UnregisterCallbacks(IHoveredBlockPickerActions)" />.
             /// </summary>
-            /// <seealso cref="BlockSelectorActions.UnregisterCallbacks(IBlockSelectorActions)" />
-            public void RemoveCallbacks(IBlockSelectorActions instance)
+            /// <seealso cref="HoveredBlockPickerActions.UnregisterCallbacks(IHoveredBlockPickerActions)" />
+            public void RemoveCallbacks(IHoveredBlockPickerActions instance)
             {
-                if (m_Wrapper.m_BlockSelectorActionsCallbackInterfaces.Remove(instance))
+                if (m_Wrapper.m_HoveredBlockPickerActionsCallbackInterfaces.Remove(instance))
                     UnregisterCallbacks(instance);
             }
 
@@ -1214,21 +1214,21 @@ namespace World.InputActions
             /// <remarks>
             /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
             /// </remarks>
-            /// <seealso cref="BlockSelectorActions.AddCallbacks(IBlockSelectorActions)" />
-            /// <seealso cref="BlockSelectorActions.RemoveCallbacks(IBlockSelectorActions)" />
-            /// <seealso cref="BlockSelectorActions.UnregisterCallbacks(IBlockSelectorActions)" />
-            public void SetCallbacks(IBlockSelectorActions instance)
+            /// <seealso cref="HoveredBlockPickerActions.AddCallbacks(IHoveredBlockPickerActions)" />
+            /// <seealso cref="HoveredBlockPickerActions.RemoveCallbacks(IHoveredBlockPickerActions)" />
+            /// <seealso cref="HoveredBlockPickerActions.UnregisterCallbacks(IHoveredBlockPickerActions)" />
+            public void SetCallbacks(IHoveredBlockPickerActions instance)
             {
-                foreach (var item in m_Wrapper.m_BlockSelectorActionsCallbackInterfaces)
+                foreach (var item in m_Wrapper.m_HoveredBlockPickerActionsCallbackInterfaces)
                     UnregisterCallbacks(item);
-                m_Wrapper.m_BlockSelectorActionsCallbackInterfaces.Clear();
+                m_Wrapper.m_HoveredBlockPickerActionsCallbackInterfaces.Clear();
                 AddCallbacks(instance);
             }
         }
         /// <summary>
-        /// Provides a new <see cref="BlockSelectorActions" /> instance referencing this action map.
+        /// Provides a new <see cref="HoveredBlockPickerActions" /> instance referencing this action map.
         /// </summary>
-        public BlockSelectorActions @BlockSelector => new BlockSelectorActions(this);
+        public HoveredBlockPickerActions @HoveredBlockPicker => new HoveredBlockPickerActions(this);
 
         // Player
         private readonly InputActionMap m_Player;
@@ -1411,11 +1411,11 @@ namespace World.InputActions
             void OnPointerPress(InputAction.CallbackContext context);
         }
         /// <summary>
-        /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "BlockSetting" which allows adding and removing callbacks.
+        /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "HoveredBlockPlacer" which allows adding and removing callbacks.
         /// </summary>
-        /// <seealso cref="BlockSettingActions.AddCallbacks(IBlockSettingActions)" />
-        /// <seealso cref="BlockSettingActions.RemoveCallbacks(IBlockSettingActions)" />
-        public interface IBlockSettingActions
+        /// <seealso cref="HoveredBlockPlacerActions.AddCallbacks(IHoveredBlockPlacerActions)" />
+        /// <seealso cref="HoveredBlockPlacerActions.RemoveCallbacks(IHoveredBlockPlacerActions)" />
+        public interface IHoveredBlockPlacerActions
         {
             /// <summary>
             /// Method invoked when associated input action "MouseRightClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
@@ -1426,11 +1426,11 @@ namespace World.InputActions
             void OnMouseRightClick(InputAction.CallbackContext context);
         }
         /// <summary>
-        /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "BlockSelector" which allows adding and removing callbacks.
+        /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "HoveredBlockPicker" which allows adding and removing callbacks.
         /// </summary>
-        /// <seealso cref="BlockSelectorActions.AddCallbacks(IBlockSelectorActions)" />
-        /// <seealso cref="BlockSelectorActions.RemoveCallbacks(IBlockSelectorActions)" />
-        public interface IBlockSelectorActions
+        /// <seealso cref="HoveredBlockPickerActions.AddCallbacks(IHoveredBlockPickerActions)" />
+        /// <seealso cref="HoveredBlockPickerActions.RemoveCallbacks(IHoveredBlockPickerActions)" />
+        public interface IHoveredBlockPickerActions
         {
             /// <summary>
             /// Method invoked when associated input action "MouseMiddleClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.

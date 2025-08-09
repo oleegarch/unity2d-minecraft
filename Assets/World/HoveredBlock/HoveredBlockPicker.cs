@@ -5,12 +5,12 @@ using World.InputActions;
 using World.Chunks;
 using World.Blocks;
 
-namespace World.BlockHovered
+namespace World.HoveredBlock
 {
-    public class BlockSelector : MonoBehaviour
+    public class HoveredBlockPicker : MonoBehaviour
     {
         [SerializeField] private WorldInputManager _inputManager;
-        [SerializeField] private BlockHoveredObserver _blockHoveredObserver;
+        [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
         [SerializeField] private ChunksManager _chunksManager;
 
         private Block _selectedBlock;
@@ -22,13 +22,13 @@ namespace World.BlockHovered
 
         private void OnEnable()
         {
-            var actions = _inputManager.Controls.BlockSelector;
+            var actions = _inputManager.Controls.HoveredBlockPicker;
             actions.MouseMiddleClick.performed += OnBlockSelect;
             actions.Enable();
         }
         private void OnDisable()
         {
-            var actions = _inputManager.Controls.BlockSelector;
+            var actions = _inputManager.Controls.HoveredBlockPicker;
             actions.MouseMiddleClick.performed -= OnBlockSelect;
             actions.Disable();
         }

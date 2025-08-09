@@ -8,15 +8,15 @@ using World.InputActions;
 using World.Entities.Player;
 using World.Chunks;
 
-namespace World.BlockHovered
+namespace World.HoveredBlock
 {
-    public class BlockBreakingProcess : MonoBehaviour
+    public class HoveredBlockBreaker : MonoBehaviour
     {
         [SerializeField] private CameraModeController _cameraModeController;
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
         [SerializeField] private ChunksManager _chunksManager;
-        [SerializeField] private BlockHoveredObserver _blockHoveredObserver;
+        [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private Transform _breakingMask;
         [SerializeField] private PlayerController _playerController;

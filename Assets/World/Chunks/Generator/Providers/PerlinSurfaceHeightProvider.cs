@@ -1,5 +1,5 @@
 using UnityEngine;
-using World.BlockHovered;
+using World.HoveredBlock;
 
 namespace World.Chunks.Generator.Providers
 {

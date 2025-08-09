@@ -5,9 +5,9 @@ using World.Chunks;
 using World.Cameras;
 using World.InputActions;
 
-namespace World.BlockHovered
+namespace World.HoveredBlock
 {
-    public class BlockHoveredObserver : MonoBehaviour
+    public class HoveredBlockObserver : MonoBehaviour
     {
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
