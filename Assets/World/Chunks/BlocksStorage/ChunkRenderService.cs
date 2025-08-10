@@ -42,5 +42,4 @@ namespace World.Chunks.BlocksStorage
         public void DisableDarkening(BlockIndex index) => _noDarkeningOverrides.Add(index);
         public bool ShouldDarken(BlockIndex index) => !_noDarkeningOverrides.Contains(index);
     }
-
 }

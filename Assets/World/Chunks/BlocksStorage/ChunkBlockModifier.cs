@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using World.Blocks;
 using World.Chunks.BlocksStorage.Storages;
 
@@ -22,20 +21,17 @@ namespace World.Chunks
     }
     public class ChunkBlockModifier : IChunkBlockModifier
     {
-        private readonly Dictionary<BlockLayer, IBlockLayerStorage> _blockLayers;
+        private readonly IBlockLayerStorage[] _blockLayers;
         public ChunkBlockEvents Events { get; } = new();
 
-        public ChunkBlockModifier(Dictionary<BlockLayer, IBlockLayerStorage> blockLayers)
-        {
-            _blockLayers = blockLayers;
-        }
+        public ChunkBlockModifier(IBlockLayerStorage[] blockLayers) => _blockLayers = blockLayers;
 
-        public Block Get(BlockIndex index, BlockLayer layer) => _blockLayers[layer].Get(index);
+        public Block Get(BlockIndex index, BlockLayer layer) => _blockLayers[(int)layer].Get(index);
         public Block Get(byte x, byte y, BlockLayer layer) => Get(new BlockIndex(x, y), layer);
 
         public void Set(BlockIndex index, Block block, BlockLayer layer)
         {
-            _blockLayers[layer].Set(index, block);
+            _blockLayers[(int)layer].Set(index, block);
             Events.InvokeBlockSet(index, block, layer);
         }
 

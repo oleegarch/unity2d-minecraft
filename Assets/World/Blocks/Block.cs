@@ -1,11 +1,5 @@
 namespace World.Blocks
 {
-    public enum BlockLayer
-    {
-        Main,
-        Behind,
-        Front
-    }
     public readonly struct Block
     {
         public static readonly ushort AirId = 0;

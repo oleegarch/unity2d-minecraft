@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using World.Blocks;
 using World.Chunks.BlocksStorage.Storages;
 
@@ -17,11 +16,11 @@ namespace World.Chunks.BlocksStorage
             Index = index;
             Size = size;
 
-            Blocks = new ChunkBlockModifier(new Dictionary<BlockLayer, IBlockLayerStorage>()
+            Blocks = new ChunkBlockModifier(new IBlockLayerStorage[]
             {
-                [BlockLayer.Main] = new ArrayBlockStorage(size),
-                [BlockLayer.Behind] = new ArrayBlockStorage(size),
-                [BlockLayer.Front] = new SparseBlockStorage()
+                new ArrayBlockStorage(size),  // BlockLayer.Main
+                new ArrayBlockStorage(size),  // BlockLayer.Behind
+                new SparseBlockStorage()      // BlockLayer.Front
             });
             Render = new ChunkRenderService(Blocks);
         }

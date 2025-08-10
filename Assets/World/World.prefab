@@ -897,8 +897,8 @@ MonoBehaviour:
   _outliner: {fileID: 3421474599134605749}
   _observer: {fileID: 167939084089460052}
   _breaker: {fileID: 2572357408661218484}
-  _selector: {fileID: 6203515626348112953}
-  _setting: {fileID: 2604564451908335111}
+  _picker: {fileID: 6203515626348112953}
+  _placer: {fileID: 2604564451908335111}
   _chunksManager: {fileID: 5868988553912566916}
 --- !u!1 &7371231742770794637
 GameObject:
