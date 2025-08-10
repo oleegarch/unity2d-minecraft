@@ -1,10 +1,13 @@
+— KeyNotFoundException: The given key 'Behind' was not present in the dictionary (ChunkRenderService.cs:65)
+— HoveredBlockPicker должен научиться определять полноценные правильные BlockStyles вместо обычного SelectedLayer (влияет также на HoveredBlockActionDispatcher)
+— ChunkProceduralCreation при генерации чанка берёт именно слой блоков GetLayer и использует методы хранилища слоя для установки блока чтобы не вызывать InvokeBlockSet или InvokeBlockBroken, думаю, вместо этого следует добавить лишний метод для тихой установки
 — ChunkRenderService.TryGetBlockRenderId должен научиться выдавать сразу несколько блоков по слоям для рендеринга (либо другая реализация через ChunkRenderer)
 — Лучше ли чтобы Block.IsAir был геттером?
-— В BlockDatabase метод SetBlocksIdSortedInList должен проверить наличие блока пустоты и установить ему 0 идентификатор (сейчас он устанавливает Air блоку нулевой индекс только потому что я сам в лист блокинфо положил его на первое место)
-— ??? Перенести Camera объект в World структуру префаба
+— Перенести Camera объект в World структуру префаба
 — В chunk.TrySetBlock и подобные методы можно передавать BlockIndex как ref/in
 — В SkyController добавить фазы луны.
 — В SkyController солнце и луна должны сразу появлятся после отсутствия видимости на экране другого (а не за горизонтом).
+— В BlockDatabase метод SetBlocksIdSortedInList должен проверить наличие блока пустоты и установить ему 0 идентификатор (сейчас он устанавливает Air блоку нулевой индекс только потому что я сам в лист блокинфо положил его на первое место)
 — WorldController это компонент жизненного цикла. Всю логику "Startup" реализовать в нём (как-нибудь с переменной ~[SerializeField] private MonoBehaviour[] components; и вызовом последовательно Initialize).
 — ChunkColliderBuilder реализовать полноценные AddSquare+RemoveSquare.
 — Если снизу блок у кактуса отсутствует = ломаются все верхние блоки кактуса (реализовать отдельную систему ~BreakSameAboveSystem которая следит за событием BlockEvents и добавляет логику поломки дополнительных блоков).
