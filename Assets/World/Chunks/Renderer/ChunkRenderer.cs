@@ -9,7 +9,7 @@ using World.Chunks.BlocksStorage;
 namespace World.Chunks
 {
     [RequireComponent(typeof(Transform))]
-    public class ChunkRenderer : MonoBehaviour
+    public class ChunkRenderer : MonoBehaviour, IDisposable
     {
         [SerializeField] private PolygonCollider2D _polygonCollider2D;
 

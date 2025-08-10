@@ -1,7 +1,7 @@
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using UnityEngine;
 using World.Chunks.BlocksStorage;
 using World.Chunks.Generator;
 
@@ -55,12 +55,6 @@ namespace World.Chunks
                 // Генерируем данные чанка
                 chunk = await _generator.GenerateChunkAsync(index, seed);
 
-                // Пока выполнялся асинхронный GenerateChunkAsync
-                // чанк с данным индексом уже мог удалиться
-                // поэтому проверяем остался ли он в _loadings
-                if (!_loadings.Contains(index))
-                    return false;
-
                 // Создаём рендерер чанка
                 var go = Object.Instantiate(_prefab, _parent);
                 var renderer = go.GetComponent<ChunkRenderer>();
@@ -71,6 +65,15 @@ namespace World.Chunks
                 // Сохраняем сразу вместе (до асинхронного выполнения рендера чтобы в случае ненужности отменить рендер)
                 _renderers[index] = renderer;
                 _chunks[index] = chunk;
+
+                // Пока выполнялся асинхронный GenerateChunkAsync
+                // чанк с данным индексом уже мог удалиться
+                // поэтому проверяем остался ли он в _loadings
+                if (!_loadings.Contains(index))
+                {
+                    Dispose(index);
+                    return false;
+                }
 
                 await renderer.RenderAsync(chunk);
             }
@@ -83,8 +86,12 @@ namespace World.Chunks
             if (_renderers.TryGetValue(index, out var renderer))
             {
                 renderer.Dispose();
-                _chunks.Remove(index);
                 _renderers.Remove(index);
+            }
+            if (_chunks.TryGetValue(index, out var chunk))
+            {
+                chunk.Dispose();
+                _chunks.Remove(index);
             }
             _loadings.Remove(index);
         }

@@ -130,7 +130,7 @@ namespace World.Chunks.Generator.Providers
                     out BlockIndex blockIndex))
                 {
                     chunk.Blocks.Set(blockIndex, trunkBlock, BlockLayer.Behind);
-                    chunk.Render.DisableDarkening(blockIndex);
+                    chunk.Render.OverrideBlockStyles(blockIndex, BlockStyles.BehindLikeMain, BlockLayer.Behind);
                 }
             }
 
@@ -158,7 +158,7 @@ namespace World.Chunks.Generator.Providers
                             out BlockIndex blockIndex))
                         {
                             chunk.Blocks.Set(blockIndex, leafBlock, BlockLayer.Behind);
-                            chunk.Render.DisableDarkening(blockIndex);
+                            chunk.Render.OverrideBlockStyles(blockIndex, BlockStyles.BehindLikeMain, BlockLayer.Behind);
                         }
                     }
                 }

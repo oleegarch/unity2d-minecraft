@@ -6,6 +6,7 @@ namespace World.Chunks
     // IBlockAccessor — минимальный интерфейс чтения
     public interface IChunkBlockAccessor
     {
+        public IBlockLayerStorage GetLayer(BlockLayer layer);
         public Block Get(BlockIndex index, BlockLayer layer);
         public Block Get(byte x, byte y, BlockLayer layer);
     }
@@ -26,13 +27,19 @@ namespace World.Chunks
 
         public ChunkBlockModifier(IBlockLayerStorage[] blockLayers) => _blockLayers = blockLayers;
 
+        public IBlockLayerStorage GetLayer(BlockLayer layer) => _blockLayers[(int)layer];
+
         public Block Get(BlockIndex index, BlockLayer layer) => _blockLayers[(int)layer].Get(index);
         public Block Get(byte x, byte y, BlockLayer layer) => Get(new BlockIndex(x, y), layer);
 
         public void Set(BlockIndex index, Block block, BlockLayer layer)
         {
             _blockLayers[(int)layer].Set(index, block);
-            Events.InvokeBlockSet(index, block, layer);
+
+            if (block.IsAir())
+                Events.InvokeBlockBroken(index, block, layer);
+            else
+                Events.InvokeBlockSet(index, block, layer);
         }
 
         public void Set(byte x, byte y, ushort blockId, BlockLayer layer)
@@ -56,7 +63,6 @@ namespace World.Chunks
             if (!toRemoveBlock.IsAir())
             {
                 Set(index, Block.Air, layer);
-                Events.InvokeBlockBroken(index, toRemoveBlock, layer);
                 return true;
             }
             return false;

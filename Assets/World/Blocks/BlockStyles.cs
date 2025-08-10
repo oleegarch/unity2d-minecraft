@@ -15,7 +15,9 @@ namespace World.Blocks
         public static BlockStyles ForBehind = new BlockStyles { IsBehind = true, HasCollider = false };
         public static BlockStyles ForFront = new BlockStyles { IsBehind = false, HasCollider = false };
 
-        public static BlockStyles[] ByLayer = 
+        public static BlockStyles BehindLikeMain = new BlockStyles { IsBehind = false, HasCollider = false };
+
+        public static BlockStyles[] ByLayer =
         {
             ForMain,
             ForBehind,

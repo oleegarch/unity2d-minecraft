@@ -1,9 +1,10 @@
+using System;
 using World.Blocks;
 using World.Chunks.BlocksStorage.Storages;
 
 namespace World.Chunks.BlocksStorage
 {
-    public class Chunk
+    public class Chunk : IDisposable
     {
         public readonly ChunkIndex Index;
         public readonly byte Size;
@@ -36,6 +37,10 @@ namespace World.Chunks.BlocksStorage
             blockIndex = BlockIndex.Zero;
             return false;
         }
-    }
 
+        public void Dispose()
+        {
+            Render.Dispose();
+        }
+    }
 }
