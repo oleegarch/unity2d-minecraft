@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
+using UIGlobal;
 using World.Blocks;
 
 using Image = UnityEngine.UI.Image;
@@ -17,7 +17,7 @@ namespace World.HoveredBlock.BlockStylesSelector
         [SerializeField] private Color32 _blockBehindColor = new Color32(0, 0, 0, 50);
         [SerializeField] private Image _image;
         [SerializeField] private Image _blockImage;
-        [SerializeField] private Outline _blockOutline;
+        [SerializeField] private UIRectOutline _blockOutline;
 
         [NonSerialized] public bool IsHovered;
         [NonSerialized] public int Index;
