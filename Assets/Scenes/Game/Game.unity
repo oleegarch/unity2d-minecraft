@@ -199,6 +199,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: World
       objectReference: {fileID: 0}
+    - target: {fileID: 7726139880603854758, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9008502133466337078, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: _cameraObserver
       value: 
