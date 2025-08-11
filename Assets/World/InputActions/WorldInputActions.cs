@@ -346,9 +346,18 @@ namespace World.InputActions
             ""id"": ""77b51039-ba94-4576-b4fe-c659cd777e47"",
             ""actions"": [
                 {
-                    ""name"": ""MouseRightClick"",
+                    ""name"": ""MouseFastRightClick"",
                     ""type"": ""Button"",
                     ""id"": ""ab00be39-48dd-4566-afab-99a651ef8b5f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MouseSlowRightClick"",
+                    ""type"": ""Button"",
+                    ""id"": ""651085b4-9d5d-4dee-b517-7aaf808305bd"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -360,10 +369,21 @@ namespace World.InputActions
                     ""name"": """",
                     ""id"": ""9435f2ca-5ced-45e9-933e-ca2574401f0e"",
                     ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
+                    ""interactions"": ""Tap"",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MouseRightClick"",
+                    ""action"": ""MouseFastRightClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""84729a95-085b-47da-b2aa-9c73741cdb81"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseSlowRightClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -541,7 +561,8 @@ namespace World.InputActions
             m_BlockBreaking_PointerPress = m_BlockBreaking.FindAction("PointerPress", throwIfNotFound: true);
             // HoveredBlockPlacer
             m_HoveredBlockPlacer = asset.FindActionMap("HoveredBlockPlacer", throwIfNotFound: true);
-            m_HoveredBlockPlacer_MouseRightClick = m_HoveredBlockPlacer.FindAction("MouseRightClick", throwIfNotFound: true);
+            m_HoveredBlockPlacer_MouseFastRightClick = m_HoveredBlockPlacer.FindAction("MouseFastRightClick", throwIfNotFound: true);
+            m_HoveredBlockPlacer_MouseSlowRightClick = m_HoveredBlockPlacer.FindAction("MouseSlowRightClick", throwIfNotFound: true);
             // HoveredBlockPicker
             m_HoveredBlockPicker = asset.FindActionMap("HoveredBlockPicker", throwIfNotFound: true);
             m_HoveredBlockPicker_MouseMiddleClick = m_HoveredBlockPicker.FindAction("MouseMiddleClick", throwIfNotFound: true);
@@ -1041,7 +1062,8 @@ namespace World.InputActions
         // HoveredBlockPlacer
         private readonly InputActionMap m_HoveredBlockPlacer;
         private List<IHoveredBlockPlacerActions> m_HoveredBlockPlacerActionsCallbackInterfaces = new List<IHoveredBlockPlacerActions>();
-        private readonly InputAction m_HoveredBlockPlacer_MouseRightClick;
+        private readonly InputAction m_HoveredBlockPlacer_MouseFastRightClick;
+        private readonly InputAction m_HoveredBlockPlacer_MouseSlowRightClick;
         /// <summary>
         /// Provides access to input actions defined in input action map "HoveredBlockPlacer".
         /// </summary>
@@ -1054,9 +1076,13 @@ namespace World.InputActions
             /// </summary>
             public HoveredBlockPlacerActions(@WorldInputActions wrapper) { m_Wrapper = wrapper; }
             /// <summary>
-            /// Provides access to the underlying input action "HoveredBlockPlacer/MouseRightClick".
+            /// Provides access to the underlying input action "HoveredBlockPlacer/MouseFastRightClick".
             /// </summary>
-            public InputAction @MouseRightClick => m_Wrapper.m_HoveredBlockPlacer_MouseRightClick;
+            public InputAction @MouseFastRightClick => m_Wrapper.m_HoveredBlockPlacer_MouseFastRightClick;
+            /// <summary>
+            /// Provides access to the underlying input action "HoveredBlockPlacer/MouseSlowRightClick".
+            /// </summary>
+            public InputAction @MouseSlowRightClick => m_Wrapper.m_HoveredBlockPlacer_MouseSlowRightClick;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1083,9 +1109,12 @@ namespace World.InputActions
             {
                 if (instance == null || m_Wrapper.m_HoveredBlockPlacerActionsCallbackInterfaces.Contains(instance)) return;
                 m_Wrapper.m_HoveredBlockPlacerActionsCallbackInterfaces.Add(instance);
-                @MouseRightClick.started += instance.OnMouseRightClick;
-                @MouseRightClick.performed += instance.OnMouseRightClick;
-                @MouseRightClick.canceled += instance.OnMouseRightClick;
+                @MouseFastRightClick.started += instance.OnMouseFastRightClick;
+                @MouseFastRightClick.performed += instance.OnMouseFastRightClick;
+                @MouseFastRightClick.canceled += instance.OnMouseFastRightClick;
+                @MouseSlowRightClick.started += instance.OnMouseSlowRightClick;
+                @MouseSlowRightClick.performed += instance.OnMouseSlowRightClick;
+                @MouseSlowRightClick.canceled += instance.OnMouseSlowRightClick;
             }
 
             /// <summary>
@@ -1097,9 +1126,12 @@ namespace World.InputActions
             /// <seealso cref="HoveredBlockPlacerActions" />
             private void UnregisterCallbacks(IHoveredBlockPlacerActions instance)
             {
-                @MouseRightClick.started -= instance.OnMouseRightClick;
-                @MouseRightClick.performed -= instance.OnMouseRightClick;
-                @MouseRightClick.canceled -= instance.OnMouseRightClick;
+                @MouseFastRightClick.started -= instance.OnMouseFastRightClick;
+                @MouseFastRightClick.performed -= instance.OnMouseFastRightClick;
+                @MouseFastRightClick.canceled -= instance.OnMouseFastRightClick;
+                @MouseSlowRightClick.started -= instance.OnMouseSlowRightClick;
+                @MouseSlowRightClick.performed -= instance.OnMouseSlowRightClick;
+                @MouseSlowRightClick.canceled -= instance.OnMouseSlowRightClick;
             }
 
             /// <summary>
@@ -1418,12 +1450,19 @@ namespace World.InputActions
         public interface IHoveredBlockPlacerActions
         {
             /// <summary>
-            /// Method invoked when associated input action "MouseRightClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// Method invoked when associated input action "MouseFastRightClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
             /// </summary>
             /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-            void OnMouseRightClick(InputAction.CallbackContext context);
+            void OnMouseFastRightClick(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "MouseSlowRightClick" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnMouseSlowRightClick(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "HoveredBlockPicker" which allows adding and removing callbacks.

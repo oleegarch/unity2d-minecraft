@@ -35,6 +35,12 @@ namespace World
             return new BlockIndex((byte)localX, (byte)localY);
         }
 
+        // Конвертировать в Vector3Int
+        public Vector3Int ToVector3Int()
+        {
+            return new Vector3Int(x, y, 0);
+        }
+
         public override string ToString() => $"WorldPosition({x}, {y})";
 
         public bool Equals(WorldPosition other) => x == other.x && y == other.y;

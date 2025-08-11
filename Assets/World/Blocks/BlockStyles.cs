@@ -1,3 +1,5 @@
+using System;
+
 namespace World.Blocks
 {
     public enum BlockLayer : byte
@@ -6,6 +8,7 @@ namespace World.Blocks
         Behind,
         Front
     }
+    [Serializable]
     public struct BlockStyles
     {
         public bool IsBehind;
@@ -39,5 +42,17 @@ namespace World.Blocks
 
         public static bool operator ==(BlockStyles left, BlockStyles right) => left.Equals(right);
         public static bool operator !=(BlockStyles left, BlockStyles right) => !left.Equals(right);
+    }
+    [Serializable]
+    public struct BlockPlacementVariant
+    {
+        public BlockLayer Layer;
+        public BlockStyles StylesOverrides;
+
+        public static BlockPlacementVariant ForMain = new BlockPlacementVariant { Layer = BlockLayer.Main, StylesOverrides = BlockStyles.ForMain };
+        public static BlockPlacementVariant ForBehind = new BlockPlacementVariant { Layer = BlockLayer.Behind, StylesOverrides = BlockStyles.ForBehind };
+        public static BlockPlacementVariant ForFront = new BlockPlacementVariant { Layer = BlockLayer.Front, StylesOverrides = BlockStyles.ForFront };
+
+        public static BlockPlacementVariant BehindLikeMain = new BlockPlacementVariant { Layer = BlockLayer.Behind, StylesOverrides = new BlockStyles { IsBehind = false, HasCollider = false } };
     }
 }

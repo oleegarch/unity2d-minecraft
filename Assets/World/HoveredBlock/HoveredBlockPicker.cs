@@ -20,27 +20,33 @@ namespace World.HoveredBlock
         public Block SelectedBlock => _selectedBlock;
         public BlockLayer SelectedLayer => _selectedLayer;
         public BlockStyles SelectedStyles => _selectedStyles;
-        public event Action<WorldPosition, Block, BlockLayer, BlockStyles> OnBlockSelectedChanged;
+        public event Action<WorldPosition, Block, BlockLayer, BlockStyles> OnBlockPickedChanged;
 
         private void OnEnable()
         {
             var actions = _inputManager.Controls.HoveredBlockPicker;
-            actions.MouseMiddleClick.performed += HandleBlockPick;
+            actions.MouseMiddleClick.performed += HandleMouseMiddleClick;
             actions.Enable();
         }
         private void OnDisable()
         {
             var actions = _inputManager.Controls.HoveredBlockPicker;
-            actions.MouseMiddleClick.performed -= HandleBlockPick;
+            actions.MouseMiddleClick.performed -= HandleMouseMiddleClick;
             actions.Disable();
         }
-        private void HandleBlockPick(InputAction.CallbackContext context)
+        private void HandleMouseMiddleClick(InputAction.CallbackContext context)
         {
             WorldPosition worldPosition = _blockHoveredObserver.HoveredPosition;
             _selectedBlock = _chunksManager.Blocks.GetBreakable(worldPosition, out _selectedLayer);
             _selectedStyles = _chunksManager.Blocks.GetBlockStyles(worldPosition, _selectedLayer);
 
-            OnBlockSelectedChanged?.Invoke(worldPosition, _selectedBlock, _selectedLayer, _selectedStyles);
+            OnBlockPickedChanged?.Invoke(worldPosition, _selectedBlock, _selectedLayer, _selectedStyles);
+        }
+
+        public void ChangePlacementVariant(BlockPlacementVariant variant)
+        {
+            _selectedLayer = variant.Layer;
+            _selectedStyles = variant.StylesOverrides;
         }
     }
 }

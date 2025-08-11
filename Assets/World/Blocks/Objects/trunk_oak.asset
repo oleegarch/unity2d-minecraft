@@ -18,3 +18,10 @@ MonoBehaviour:
   OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   Sprite: {fileID: 21300000, guid: aba23e207dfc54a4097473b1e8487cdd, type: 3}
   AtlasCategory: 3
+  AvailableStyles:
+  - IsBehind: 0
+    HasCollider: 1
+  - IsBehind: 1
+    HasCollider: 0
+  - IsBehind: 0
+    HasCollider: 0

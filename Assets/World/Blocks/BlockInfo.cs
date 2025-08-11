@@ -12,5 +12,10 @@ namespace World.Blocks
         public Color OutlineColor = new Color(0f, 0f, 0f, 1f);
         public Sprite Sprite;
         public BlockAtlasCategory AtlasCategory;
+        public BlockPlacementVariant[] AvailablePlacements =
+        {
+            BlockPlacementVariant.ForMain,
+            BlockPlacementVariant.ForBehind
+        };
     }
 }

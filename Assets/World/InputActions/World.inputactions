@@ -258,9 +258,18 @@
             "id": "77b51039-ba94-4576-b4fe-c659cd777e47",
             "actions": [
                 {
-                    "name": "MouseRightClick",
+                    "name": "MouseFastRightClick",
                     "type": "Button",
                     "id": "ab00be39-48dd-4566-afab-99a651ef8b5f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MouseSlowRightClick",
+                    "type": "Button",
+                    "id": "651085b4-9d5d-4dee-b517-7aaf808305bd",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -272,10 +281,21 @@
                     "name": "",
                     "id": "9435f2ca-5ced-45e9-933e-ca2574401f0e",
                     "path": "<Mouse>/rightButton",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": "",
-                    "action": "MouseRightClick",
+                    "action": "MouseFastRightClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "84729a95-085b-47da-b2aa-9c73741cdb81",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseSlowRightClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
