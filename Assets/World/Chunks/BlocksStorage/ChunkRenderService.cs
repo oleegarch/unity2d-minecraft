@@ -62,10 +62,8 @@ namespace World.Chunks.BlocksStorage
         public bool ShouldBehind(BlockIndex index, BlockLayer layer = BlockLayer.Behind)
         {
             var defaultBehind = BlockStyles.ByLayer[(int)layer].IsBehind;
-            var overrides = _styleOverrides[layer];
-            if (overrides == null) return defaultBehind;
-
-            if (!overrides.ContainsKey(index)) return defaultBehind;
+            if (!_styleOverrides.TryGetValue(layer, out var overrides) || !overrides.ContainsKey(index))
+                return defaultBehind;
 
             return overrides[index].IsBehind;
         }

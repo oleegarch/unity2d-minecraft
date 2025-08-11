@@ -1,4 +1,3 @@
-— KeyNotFoundException: The given key 'Behind' was not present in the dictionary (ChunkRenderService.cs:65)
 — HoveredBlockPicker должен научиться определять полноценные правильные BlockStyles вместо обычного SelectedLayer (влияет также на HoveredBlockActionDispatcher)
 — ChunkProceduralCreation при генерации чанка берёт именно слой блоков GetLayer и использует методы хранилища слоя для установки блока чтобы не вызывать InvokeBlockSet или InvokeBlockBroken, думаю, вместо этого следует добавить лишний метод для тихой установки
 — ChunkRenderService.TryGetBlockRenderId должен научиться выдавать сразу несколько блоков по слоям для рендеринга (либо другая реализация через ChunkRenderer)
