@@ -14,6 +14,8 @@ namespace World.HoveredBlock
         [SerializeField] private HoveredBlockPicker _blockHoveredPicker;
         [SerializeField] private UIBlockStyleSelector _blockStylesSelector;
 
+        private bool _wasPerformed;
+
         public event Action<WorldPosition> OnBlockSetAttempt;
 
         private void OnEnable()
@@ -41,10 +43,13 @@ namespace World.HoveredBlock
         {
             if (context.performed)
             {
+                _wasPerformed = true;
                 _blockStylesSelector.StartSelecting(_blockHoveredObserver.HoveredPosition);
             }
-            else if (context.canceled)
+            else if (_wasPerformed && context.canceled)
             {
+                _wasPerformed = false;
+                
                 BlockPlacementVariant? variantNullable = _blockStylesSelector.Select();
                 if (variantNullable.HasValue)
                 {
