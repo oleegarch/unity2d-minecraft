@@ -41,7 +41,6 @@ namespace World.Chunks
             else
                 Events.InvokeBlockSet(index, block, layer);
         }
-
         public void Set(byte x, byte y, ushort blockId, BlockLayer layer)
         {
             Set(new BlockIndex(x, y), new Block(blockId), layer);
@@ -56,7 +55,6 @@ namespace World.Chunks
             }
             return false;
         }
-
         public bool TryUnset(BlockIndex index, BlockLayer layer)
         {
             Block toRemoveBlock = Get(index, layer);

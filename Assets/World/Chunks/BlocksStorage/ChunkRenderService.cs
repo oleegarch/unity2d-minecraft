@@ -4,11 +4,19 @@ using World.Blocks;
 
 namespace World.Chunks.BlocksStorage
 {
+    // IChunkBlockPlacerWithStyles — модификация блоков по слоям как в IChunkBlockModifier, но с перезаписью стилей
+    public interface IChunkBlockPlacerWithStyles
+    {
+        public void Set(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer);
+        public bool TrySet(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer);
+    }
     // Интерфейс для логики, связанной с визуальной информацией
-    public interface IChunkRenderService
+    public interface IChunkRenderService : IChunkBlockPlacerWithStyles
     {
         public bool TryGetBlockRenderId(BlockIndex index, out ushort renderId, out bool isBehind);
+        public BlockStyles GetBlockStyles(BlockIndex index, BlockLayer layer);
         public void OverrideBlockStyles(BlockIndex index, BlockStyles styles, BlockLayer layer);
+        public bool RemoveOverrideBlockStyles(BlockIndex index, BlockLayer layer);
         public bool ShouldBehind(BlockIndex index, BlockLayer layer = BlockLayer.Behind);
         public void Dispose();
     }
@@ -21,6 +29,22 @@ namespace World.Chunks.BlocksStorage
         {
             _blocks = blocks;
             _blocks.Events.OnBlockBroken += HandleBlockBroken;
+        }
+
+        public void Set(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer)
+        {
+            OverrideBlockStyles(index, overrided, layer);
+            _blocks.Set(index, block, layer);
+        }
+        public bool TrySet(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer)
+        {
+            if (_blocks.Get(index, layer).IsAir())
+            {
+                OverrideBlockStyles(index, overrided, layer);
+                _blocks.Set(index, block, layer);
+                return true;
+            }
+            return false;
         }
 
         public bool TryGetBlockRenderId(BlockIndex index, out ushort renderId, out bool isBehind)
@@ -43,8 +67,22 @@ namespace World.Chunks.BlocksStorage
             return true;
         }
 
+        public BlockStyles GetDefaultBlockStyles(BlockLayer layer)
+        {
+            return BlockStyles.ByLayer[(int)layer];
+        }
+        public BlockStyles GetBlockStyles(BlockIndex index, BlockLayer layer)
+        {
+            if (!_styleOverrides.TryGetValue(layer, out var overrides) || !overrides.ContainsKey(index))
+                return GetDefaultBlockStyles(layer);
+
+            return overrides[index];
+        }
         public void OverrideBlockStyles(BlockIndex index, BlockStyles styles, BlockLayer layer)
         {
+            if (styles == GetDefaultBlockStyles(layer))
+                return;
+
             if (!_styleOverrides.TryGetValue(layer, out var overrides))
                 overrides = _styleOverrides[layer] = new();
 
@@ -61,9 +99,8 @@ namespace World.Chunks.BlocksStorage
         }
         public bool ShouldBehind(BlockIndex index, BlockLayer layer = BlockLayer.Behind)
         {
-            var defaultBehind = BlockStyles.ByLayer[(int)layer].IsBehind;
             if (!_styleOverrides.TryGetValue(layer, out var overrides) || !overrides.ContainsKey(index))
-                return defaultBehind;
+                return GetDefaultBlockStyles(layer).IsBehind;
 
             return overrides[index].IsBehind;
         }

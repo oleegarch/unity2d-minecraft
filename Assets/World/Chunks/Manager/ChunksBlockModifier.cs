@@ -7,7 +7,8 @@ namespace World.Chunks
     {
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main);
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer);
-        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer);
+        public BlockStyles GetBlockStyles(WorldPosition worldPosition, BlockLayer layer);
+        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles);
         public bool Break(WorldPosition worldPosition, BlockLayer layer);
         public bool BreakVisible(WorldPosition worldPosition);
     }
@@ -55,14 +56,23 @@ namespace World.Chunks
 
             return Block.Air;
         }
+        public BlockStyles GetBlockStyles(WorldPosition worldPosition, BlockLayer layer)
+        {
+            if (_chunksStorage.TryGetChunk(worldPosition, out Chunk chunk))
+            {
+                BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
+                return chunk.Render.GetBlockStyles(blockIndex, layer);
+            }
+            return BlockStyles.ByLayer[(int)layer];
+        }
 
-        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer)
+        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles)
         {
             if (!_chunksStorage.TryGetChunk(worldPosition, out var chunk))
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-            if (chunk.Blocks.TrySet(blockIndex, block, layer))
+            if (chunk.Render.TrySet(blockIndex, block, styles, layer))
             {
                 Events.InvokeBlockSet(worldPosition, block, layer);
                 return true;

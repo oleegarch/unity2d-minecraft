@@ -23,5 +23,21 @@ namespace World.Blocks
             ForBehind,
             ForFront
         };
+
+        public override bool Equals(object obj)
+        {
+            if (obj is BlockStyles other)
+            {
+                return IsBehind == other.IsBehind && HasCollider == other.HasCollider;
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return (IsBehind ? 1 : 0) | ((HasCollider ? 1 : 0) << 1);
+        }
+
+        public static bool operator ==(BlockStyles left, BlockStyles right) => left.Equals(right);
+        public static bool operator !=(BlockStyles left, BlockStyles right) => !left.Equals(right);
     }
 }

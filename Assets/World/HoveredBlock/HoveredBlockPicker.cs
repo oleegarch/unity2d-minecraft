@@ -15,10 +15,12 @@ namespace World.HoveredBlock
 
         private Block _selectedBlock;
         private BlockLayer _selectedLayer;
+        private BlockStyles _selectedStyles;
 
         public Block SelectedBlock => _selectedBlock;
         public BlockLayer SelectedLayer => _selectedLayer;
-        public event Action<WorldPosition, Block, BlockLayer> OnBlockSelectedChanged;
+        public BlockStyles SelectedStyles => _selectedStyles;
+        public event Action<WorldPosition, Block, BlockLayer, BlockStyles> OnBlockSelectedChanged;
 
         private void OnEnable()
         {
@@ -36,8 +38,9 @@ namespace World.HoveredBlock
         {
             WorldPosition worldPosition = _blockHoveredObserver.HoveredPosition;
             _selectedBlock = _chunksManager.Blocks.GetBreakable(worldPosition, out _selectedLayer);
+            _selectedStyles = _chunksManager.Blocks.GetBlockStyles(worldPosition, _selectedLayer);
 
-            OnBlockSelectedChanged?.Invoke(worldPosition, _selectedBlock, _selectedLayer);
+            OnBlockSelectedChanged?.Invoke(worldPosition, _selectedBlock, _selectedLayer, _selectedStyles);
         }
     }
 }

@@ -23,6 +23,6 @@ namespace World.HoveredBlock
             _breaker.OnBlockBreakAttempt -= HandleBlockBroken;
         }
         private void HandleBlockBroken(WorldPosition wc) => _chunksManager.Blocks.BreakVisible(wc);
-        private void HandleBlockSet(WorldPosition wc) => _chunksManager.Blocks.Set(wc, _picker.SelectedBlock, _picker.SelectedLayer);
+        private void HandleBlockSet(WorldPosition wc) => _chunksManager.Blocks.Set(wc, _picker.SelectedBlock, _picker.SelectedLayer, _picker.SelectedStyles);
     }
 }
