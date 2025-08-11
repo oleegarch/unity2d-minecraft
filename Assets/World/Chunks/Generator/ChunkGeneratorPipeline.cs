@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using World.Chunks.Generator.Steps;
 using World.Chunks.BlocksStorage;
-using World.Chunks.Generator.Providers;
 
 namespace World.Chunks.Generator
 {
