@@ -1,5 +1,4 @@
 — ChunkRenderService.TryGetBlockRenderId должен научиться выдавать сразу несколько блоков по слоям для рендеринга (либо другая реализация через ChunkRenderer)
-— Лучше ли чтобы Block.IsAir был геттером?
 — Перенести Camera объект в World структуру префаба
 — В chunk.TrySetBlock и подобные методы можно передавать BlockIndex как ref/in
 — В SkyController добавить фазы луны.

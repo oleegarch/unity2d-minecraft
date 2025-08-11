@@ -34,7 +34,7 @@ namespace World.HoveredBlock
         private void SetOutline(WorldPosition worldPosition)
         {
             Block hoveredBlock = _chunksManager.Blocks.GetBreakable(worldPosition, out BlockLayer blockLayer);
-            bool enabled = !hoveredBlock.IsAir();
+            bool enabled = !hoveredBlock.IsAir;
 
             _targetSpriteRenderer.enabled = enabled;
 

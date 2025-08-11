@@ -45,7 +45,7 @@ namespace World.Chunks
                 BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
                 Block mainBlock = chunk.Blocks.Get(blockIndex, blockLayer);
 
-                if (mainBlock.IsAir())
+                if (mainBlock.IsAir)
                 {
                     blockLayer = BlockLayer.Behind;
                     return chunk.Blocks.Get(blockIndex, blockLayer);
@@ -106,7 +106,7 @@ namespace World.Chunks
             BlockLayer layer = BlockLayer.Main;
             Block block = chunk.Blocks.Get(blockIndex, layer);
 
-            if (block.IsAir())
+            if (block.IsAir)
             {
                 layer = BlockLayer.Behind;
                 block = chunk.Blocks.Get(blockIndex, layer);

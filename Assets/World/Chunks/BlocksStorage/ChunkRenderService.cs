@@ -38,7 +38,7 @@ namespace World.Chunks.BlocksStorage
         }
         public bool TrySet(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer)
         {
-            if (_blocks.Get(index, layer).IsAir())
+            if (_blocks.Get(index, layer).IsAir)
             {
                 OverrideBlockStyles(index, overrided, layer);
                 _blocks.Set(index, block, layer);
@@ -51,15 +51,13 @@ namespace World.Chunks.BlocksStorage
         {
             Block main = _blocks.Get(index, BlockLayer.Main);
             renderId = main.Id;
-            isBehind = main.IsAir();
+            isBehind = main.IsAir;
 
             if (isBehind)
             {
                 Block behind = _blocks.Get(index, BlockLayer.Behind);
-                if (behind.IsAir())
-                {
+                if (behind.IsAir)
                     return false;
-                }
                 isBehind = ShouldBehind(index);
                 renderId = behind.Id;
             }

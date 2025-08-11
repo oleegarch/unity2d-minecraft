@@ -36,7 +36,7 @@ namespace World.Chunks
         {
             _blockLayers[(int)layer].Set(index, block);
 
-            if (block.IsAir())
+            if (block.IsAir)
                 Events.InvokeBlockBroken(index, block, layer);
             else
                 Events.InvokeBlockSet(index, block, layer);
@@ -48,7 +48,7 @@ namespace World.Chunks
 
         public bool TrySet(BlockIndex index, Block block, BlockLayer layer)
         {
-            if (Get(index, layer).IsAir())
+            if (Get(index, layer).IsAir)
             {
                 Set(index, block, layer);
                 return true;
@@ -58,7 +58,7 @@ namespace World.Chunks
         public bool TryUnset(BlockIndex index, BlockLayer layer)
         {
             Block toRemoveBlock = Get(index, layer);
-            if (!toRemoveBlock.IsAir())
+            if (!toRemoveBlock.IsAir)
             {
                 Set(index, Block.Air, layer);
                 return true;

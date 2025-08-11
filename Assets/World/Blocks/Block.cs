@@ -12,7 +12,7 @@ namespace World.Blocks
             Id = id;
         }
 
-        public readonly bool IsAir() => Id == AirId;
+        public readonly bool IsAir => Id == AirId;
 
         public override int GetHashCode() => Id.GetHashCode();
         public override bool Equals(object obj) => obj is Block other && Id == other.Id;

@@ -29,7 +29,7 @@ namespace World.Entities.Player
             {
                 Block block = _chunksManager.Blocks.Get(new WorldPosition(0, y));
 
-                if (block.IsAir())
+                if (block.IsAir)
                 {
                     _playerTransform.position = new Vector3(0, y, 0);
                     _playerSprite.enabled = true;
