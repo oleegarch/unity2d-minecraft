@@ -26,32 +26,45 @@ namespace World.Blocks
         public ushort GetId(string name) => _nameToId[name];
 
 #if UNITY_EDITOR
-        [ContextMenu("Установить Id блоков последовательно их сортировке в списке")]
-        private void SetBlocksIdSortedInList()
+    [ContextMenu("Создать BlockInfo для всех спрайтов")]
+        private void CreateBlockInfos()
         {
-            ushort index = 0;
-            foreach (BlockInfo info in blocks)
-            {
-                info.Id = index++;
-                EditorUtility.SetDirty(info);
-            }
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
+            // ищем все спрайты в проекте
+            string[] guids = AssetDatabase.FindAssets("t:Sprite", new[] { "Assets/World/Blocks/Textures" });
+            int currentId = 0;
 
-        [ContextMenu("Установить во всех блоках название спрайта в качестве Name поле блока")]
-        private void SetNameOfTextureName()
-        {
-            foreach (BlockInfo info in blocks)
+            foreach (string guid in guids)
             {
-                if (info.Sprite != null)
+                currentId++;
+
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+
+                // проверяем, есть ли уже такой блок
+                if (blocks.Exists(b => b != null && b.Sprite == sprite))
                 {
-                    info.Name = info.Sprite.name;
-                    EditorUtility.SetDirty(info);
+                    blocks[currentId].Id = (ushort)currentId;
+                    EditorUtility.SetDirty(blocks[currentId]);
+                    continue;
                 }
+
+                // создаём новый ScriptableObject
+                BlockInfo block = ScriptableObject.CreateInstance<BlockInfo>();
+                block.Name = sprite.name;
+                block.Sprite = sprite;
+                block.Id = (ushort)currentId;
+
+                // сохраняем в папку ScriptableObjects
+                string savePath = "Assets/World/Blocks/Objects/" + sprite.name + ".asset";
+                AssetDatabase.CreateAsset(block, savePath);
+
+                blocks.Add(block);
             }
+
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+
+            Debug.Log($"Создано {blocks.Count} BlockInfo");
         }
 #endif
     }

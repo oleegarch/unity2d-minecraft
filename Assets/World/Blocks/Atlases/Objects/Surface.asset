@@ -23,32 +23,75 @@ MonoBehaviour:
       y: 0
       width: 0.25
       height: 0.25
-  - Id: 27
+    SpriteSizeUnits:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+  - Id: 29
     Rect:
       serializedVersion: 2
       x: 0.3125
       y: 0
       width: 0.25
       height: 0.25
-  - Id: 28
+    SpriteSizeUnits:
+      serializedVersion: 2
+      x: 0.0625
+      y: 0
+      width: 0.875
+      height: 0.875
+  - Id: 14
     Rect:
       serializedVersion: 2
       x: 0.625
       y: 0
       width: 0.25
       height: 0.25
-  - Id: 25
+    SpriteSizeUnits:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+  - Id: 15
     Rect:
       serializedVersion: 2
       x: 0
       y: 0.3125
       width: 0.25
       height: 0.25
-  - Id: 26
+    SpriteSizeUnits:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+  - Id: 27
     Rect:
       serializedVersion: 2
       x: 0
       y: 0.625
       width: 0.25
       height: 0.25
+    SpriteSizeUnits:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+  - Id: 28
+    Rect:
+      serializedVersion: 2
+      x: 0.3125
+      y: 0.3125
+      width: 0.25
+      height: 0.25
+    SpriteSizeUnits:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
   Epsilon: 0.015625

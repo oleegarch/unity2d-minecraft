@@ -13,6 +13,90 @@ namespace World.Blocks.Atlases
         private const string OUTPUT_FOLDER = "Assets/World/Blocks/Atlases/Textures";
         private const string MATERIALS_FOLDER = "Assets/World/Blocks/Atlases/Materials";
 
+        private static Rect GetTightPixelRectForSprite(Sprite sprite)
+        {
+            float ppu = Mathf.Max(1f, sprite.pixelsPerUnit);
+
+            Rect spritePixelRect = sprite.rect;
+            Rect textureSpriteRect = sprite.textureRect;
+
+            var tex = sprite.texture;
+            Rect texRect = sprite.textureRect;
+
+            int sx = Mathf.FloorToInt(texRect.x);
+            int sy = Mathf.FloorToInt(texRect.y);
+            int sw = Mathf.FloorToInt(texRect.width);
+            int sh = Mathf.FloorToInt(texRect.height);
+
+            Color32[] pixels;
+            try
+            {
+                pixels = tex.GetPixels32();
+            }
+            catch
+            {
+                Debug.LogWarning($"Texture '{tex.name}' is not readable. Enable Read/Write in importer for accurate trimming. Falling back to full sprite rect.");
+                return texRect;
+            }
+
+            int texW = tex.width;
+
+            int left = sw, right = -1, bottom = sh, top = -1;
+            const byte alphaThreshold = 1;
+
+            for (int y = 0; y < sh; y++)
+            {
+                int ty = sy + y;
+                int rowBase = ty * texW;
+                for (int x = 0; x < sw; x++)
+                {
+                    int tx = sx + x;
+                    Color32 c = pixels[rowBase + tx];
+                    if (c.a > alphaThreshold)
+                    {
+                        if (x < left) left = x;
+                        if (x > right) right = x;
+                        if (y < bottom) bottom = y;
+                        if (y > top) top = y;
+                    }
+                }
+            }
+
+            if (right < left || top < bottom)
+            {
+                return texRect;
+            }
+
+            int trimmedX = sx + left;
+            int trimmedY = sy + bottom;
+            int trimmedW = right - left + 1;
+            int trimmedH = top - bottom + 1;
+
+            Rect tightPixelRect = new Rect(trimmedX, trimmedY, trimmedW, trimmedH);
+
+            float relativeTrimX = tightPixelRect.x - textureSpriteRect.x;
+            float relativeTrimY = tightPixelRect.y - textureSpriteRect.y;
+
+            float spriteFullUnitsW = spritePixelRect.width / ppu;
+            float spriteFullUnitsH = spritePixelRect.height / ppu;
+
+            float centerOffsetX = (1f - spriteFullUnitsW) * 0.5f;
+            float centerOffsetY = (1f - spriteFullUnitsH) * 0.5f;
+
+            float trimOffsetUnitsX = relativeTrimX / ppu;
+            float trimOffsetUnitsY = relativeTrimY / ppu;
+
+            float trimmedUnitsW = tightPixelRect.width / ppu;
+            float trimmedUnitsH = tightPixelRect.height / ppu;
+
+            return new Rect(
+                centerOffsetX + trimOffsetUnitsX,
+                centerOffsetY + trimOffsetUnitsY,
+                trimmedUnitsW,
+                trimmedUnitsH
+            );
+        }
+
         [MenuItem("Tools/Blocks/Pack All Atlases")]
         public static void PackAllAtlases()
         {
@@ -39,7 +123,7 @@ namespace World.Blocks.Atlases
             string[] guids = AssetDatabase.FindAssets("t:BlockInfo");
             var allInfos = guids
                 .Select(g => AssetDatabase.LoadAssetAtPath<BlockInfo>(AssetDatabase.GUIDToAssetPath(g)))
-                .Where(b => b.Sprite != null)
+                .Where(b => b != null && b.Sprite != null)
                 .ToList();
 
             // Группировать по категории
@@ -64,13 +148,13 @@ namespace World.Blocks.Atlases
                     continue;
                 }
 
-                // Собрать все текстуры блоков
+                // Собрать все текстуры блоков (оригинальные textures у спрайтов)
                 var textures = infos.Select(b => b.Sprite.texture).ToArray();
 
                 // PackTextures (собираем все текстуры блоков в один атлас)
                 Texture2D textureAtlas = new Texture2D(2048, 2048, TextureFormat.RGBA32, false);
                 Rect[] textureRects = textureAtlas.PackTextures(textures, 8, 2048);
-                
+
                 textureAtlas.filterMode = FilterMode.Point;
                 textureAtlas.wrapMode = TextureWrapMode.Clamp;
 
@@ -80,8 +164,9 @@ namespace World.Blocks.Atlases
 
                 // Создать или обновить материал (материал для атласа)
                 var reloadedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(atlasAssetPath);
-                var shader = Shader.Find("Shader Graphs/ChunkUnlit");
-                var material = new Material(shader) {
+                var shader = Shader.Find("Custom/BlockTransparentRenderer");
+                var material = new Material(shader)
+                {
                     name = Path.GetFileNameWithoutExtension(materialPath),
                     mainTexture = reloadedTexture
                 };
@@ -95,9 +180,18 @@ namespace World.Blocks.Atlases
                 blockAtlas.Texture = reloadedTexture;
                 blockAtlas.Material = reloadedMaterial;
                 blockAtlas.TextureUVs.Clear();
-                blockAtlas.Epsilon = 1f / textureAtlas.width * 2f;
+
                 for (int i = 0; i < infos.Count; i++)
-                    blockAtlas.TextureUVs.Add(new BlockTextureUV { Id = infos[i].Id, Rect = textureRects[i] });
+                {
+                    Sprite sprite = infos[i].Sprite;
+
+                    blockAtlas.TextureUVs.Add(new BlockTextureUV
+                    {
+                        Id = infos[i].Id,
+                        Rect = textureRects[i],
+                        SpriteSizeUnits = GetTightPixelRectForSprite(sprite)
+                    });
+                }
                 EditorUtility.SetDirty(blockAtlas);
             }
 

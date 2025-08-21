@@ -18,3 +18,13 @@ MonoBehaviour:
   OutlineColor: {r: 0, g: 0, b: 0, a: 0}
   Sprite: {fileID: 0}
   AtlasCategory: 0
+  AvailablePlacements:
+  - Layer: 0
+    StylesOverrides:
+      IsBehind: 0
+      HasCollider: 1
+  - Layer: 1
+    StylesOverrides:
+      IsBehind: 1
+      HasCollider: 0
+  IsTransparent: 1

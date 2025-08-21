@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using World.Blocks.Atlases;
 using World.Blocks;
 using World.Chunks.BlocksStorage;
@@ -12,6 +13,8 @@ namespace World.Chunks
         {
             public BlockAtlasCategory MeshCategory;
             public int QuadIndex;
+            public ushort BlockId;
+            public bool Behind;
         }
 
         private readonly GameObject _gameObject;
@@ -19,7 +22,7 @@ namespace World.Chunks
         private readonly BlockAtlasDatabase _blockAtlasDatabase;
         private readonly List<GameObject> _categoryObjects = new();
         private readonly Dictionary<BlockAtlasCategory, ChunkMeshData> _meshDatas = new();
-        private readonly Dictionary<BlockIndex, RenderInfo> _blockIndexes = new();
+        private readonly Dictionary<BlockIndex, List<RenderInfo>> _blockIndexes = new();
 
         private Chunk _chunk;
 
@@ -32,33 +35,55 @@ namespace World.Chunks
 
         public ChunkMeshBuilder BuildMesh(Chunk chunk)
         {
+            UnsubscribeFromChunkChanges();
+
             _chunk = chunk;
 
-            Dispose();
+            ClearAll();
             SubscribeToChunkChanges();
 
             for (byte x = 0; x < chunk.Size; x++)
                 for (byte y = 0; y < chunk.Size; y++)
                 {
                     BlockIndex index = new BlockIndex(x, y);
-                    if (!chunk.Render.TryGetBlockRenderId(index, out ushort id, out bool behind)) continue;
 
-                    BlockInfo info = _blockDatabase.Get(id);
-                    BlockAtlasInfo atlas = _blockAtlasDatabase.Get(info.AtlasCategory);
+                    // Получаем стэк слоёв (back..front)
+                    var layers = _chunk.Render.GetRenderStack(index, _blockDatabase, _blockAtlasDatabase);
+                    if (layers == null || layers.Count == 0) continue;
 
-                    if (!_meshDatas.TryGetValue(atlas.Category, out ChunkMeshData meshData))
+                    // Для каждого слоя добавляем quad
+                    foreach (var layer in layers)
                     {
-                        meshData = new ChunkMeshData(atlas);
-                        _meshDatas[atlas.Category] = meshData;
+                        BlockInfo info = _blockDatabase.Get(layer.Id);
+                        BlockAtlasInfo atlas = _blockAtlasDatabase.Get(info.AtlasCategory);
+
+                        if (!_meshDatas.TryGetValue(atlas.Category, out ChunkMeshData meshData))
+                        {
+                            meshData = new ChunkMeshData(atlas);
+                            _meshDatas[atlas.Category] = meshData;
+                        }
+
+                        int quadIndex = meshData.AddQuadAt(index, layer.Id, layer.Behind);
+
+                        if (!_blockIndexes.TryGetValue(index, out var list))
+                        {
+                            list = new List<RenderInfo>();
+                            _blockIndexes[index] = list;
+                        }
+
+                        list.Add(new RenderInfo
+                        {
+                            MeshCategory = atlas.Category,
+                            QuadIndex = quadIndex,
+                            BlockId = layer.Id,
+                            Behind = layer.Behind
+                        });
                     }
-
-                    int quadIndex = meshData.AddQuadAt(index, id, behind);
-
-                    _blockIndexes.Add(index, new RenderInfo { MeshCategory = atlas.Category, QuadIndex = quadIndex });
                 }
 
             return this;
         }
+
         public void CreateMesh(ChunkMeshData meshData)
         {
             GameObject go = meshData.ApplyMesh();
@@ -74,90 +99,156 @@ namespace World.Chunks
 
         public void DrawBlock(BlockIndex index)
         {
-            if (!_chunk.Render.TryGetBlockRenderId(index, out ushort id, out bool behind)) return;
+            // Получаем текущий стэк из данных чанка
+            var layers = _chunk.Render.GetRenderStack(index, _blockDatabase, _blockAtlasDatabase);
 
-            ChunkMeshData meshData;
-
-            if (_blockIndexes.TryGetValue(index, out RenderInfo renderInfo))
+            // Если нет старой записи — просто дорисовываем новый стэк
+            if (!_blockIndexes.TryGetValue(index, out var existing))
             {
-                meshData = _RedrawBlock(index, renderInfo, id, behind);
-            }
-            else
-            {
-                meshData = _DrawBlock(index, id, behind);
+                var changed = _DrawBlockStack(index, layers);
+                // refresh только затронутых мешей
+                foreach (var md in changed) md.RefreshMesh();
+                return;
             }
 
-            meshData.RefreshMesh();
+            // Иначе перерисовываем: простая и безопасная стратегия — удалить старый, добавить новый
+            var affectedErase = _EraseBlockStack(index);
+            var affectedDraw = _DrawBlockStack(index, layers);
+
+            // Refresh всех затронутых meshData
+            foreach (var md in affectedErase) md.RefreshMesh();
+            foreach (var md in affectedDraw) md.RefreshMesh();
         }
+
         public void EraseBlock(BlockIndex index)
         {
-            if (!_blockIndexes.TryGetValue(index, out RenderInfo renderInfo)) return;
+            if (!_blockIndexes.TryGetValue(index, out var existing)) return;
 
-            ChunkMeshData meshData;
+            // после удаления возможно появится новый стек (например main->behind)
+            var layers = _chunk.Render.GetRenderStack(index, _blockDatabase, _blockAtlasDatabase);
 
-            if (_chunk.Render.TryGetBlockRenderId(index, out ushort id, out bool behind))
+            var affectedErase = _EraseBlockStack(index);
+
+            // если сейчас есть новые слои — нарисуем их
+            HashSet<ChunkMeshData> affectedDraw = new();
+            if (layers != null && layers.Count > 0)
             {
-                meshData = _RedrawBlock(index, renderInfo, id, behind);
-            }
-            else
-            {
-                meshData = _EraseBlock(index, renderInfo);
+                affectedDraw = _DrawBlockStack(index, layers);
             }
 
-            meshData.RefreshMesh();
+            foreach (var md in affectedErase) md.RefreshMesh();
+            foreach (var md in affectedDraw) md.RefreshMesh();
         }
 
-        private ChunkMeshData _DrawBlock(BlockIndex index, ushort id, bool behind)
+        // добавляет все слои (layers) на указанную координату, возвращает набор затронутых ChunkMeshData
+        private HashSet<ChunkMeshData> _DrawBlockStack(BlockIndex index, List<RenderLayer> layers)
         {
-            BlockInfo info = _blockDatabase.Get(id);
-            BlockAtlasInfo atlas = _blockAtlasDatabase.Get(info.AtlasCategory);
+            var changed = new HashSet<ChunkMeshData>();
+            if (layers == null || layers.Count == 0) return changed;
 
-            if (!_meshDatas.TryGetValue(atlas.Category, out ChunkMeshData meshData))
+            if (!_blockIndexes.TryGetValue(index, out var list))
             {
-                meshData = new ChunkMeshData(atlas);
-                CreateMesh(meshData);
-
-                _meshDatas[atlas.Category] = meshData;
+                list = new List<RenderInfo>();
+                _blockIndexes[index] = list;
             }
 
-            int quadIndex = meshData.AddQuadAt(index, id, behind);
-            _blockIndexes.Add(index, new RenderInfo { MeshCategory = atlas.Category, QuadIndex = quadIndex });
+            foreach (var layer in layers)
+            {
+                BlockInfo info = _blockDatabase.Get(layer.Id);
+                BlockAtlasInfo atlas = _blockAtlasDatabase.Get(info.AtlasCategory);
 
-            return meshData;
+                if (!_meshDatas.TryGetValue(atlas.Category, out ChunkMeshData meshData))
+                {
+                    meshData = new ChunkMeshData(atlas);
+                    CreateMesh(meshData);
+                    _meshDatas[atlas.Category] = meshData;
+                }
+
+                int quadIndex = meshData.AddQuadAt(index, layer.Id, layer.Behind);
+
+                list.Add(new RenderInfo
+                {
+                    MeshCategory = atlas.Category,
+                    QuadIndex = quadIndex,
+                    BlockId = layer.Id,
+                    Behind = layer.Behind
+                });
+
+                changed.Add(meshData);
+            }
+
+            return changed;
         }
-        private ChunkMeshData _RedrawBlock(BlockIndex index, RenderInfo renderInfo, ushort id, bool behind)
+
+        // удаляет все квады, соответствующие данной координате
+        // возвращает набор ChunkMeshData, которые были изменены
+        private HashSet<ChunkMeshData> _EraseBlockStack(BlockIndex index)
         {
-            BlockInfo info = _blockDatabase.Get(id);
-            BlockAtlasInfo atlas = _blockAtlasDatabase.Get(info.AtlasCategory);
-            ChunkMeshData meshData = _meshDatas[renderInfo.MeshCategory];
+            var affected = new HashSet<ChunkMeshData>();
 
-            if (renderInfo.MeshCategory != atlas.Category)
+            if (!_blockIndexes.TryGetValue(index, out var list) || list == null || list.Count == 0)
+                return affected;
+
+            // Удаляем квады в порядке убывания индекса (чтобы корректно работать со смещением "последнего в конец")
+            var toRemove = list.Select(r => r.QuadIndex).OrderByDescending(i => i).ToList();
+
+            foreach (var quadIndex in toRemove)
             {
-                meshData = _EraseBlock(index, renderInfo);
-                meshData.RefreshMesh();
-                meshData = _DrawBlock(index, id, behind);
+                // нужно найти renderInfo соответствующий этому quadIndex (и удалить из списка)
+                var renderInfo = list.FirstOrDefault(r => r.QuadIndex == quadIndex);
+                if (renderInfo.QuadIndex != quadIndex)
+                {
+                    // неожиданный случай — пропускаем
+                    continue;
+                }
+
+                if (!_meshDatas.TryGetValue(renderInfo.MeshCategory, out var meshData))
+                    continue;
+
+                // запомним последний (который может быть перемещён)
+                int last = meshData.QuadCount - 1;
+                // удаляем
+                BlockIndex? moved = meshData.RemoveQuadAt(quadIndex);
+
+                affected.Add(meshData);
+
+                // если что-то переместилось (return moved != null), обновляем соответствующую запись в _blockIndexes
+                if (moved.HasValue)
+                {
+                    var movedCoord = moved.Value;
+                    if (_blockIndexes.TryGetValue(movedCoord, out var movedList))
+                    {
+                        // нашли renderInfo в списке movedCoord с QuadIndex == last и заменим на quadIndex
+                        for (int i = 0; i < movedList.Count; i++)
+                        {
+                            if (movedList[i].QuadIndex == last)
+                            {
+                                var ri = movedList[i];
+                                ri.QuadIndex = quadIndex;
+                                movedList[i] = ri;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // и удаляем соответствующий renderInfo из original list
+                // (используем поиск по original QuadIndex)
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i].QuadIndex == quadIndex)
+                    {
+                        list.RemoveAt(i);
+                        break;
+                    }
+                }
             }
-            else
-            {
-                meshData.UpdateQuadAt(renderInfo.QuadIndex, id, behind);
-            }
 
-            return meshData;
-        }
-        private ChunkMeshData _EraseBlock(BlockIndex index, RenderInfo renderInfo)
-        {
-            ChunkMeshData meshData = _meshDatas[renderInfo.MeshCategory];
-            BlockIndex? moved = meshData.RemoveQuadAt(renderInfo.QuadIndex);
+            // Если после удаления список пуст — удаляем ключ
+            if (list.Count == 0)
+                _blockIndexes.Remove(index);
 
-            if (moved.HasValue && _blockIndexes.TryGetValue(moved.Value, out var mv))
-            {
-                mv.QuadIndex = renderInfo.QuadIndex;
-                _blockIndexes[moved.Value] = mv;
-            }
-
-            _blockIndexes.Remove(index);
-
-            return meshData;
+            return affected;
         }
 
         private void OnChunkBlockSet(BlockIndex index, Block block, BlockLayer layer)
@@ -170,23 +261,28 @@ namespace World.Chunks
         }
         private void SubscribeToChunkChanges()
         {
+            if (_chunk == null) return;
             _chunk.Blocks.Events.OnBlockSet += OnChunkBlockSet;
             _chunk.Blocks.Events.OnBlockBroken += OnChunkBlockBroken;
         }
         private void UnsubscribeFromChunkChanges()
         {
+            if (_chunk == null) return;
             _chunk.Blocks.Events.OnBlockSet -= OnChunkBlockSet;
             _chunk.Blocks.Events.OnBlockBroken -= OnChunkBlockBroken;
         }
-        
-        public void Dispose()
-        {
-            UnsubscribeFromChunkChanges();
 
+        public void ClearAll()
+        {
             _categoryObjects.ForEach(Object.DestroyImmediate);
             _categoryObjects.Clear();
             _blockIndexes.Clear();
             _meshDatas.Clear();
+        }
+        public void Dispose()
+        {
+            UnsubscribeFromChunkChanges();
+            ClearAll();
         }
     }
 }

@@ -10,6 +10,7 @@ namespace World.Blocks.Atlases
     {
         public ushort Id;
         public Rect Rect;
+        public Rect SpriteSizeUnits;
     }
 
     public enum BlockAtlasCategory
@@ -27,7 +28,6 @@ namespace World.Blocks.Atlases
         public Texture2D Texture;
         public Material Material;
         public List<BlockTextureUV> TextureUVs;
-        public float Epsilon;
 
         private Dictionary<ushort, Rect> _cachedUVsDict;
         public Rect GetRect(ushort id)
@@ -36,6 +36,15 @@ namespace World.Blocks.Atlases
                 _cachedUVsDict = TextureUVs.ToDictionary(u => u.Id, u => u.Rect);
 
             return _cachedUVsDict[id];
+        }
+
+        private Dictionary<ushort, Rect> _cachedSpriteSizes;
+        public Rect GetSpriteSize(ushort id)
+        {
+            if (_cachedSpriteSizes == null)
+                _cachedSpriteSizes = TextureUVs.ToDictionary(u => u.Id, u => u.SpriteSizeUnits);
+
+            return _cachedSpriteSizes[id];
         }
     }
 }

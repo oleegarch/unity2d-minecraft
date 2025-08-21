@@ -14,7 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 6
   Name: deepslate_emerald_ore
-  Hardness: 10
-  OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  Hardness: 3
+  OutlineColor: {r: 1, g: 1, b: 1, a: 1}
   Sprite: {fileID: 21300000, guid: 97a2115754bc9c74d9e75b716987ddf5, type: 3}
   AtlasCategory: 2
+  AvailablePlacements:
+  - Layer: 0
+    StylesOverrides:
+      IsBehind: 0
+      HasCollider: 1
+  - Layer: 1
+    StylesOverrides:
+      IsBehind: 1
+      HasCollider: 0
+  IsTransparent: 0

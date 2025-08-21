@@ -17,5 +17,6 @@ namespace World.Blocks
             BlockPlacementVariant.ForMain,
             BlockPlacementVariant.ForBehind
         };
+        public bool IsTransparent;
     }
 }

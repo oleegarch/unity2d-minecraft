@@ -1,9 +1,15 @@
 using System;
 using System.Collections.Generic;
 using World.Blocks;
+using World.Blocks.Atlases;
 
 namespace World.Chunks.BlocksStorage
 {
+    public struct RenderLayer
+    {
+        public ushort Id;
+        public bool Behind; // влияет на "darkness" при рендере
+    }
     // IChunkBlockPlacerWithStyles — модификация блоков по слоям как в IChunkBlockModifier, но с перезаписью стилей
     public interface IChunkBlockPlacerWithStyles
     {
@@ -13,7 +19,7 @@ namespace World.Chunks.BlocksStorage
     // Интерфейс для логики, связанной с визуальной информацией
     public interface IChunkRenderService : IChunkBlockPlacerWithStyles
     {
-        public bool TryGetBlockRenderId(BlockIndex index, out ushort renderId, out bool isBehind);
+        public List<RenderLayer> GetRenderStack(BlockIndex index, BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase);
         public BlockStyles GetBlockStyles(BlockIndex index, BlockLayer layer);
         public void OverrideBlockStyles(BlockIndex index, BlockStyles styles, BlockLayer layer);
         public bool RemoveOverrideBlockStyles(BlockIndex index, BlockLayer layer);
@@ -47,22 +53,30 @@ namespace World.Chunks.BlocksStorage
             return false;
         }
 
-        public bool TryGetBlockRenderId(BlockIndex index, out ushort renderId, out bool isBehind)
+        public List<RenderLayer> GetRenderStack(BlockIndex index, BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase)
         {
-            Block main = _blocks.Get(index, BlockLayer.Main);
-            renderId = main.Id;
-            isBehind = main.IsAir;
+            var stack = new List<RenderLayer>(2);
 
-            if (isBehind)
+            Block main = _blocks.Get(index, BlockLayer.Main);
+            Block behind = _blocks.Get(index, BlockLayer.Behind);
+
+            if (!behind.IsAir)
             {
-                Block behind = _blocks.Get(index, BlockLayer.Behind);
-                if (behind.IsAir)
-                    return false;
-                isBehind = ShouldBehind(index);
-                renderId = behind.Id;
+                BlockInfo mainInfo = blockDatabase.Get(main.Id);
+                bool renderBehind = main.IsAir || mainInfo.IsTransparent;
+                if (renderBehind)
+                {
+                    bool behindDarkness = ShouldBehind(index);
+                    stack.Add(new RenderLayer { Id = behind.Id, Behind = behindDarkness });
+                }
             }
 
-            return true;
+            if (!main.IsAir)
+            {
+                stack.Add(new RenderLayer { Id = main.Id, Behind = false });
+            }
+
+            return stack;
         }
 
         public BlockStyles GetDefaultBlockStyles(BlockLayer layer)

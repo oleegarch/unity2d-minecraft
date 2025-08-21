@@ -60,6 +60,13 @@ namespace World.Chunks.Generator.Providers
             int surfaceY = _surfaceHeightProvider.GetSurfaceY(worldX, seed);
             int caveStartY = surfaceY - biome.Depth;
 
+            // Chest test
+            if (worldX == 1 && worldY - surfaceY == 1)
+            {
+                ushort chestId = _blockDatabase.GetId("chest");
+                return (chestId, Block.AirId);
+            }
+
             // Above surface
             if (worldY > surfaceY)
             {

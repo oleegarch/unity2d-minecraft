@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 85e7b53dab122f34ebc307a8de9de3f7, type: 3}
-  m_Name: stone_diamond_ore
+  m_Name: chest
   m_EditorClassIdentifier: 
-  Id: 21
-  Name: stone_diamond_ore
+  Id: 29
+  Name: chest
   Hardness: 2
-  OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-  Sprite: {fileID: 21300000, guid: 76eb8370d93722948b9f1b8f466c7b76, type: 3}
-  AtlasCategory: 2
+  OutlineColor: {r: 1, g: 1, b: 1, a: 1}
+  Sprite: {fileID: 21300000, guid: c0a92b7a6c40f764e978953cfd1f5085, type: 3}
+  AtlasCategory: 3
   AvailablePlacements:
   - Layer: 0
     StylesOverrides:
@@ -27,4 +27,8 @@ MonoBehaviour:
     StylesOverrides:
       IsBehind: 1
       HasCollider: 0
-  IsTransparent: 0
+  - Layer: 1
+    StylesOverrides:
+      IsBehind: 0
+      HasCollider: 0
+  IsTransparent: 1

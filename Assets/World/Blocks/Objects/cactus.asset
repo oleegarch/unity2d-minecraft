@@ -31,3 +31,4 @@ MonoBehaviour:
     StylesOverrides:
       IsBehind: 0
       HasCollider: 0
+  IsTransparent: 0

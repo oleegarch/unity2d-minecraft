@@ -12,9 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85e7b53dab122f34ebc307a8de9de3f7, type: 3}
   m_Name: sand_red
   m_EditorClassIdentifier: 
-  Id: 15
+  Id: 17
   Name: sand_red
   Hardness: 0.5
   OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   Sprite: {fileID: 21300000, guid: 8f7fe6163bbd5bc489f862f35361d535, type: 3}
   AtlasCategory: 1
+  AvailablePlacements:
+  - Layer: 0
+    StylesOverrides:
+      IsBehind: 0
+      HasCollider: 1
+  - Layer: 1
+    StylesOverrides:
+      IsBehind: 1
+      HasCollider: 0
+  IsTransparent: 0

@@ -6,7 +6,6 @@ using System.Linq;
 using World.Blocks;
 using World.Blocks.Atlases;
 using World.Chunks.Generator;
-using World.Chunks.Generator.Providers;
 
 namespace World.Chunks
 {
@@ -74,7 +73,14 @@ namespace World.Chunks
                     ChunkIndex index = new ChunkIndex(x, y);
                     needed.Add(index);
 
-                    await Storage.GetOrCreateAsync(index, _seed);
+                    try
+                    {
+                        await Storage.GetOrCreateAsync(index, _seed);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogException(ex);
+                    }
                 }
 
             var toRemove = new List<ChunkIndex>();

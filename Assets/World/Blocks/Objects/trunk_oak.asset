@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85e7b53dab122f34ebc307a8de9de3f7, type: 3}
   m_Name: trunk_oak
   m_EditorClassIdentifier: 
-  Id: 26
+  Id: 28
   Name: trunk_oak
-  Hardness: 2
+  Hardness: 1
   OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   Sprite: {fileID: 21300000, guid: aba23e207dfc54a4097473b1e8487cdd, type: 3}
   AtlasCategory: 3
@@ -31,3 +31,4 @@ MonoBehaviour:
     StylesOverrides:
       IsBehind: 0
       HasCollider: 0
+  IsTransparent: 0
