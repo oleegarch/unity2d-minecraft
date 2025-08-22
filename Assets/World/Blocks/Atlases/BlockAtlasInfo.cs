@@ -18,7 +18,9 @@ namespace World.Blocks.Atlases
         Empty,
         MainTerrain,
         Ores,
-        Surface
+        Surface,
+        SurfaceTransparent,
+        WorkbenchTransparent
     }
 
     [CreateAssetMenu(menuName = "Blocks/New BlockAtlasInfo")]
@@ -28,6 +30,7 @@ namespace World.Blocks.Atlases
         public Texture2D Texture;
         public Material Material;
         public List<BlockTextureUV> TextureUVs;
+        public bool IsTransparent;
 
         private Dictionary<ushort, Rect> _cachedUVsDict;
         public Rect GetRect(ushort id)

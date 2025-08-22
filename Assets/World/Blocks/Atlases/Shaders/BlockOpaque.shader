@@ -1,4 +1,4 @@
-Shader "Custom/BlockTransparentRenderer"
+Shader "Custom/BlockOpaque"
 {
     Properties
     {
@@ -6,9 +6,8 @@ Shader "Custom/BlockTransparentRenderer"
     }
     SubShader
     {
-        Tags { "Queue"="Transparent" "RenderType"="Transparent" }
-        Blend SrcAlpha OneMinusSrcAlpha
-        ZWrite Off
+        Tags { "Queue"="Geometry" "RenderType"="Opaque" }
+        ZWrite On
         Cull Off
 
         Pass
@@ -59,6 +58,10 @@ Shader "Custom/BlockTransparentRenderer"
                 float2 uv    = clamp(i.uv, uvMin, uvMax);
 
                 fixed4 col = tex2D(_MainTex, uv);
+
+                // обрезаем "прозрачные пиксели" — превращаем их в пустоту (альфа-тест)
+                clip(col.a - 0.5);
+
                 return col * i.color;
             }
             ENDCG

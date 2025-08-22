@@ -107,4 +107,4 @@ MonoBehaviour:
       y: 0
       width: 1
       height: 1
-  Epsilon: 0.015625
+  IsTransparent: 0

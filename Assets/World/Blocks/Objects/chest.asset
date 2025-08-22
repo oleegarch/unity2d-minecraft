@@ -17,7 +17,7 @@ MonoBehaviour:
   Hardness: 2
   OutlineColor: {r: 1, g: 1, b: 1, a: 1}
   Sprite: {fileID: 21300000, guid: c0a92b7a6c40f764e978953cfd1f5085, type: 3}
-  AtlasCategory: 3
+  AtlasCategory: 5
   AvailablePlacements:
   - Layer: 0
     StylesOverrides:
@@ -31,4 +31,4 @@ MonoBehaviour:
     StylesOverrides:
       IsBehind: 0
       HasCollider: 0
-  IsTransparent: 1
+  HasTransparentPixels: 1

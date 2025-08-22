@@ -164,7 +164,7 @@ namespace World.Blocks.Atlases
 
                 // Создать или обновить материал (материал для атласа)
                 var reloadedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(atlasAssetPath);
-                var shader = Shader.Find("Custom/BlockTransparentRenderer");
+                var shader = Shader.Find(blockAtlas.IsTransparent ? "Custom/BlockTransparent" : "Custom/BlockOpaque");
                 var material = new Material(shader)
                 {
                     name = Path.GetFileNameWithoutExtension(materialPath),

@@ -63,7 +63,7 @@ namespace World.Chunks.BlocksStorage
             if (!behind.IsAir)
             {
                 BlockInfo mainInfo = blockDatabase.Get(main.Id);
-                bool renderBehind = main.IsAir || mainInfo.IsTransparent;
+                bool renderBehind = main.IsAir || mainInfo.HasTransparentPixels;
                 if (renderBehind)
                 {
                     bool behindDarkness = ShouldBehind(index);
