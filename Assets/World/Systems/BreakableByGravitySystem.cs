@@ -40,8 +40,6 @@ namespace World.Systems
             var toBreak = new List<WorldPosition>();
             var visited = new HashSet<WorldPosition>();
 
-            Debug.Log($"BlockBreakMatcher called");
-
             // стартовые кандидаты: блок сверху, слева и справа
             var queue = new Queue<WorldPosition>();
             queue.Enqueue(position + Vector2Int.up);
@@ -59,11 +57,8 @@ namespace World.Systems
                 if (cur.IsAir)
                     continue;
 
-                var info = _manager.BlockDatabase.Get(cur.Id);
-                if (info == null)
-                    continue;
-
                 // блок неподвижный — он поддержка, его не ломаем и дальше от него не идём
+                var info = _manager.BlockDatabase.Get(cur.Id);
                 if (!info.BreakableByGravity)
                     continue;
 
