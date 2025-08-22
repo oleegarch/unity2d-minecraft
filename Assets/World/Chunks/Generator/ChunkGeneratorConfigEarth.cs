@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using World.Chunks.Generator.Steps;
 using World.Chunks.Generator.Providers;
+using World.Systems;
 
 namespace World.Chunks.Generator
 {    
@@ -42,7 +43,8 @@ namespace World.Chunks.Generator
 
             // Compose generator
             var settings = new ChunkGeneratorSettings(_chunkSize);
-            var composite = new ChunkGeneratorPipeline(settings, creationStep, postSteps, cacheSteps);
+            var worldSystems = new IWorldSystem[] { };
+            var composite = new ChunkGeneratorPipeline(settings, creationStep, postSteps, cacheSteps, worldSystems);
 
             // Inject into manager
             return composite;

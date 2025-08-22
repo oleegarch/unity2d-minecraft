@@ -5,6 +5,7 @@ namespace World.Chunks
 {
     public interface IChunksBlockModifier
     {
+        public ChunksBlockEvents Events { get; }
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main);
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer);
         public BlockStyles GetBlockStyles(WorldPosition worldPosition, BlockLayer layer);

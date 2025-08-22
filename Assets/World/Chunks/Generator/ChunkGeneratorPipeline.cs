@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using World.Systems;
 using World.Chunks.Generator.Steps;
 using World.Chunks.BlocksStorage;
 
@@ -21,6 +22,8 @@ namespace World.Chunks.Generator
         public byte ChunkSize { get; }
         public void CacheComputation(RectInt rect, int seed);
         public Task<Chunk> GenerateChunkAsync(ChunkIndex index, int seed);
+        public void RegisterWorldSystems(ChunksManager manager);
+        public void UnregisterWorldSystems(ChunksManager manager);
     }
 
     // Composite generator orchestrates
@@ -31,17 +34,21 @@ namespace World.Chunks.Generator
         private readonly IChunkCreationStep _creationStep;
         private readonly IReadOnlyList<IChunkPostStep> _postProcessingSteps;
         private readonly IReadOnlyList<IChunkCacheStep> _chunkCachingSteps;
+        private readonly IReadOnlyList<IWorldSystem> _worldSystems;
 
         public ChunkGeneratorPipeline(
             ChunkGeneratorSettings settings,
             IChunkCreationStep chunkCreationStep,
             IEnumerable<IChunkPostStep> chunkPostProcessingSteps,
-            IEnumerable<IChunkCacheStep> chunkCachingSteps)
+            IEnumerable<IChunkCacheStep> chunkCachingSteps,
+            IEnumerable<IWorldSystem> worldSystems)
         {
             ChunkSize = settings.ChunkSize;
             _creationStep = chunkCreationStep;
             _postProcessingSteps = chunkPostProcessingSteps.ToList();
             _chunkCachingSteps = chunkCachingSteps.ToList();
+            _chunkCachingSteps = chunkCachingSteps.ToList();
+            _worldSystems = worldSystems.ToList();
         }
 
         public void CacheComputation(RectInt chunksVisibleRect, int seed)
@@ -72,6 +79,17 @@ namespace World.Chunks.Generator
         public async Task<Chunk> GenerateChunkAsync(ChunkIndex index, int seed)
         {
             return await Task.Run(() => GenerateChunk(index, seed));
+        }
+
+        public void RegisterWorldSystems(ChunksManager manager)
+        {
+            foreach (var ws in _worldSystems)
+                ws.RegisterSystem(manager);
+        }
+        public void UnregisterWorldSystems(ChunksManager manager)
+        {
+            foreach (var ws in _worldSystems)
+                ws.UnregisterSystem(manager);
         }
     }
 }
