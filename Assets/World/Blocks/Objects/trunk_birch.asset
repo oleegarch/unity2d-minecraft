@@ -31,4 +31,6 @@ MonoBehaviour:
     StylesOverrides:
       IsBehind: 0
       HasCollider: 0
-  IsTransparent: 0
+  HasTransparentPixels: 0
+  HasCustomCollider: 0
+  BreakableByGravity: 1

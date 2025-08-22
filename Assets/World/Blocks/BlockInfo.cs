@@ -19,5 +19,6 @@ namespace World.Blocks
         };
         public bool HasTransparentPixels;
         public bool HasCustomCollider;
+        public bool BreakableByGravity;
     }
 }

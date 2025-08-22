@@ -32,3 +32,5 @@ MonoBehaviour:
       IsBehind: 0
       HasCollider: 0
   HasTransparentPixels: 1
+  HasCustomCollider: 0
+  BreakableByGravity: 1
