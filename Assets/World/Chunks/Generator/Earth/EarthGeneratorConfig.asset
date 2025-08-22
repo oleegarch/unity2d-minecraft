@@ -48,7 +48,7 @@ MonoBehaviour:
     Depth: 13
   Plants:
   - BiomeName: forest
-    Interval: 10
+    Interval: 11
     OffsetRange: 2
     Plants:
     - TrunkBlockName: trunk_oak
@@ -62,7 +62,7 @@ MonoBehaviour:
       MinHeight: 4
       MaxHeight: 9
   - BiomeName: forest_snow
-    Interval: 10
+    Interval: 11
     OffsetRange: 2
     Plants:
     - TrunkBlockName: trunk_oak
