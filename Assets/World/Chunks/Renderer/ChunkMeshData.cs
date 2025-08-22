@@ -39,12 +39,14 @@ namespace World.Chunks
             var uvRect = BlockAtlas.GetRect(blockId);
 
             // Вершины
-            var spriteSize = BlockAtlas.GetSpriteSize(blockId);
-            var quadVerts = ComputeQuadVerticesForIndex(index, spriteSize);
-            _vertices.Add(quadVerts[0]);
-            _vertices.Add(quadVerts[1]);
-            _vertices.Add(quadVerts[2]);
-            _vertices.Add(quadVerts[3]);
+            float x0 = index.x;
+            float y0 = index.y;
+            float x1 = x0 + 1f;
+            float y1 = y0 + 1f;
+            _vertices.Add(new Vector3(x0, y0, 0f));
+            _vertices.Add(new Vector3(x1, y0, 0f));
+            _vertices.Add(new Vector3(x1, y1, 0f));
+            _vertices.Add(new Vector3(x0, y1, 0f));
 
             // Треугольники
             _triangles.Add(baseVertex);
@@ -71,7 +73,7 @@ namespace World.Chunks
             var color = darkness ? DarknessColor : WhiteColor;
             for (int i = 0; i < 4; i++) _colors.Add(color);
 
-            // Remember
+            // Remember mapping quad -> cell
             _quadCoordMap[quadIndex] = index;
             _isDirty = true;
 
@@ -90,7 +92,7 @@ namespace World.Chunks
             _uvs[start + 2] = new Vector2(uvRect.xMax, uvRect.yMax);
             _uvs[start + 3] = new Vector2(uvRect.xMin, uvRect.yMax);
 
-            // UV1 (границы)
+            // UV1 (bounds)
             var bounds = new Vector4(uvRect.xMin, uvRect.yMin, uvRect.xMax, uvRect.yMax);
             _uvRects[start + 0] = bounds;
             _uvRects[start + 1] = bounds;
@@ -101,19 +103,21 @@ namespace World.Chunks
             for (int i = 0; i < 4; i++)
                 _colors[start + i] = color;
 
-            // Обновляем вершины тоже (если спрайт другой размера)
+            // Обновляем вершины тоже
             if (!_quadCoordMap.TryGetValue(quadIndex, out var index))
             {
                 _isDirty = true;
                 return;
             }
 
-            var spriteSize = BlockAtlas.GetSpriteSize(blockId);
-            var quadVerts = ComputeQuadVerticesForIndex(index, spriteSize);
-            _vertices[start + 0] = quadVerts[0];
-            _vertices[start + 1] = quadVerts[1];
-            _vertices[start + 2] = quadVerts[2];
-            _vertices[start + 3] = quadVerts[3];
+            float x0 = index.x;
+            float y0 = index.y;
+            float x1 = x0 + 1f;
+            float y1 = y0 + 1f;
+            _vertices[start + 0] = new Vector3(x0, y0, 0f);
+            _vertices[start + 1] = new Vector3(x1, y0, 0f);
+            _vertices[start + 2] = new Vector3(x1, y1, 0f);
+            _vertices[start + 3] = new Vector3(x0, y1, 0f);
 
             _isDirty = true;
         }
@@ -198,22 +202,6 @@ namespace World.Chunks
             _mesh.SetColors(_colors);
             _mesh.RecalculateBounds();
             _isDirty = false;
-        }
-
-        private Vector3[] ComputeQuadVerticesForIndex(BlockIndex index, Rect sizeUnits)
-        {
-            float x0 = index.x + sizeUnits.x;
-            float y0 = index.y + sizeUnits.y;
-            float x1 = x0 + sizeUnits.width;
-            float y1 = y0 + sizeUnits.height;
-
-            return new[]
-            {
-                new Vector3(x0, y0, 0f),
-                new Vector3(x1, y0, 0f),
-                new Vector3(x1, y1, 0f),
-                new Vector3(x0, y1, 0f)
-            };
         }
     }
 }

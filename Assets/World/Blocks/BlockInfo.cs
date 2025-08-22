@@ -18,5 +18,6 @@ namespace World.Blocks
             BlockPlacementVariant.ForBehind
         };
         public bool HasTransparentPixels;
+        public bool HasCustomCollider;
     }
 }

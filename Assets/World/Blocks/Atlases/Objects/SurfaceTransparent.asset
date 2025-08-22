@@ -21,8 +21,34 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 0
+      width: 0.5
+      height: 0.25
+    SpriteSizeUnits:
+      serializedVersion: 2
+      x: 0
+      y: 0
       width: 1
       height: 1
+  - Id: 14
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.3125
+      width: 0.5
+      height: 0.25
+    SpriteSizeUnits:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+  - Id: 15
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.625
+      width: 0.5
+      height: 0.25
     SpriteSizeUnits:
       serializedVersion: 2
       x: 0

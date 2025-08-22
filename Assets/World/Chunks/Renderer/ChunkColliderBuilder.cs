@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using World.Blocks;
 using World.Chunks.BlocksStorage;
+using World.Blocks.Atlases;
 
 namespace World.Chunks
 {
@@ -20,58 +21,120 @@ namespace World.Chunks
         }
 
         private readonly PolygonCollider2D _collider;
+        private readonly BlockDatabase _blockDatabase;
+        private readonly BlockAtlasDatabase _blockAtlasDatabase;
+
         private List<Vector2[]> _paths;
         private Chunk _chunk;
 
-        public ChunkColliderBuilder(PolygonCollider2D collider)
+        public ChunkColliderBuilder(PolygonCollider2D collider, BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase)
         {
             _collider = collider;
+            _blockDatabase = blockDatabase;
+            _blockAtlasDatabase = blockAtlasDatabase;
             _paths = new List<Vector2[]>();
         }
 
         public ChunkColliderBuilder BuildCollider(Chunk chunk)
         {
             _chunk = chunk;
-            
+
             Dispose();
             SubscribeToChunkChanges();
 
             int size = chunk.Size;
             var edges = new List<Edge>(size * size * 4);
 
-            bool IsFilled(int x, int y) => !chunk.Blocks.Get((byte)x, (byte)y, BlockLayer.Main).IsAir;
+            var hasCustom = new bool[size, size];
+            var spriteRects = new Rect[size, size];
 
-            // собрираем все рёбра, отделяющие заполненные клетки от пустых
+            for (int xi = 0; xi < size; xi++)
+            {
+                for (int yi = 0; yi < size; yi++)
+                {
+                    var block = chunk.Blocks.Get((byte)xi, (byte)yi, BlockLayer.Main);
+                    if (block.IsAir) continue;
+
+                    var info = _blockDatabase.Get(block.Id);
+                    if (info.HasCustomCollider)
+                    {
+                        var atlasInfo = _blockAtlasDatabase.Get(info.AtlasCategory);
+                        spriteRects[xi, yi] = atlasInfo.GetSpriteSize(block.Id);
+                        hasCustom[xi, yi] = true;
+                    }
+                }
+            }
+
+            bool IsBlockAir(int x, int y)
+            {
+                if (x < 0 || y < 0 || x >= size || y >= size) return true;
+                return chunk.Blocks.Get((byte)x, (byte)y, BlockLayer.Main).IsAir;
+            }
+            bool HasCustomCollider(int x, int y, out Rect spriteRect)
+            {
+                if (x < 0 || y < 0 || x >= size || y >= size)
+                {
+                    spriteRect = Rect.zero;
+                    return false;
+                }
+
+                if (hasCustom[x, y])
+                {
+                    spriteRect = spriteRects[x, y];
+                    return true;
+                }
+
+                spriteRect = Rect.zero;
+                return false;
+            }
+
+            // собираем все рёбра, отделяющие заполненные клетки от пустых (для сетки 1x1)
             for (int x = 0; x < size; x++)
             {
                 for (int y = 0; y < size; y++)
                 {
-                    if (!IsFilled(x, y))
+                    if (IsBlockAir(x, y))
                         continue;
 
-                    // левая граница
-                    if (x == 0 || !IsFilled(x - 1, y))
+                    // если у клетки кастомный коллайдер — добавляем её кастомный путь и пропускаем сетку для этой клетки
+                    if (HasCustomCollider(x, y, out Rect spriteRect))
+                    {
+                        float x0 = x + spriteRect.x;
+                        float y0 = y + spriteRect.y;
+                        float x1 = x0 + spriteRect.width;
+                        float y1 = y0 + spriteRect.height;
+
+                        _paths.Add(new Vector2[]
+                        {
+                            new Vector2(x0, y0),
+                            new Vector2(x1, y0),
+                            new Vector2(x1, y1),
+                            new Vector2(x0, y1)
+                        });
+
+                        continue;
+                    }
+
+                    // Для остальных клеток (обычных 1x1) — добавляем ребра
+                    if (x == 0 || IsBlockAir(x - 1, y) || HasCustomCollider(x - 1, y, out _))
                         edges.Add(new Edge(
                             new Vector2(x, y + 1),
                             new Vector2(x, y)
                         ));
 
-                    // нижняя граница
-                    if (y == 0 || !IsFilled(x, y - 1))
+                    if (y == 0 || IsBlockAir(x, y - 1) || HasCustomCollider(x, y - 1, out _))
                         edges.Add(new Edge(
                             new Vector2(x, y),
                             new Vector2(x + 1, y)
                         ));
 
-                    // правая граница
-                    if (x == size - 1 || !IsFilled(x + 1, y))
+                    if (x == size - 1 || IsBlockAir(x + 1, y) || HasCustomCollider(x + 1, y, out _))
                         edges.Add(new Edge(
                             new Vector2(x + 1, y),
                             new Vector2(x + 1, y + 1)
                         ));
 
-                    // верхняя граница
-                    if (y == size - 1 || !IsFilled(x, y + 1))
+                    if (y == size - 1 || IsBlockAir(x, y + 1) || HasCustomCollider(x, y + 1, out _))
                         edges.Add(new Edge(
                             new Vector2(x + 1, y + 1),
                             new Vector2(x, y + 1)
@@ -79,7 +142,7 @@ namespace World.Chunks
                 }
             }
 
-            // собрираем рёбра в замкнутые контуры
+            // собираем рёбра в замкнутые контуры
             var edgeSet = new List<Edge>(edges);
 
             while (edgeSet.Count > 0)
@@ -130,6 +193,7 @@ namespace World.Chunks
 
             return this;
         }
+
         public void ApplyCollider()
         {
             _collider.pathCount = _paths.Count;

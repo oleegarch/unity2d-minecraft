@@ -21,7 +21,7 @@ namespace World.Chunks
         public void Initialize(BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase)
         {
             Mesh = new ChunkMeshBuilder(gameObject, blockDatabase, blockAtlasDatabase);
-            Collider = new ChunkColliderBuilder(_polygonCollider2D);
+            Collider = new ChunkColliderBuilder(_polygonCollider2D, blockDatabase, blockAtlasDatabase);
         }
 
         public void Render(Chunk chunk)

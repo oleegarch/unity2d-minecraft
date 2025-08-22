@@ -16,38 +16,12 @@ MonoBehaviour:
   Texture: {fileID: 2800000, guid: bcace04f7a7f56e40903d00dfc6901c0, type: 2}
   Material: {fileID: 2100000, guid: a55780e448c7b7b4db869196c226073d, type: 2}
   TextureUVs:
-  - Id: 14
-    Rect:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.25
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
-  - Id: 15
-    Rect:
-      serializedVersion: 2
-      x: 0.3125
-      y: 0
-      width: 0.25
-      height: 0.25
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
   - Id: 27
     Rect:
       serializedVersion: 2
-      x: 0.625
+      x: 0
       y: 0
-      width: 0.25
+      width: 0.5
       height: 0.25
     SpriteSizeUnits:
       serializedVersion: 2
@@ -60,7 +34,7 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 0.3125
-      width: 0.25
+      width: 0.5
       height: 0.25
     SpriteSizeUnits:
       serializedVersion: 2
