@@ -89,7 +89,7 @@ namespace World.Chunks.Generator
         public void UnregisterWorldSystems(ChunksManager manager)
         {
             foreach (var ws in _worldSystems)
-                ws.UnregisterSystem(manager);
+                ws.Dispose();
         }
     }
 }

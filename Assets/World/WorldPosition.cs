@@ -35,12 +35,6 @@ namespace World
             return new BlockIndex((byte)localX, (byte)localY);
         }
 
-        // Конвертировать в Vector3Int
-        public Vector3Int ToVector3Int()
-        {
-            return new Vector3Int(x, y, 0);
-        }
-
         public override string ToString() => $"WorldPosition({x}, {y})";
 
         public bool Equals(WorldPosition other) => x == other.x && y == other.y;
@@ -48,7 +42,23 @@ namespace World
 
         public override int GetHashCode() => HashCode.Combine(x, y);
 
+        // сравнение
         public static bool operator ==(WorldPosition a, WorldPosition b) => a.x == b.x && a.y == b.y;
         public static bool operator !=(WorldPosition a, WorldPosition b) => !(a == b);
+
+        // Конвертировать в Vector3Int
+        public Vector3Int ToVector3Int() => new Vector3Int(x, y, 0);
+
+        // Сложение WorldPosition + Vector2Int
+        public static WorldPosition operator +(WorldPosition a, Vector2Int b) => new WorldPosition(a.x + b.x, a.y + b.y);
+        public static WorldPosition operator +(Vector2Int a, WorldPosition b) => new WorldPosition(a.x + b.x, a.y + b.y);
+
+        // Вычитание
+        public static WorldPosition operator -(WorldPosition a, Vector2Int b) => new WorldPosition(a.x - b.x, a.y - b.y);
+        public static WorldPosition operator -(Vector2Int a, WorldPosition b) => new WorldPosition(a.x - b.x, a.y - b.y);
+
+        // Явное преобразование
+        public static implicit operator Vector2Int(WorldPosition a) => new Vector2Int(a.x, a.y);
+        public static implicit operator WorldPosition(Vector2Int a) => new WorldPosition(a.x, a.y);
     }
 }

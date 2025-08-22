@@ -35,9 +35,12 @@ namespace World.Chunks
         private void Awake()
         {
             Generator = _chunkGeneratorConfig.GetChunkGenerator();
-            Generator.RegisterWorldSystems(this);
             Storage = new ChunksStorage(Generator, _chunkRendererPrefab, _chunksParent, this);
             Blocks = new ChunksBlockModifier(Storage);
+        }
+        private void Start()
+        {
+            Generator.RegisterWorldSystems(this);
         }
 
         private void OnEnable()

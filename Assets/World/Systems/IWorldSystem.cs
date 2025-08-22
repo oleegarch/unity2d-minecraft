@@ -1,10 +1,10 @@
+using System;
 using World.Chunks;
 
 namespace World.Systems
 {
-    public interface IWorldSystem
+    public interface IWorldSystem : IDisposable
     {
         public void RegisterSystem(ChunksManager manager);
-        public void UnregisterSystem(ChunksManager manager);
     }
 }
