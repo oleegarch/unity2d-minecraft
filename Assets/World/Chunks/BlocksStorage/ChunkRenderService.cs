@@ -14,6 +14,7 @@ namespace World.Chunks.BlocksStorage
     public interface IChunkBlockPlacerWithStyles
     {
         public void Set(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer);
+        public void SetSilent(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer);
         public bool TrySet(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer);
     }
     // Интерфейс для логики, связанной с визуальной информацией
@@ -41,6 +42,11 @@ namespace World.Chunks.BlocksStorage
         {
             OverrideBlockStyles(index, overrided, layer);
             _blocks.Set(index, block, layer);
+        }
+        public void SetSilent(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer)
+        {
+            OverrideBlockStyles(index, overrided, layer);
+            _blocks.SetSilent(index, block, layer);
         }
         public bool TrySet(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer)
         {

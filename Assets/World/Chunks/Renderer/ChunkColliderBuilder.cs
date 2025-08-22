@@ -52,7 +52,7 @@ namespace World.Chunks
             {
                 for (int yi = 0; yi < size; yi++)
                 {
-                    var block = chunk.Blocks.Get((byte)xi, (byte)yi, BlockLayer.Main);
+                    var block = chunk.Blocks.Get(new BlockIndex((byte)xi, (byte)yi), BlockLayer.Main);
                     if (block.IsAir) continue;
 
                     var info = _blockDatabase.Get(block.Id);
@@ -68,7 +68,7 @@ namespace World.Chunks
             bool IsBlockAir(int x, int y)
             {
                 if (x < 0 || y < 0 || x >= size || y >= size) return true;
-                return chunk.Blocks.Get((byte)x, (byte)y, BlockLayer.Main).IsAir;
+                return chunk.Blocks.Get(new BlockIndex((byte)x, (byte)y), BlockLayer.Main).IsAir;
             }
             bool HasCustomCollider(int x, int y, out Rect spriteRect)
             {

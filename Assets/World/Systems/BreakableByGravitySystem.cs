@@ -40,6 +40,8 @@ namespace World.Systems
             var toBreak = new List<WorldPosition>();
             var visited = new HashSet<WorldPosition>();
 
+            Debug.Log($"BlockBreakMatcher called");
+
             // стартовые кандидаты: блок сверху, слева и справа
             var queue = new Queue<WorldPosition>();
             queue.Enqueue(position + Vector2Int.up);
@@ -85,19 +87,19 @@ namespace World.Systems
             toBreak.Sort((a, b) => b.y.CompareTo(a.y));
 
             foreach (var bp in toBreak)
-                _manager.Blocks.Break(bp, layer);
+                _manager.Blocks.Break(bp, layer, BlockBrokeSource.System);
         }
 
         public void RegisterSystem(ChunksManager manager)
         {
             _manager = manager;
-            _manager.Blocks.Events.OnBlockBroken += BlockBreakMatcher;
+            _manager.Blocks.Events.OnBlockBrokenByPlayer += BlockBreakMatcher;
         }
 
         public void Dispose()
         {
             if (_manager != null)
-                _manager.Blocks.Events.OnBlockBroken -= BlockBreakMatcher;
+                _manager.Blocks.Events.OnBlockBrokenByPlayer -= BlockBreakMatcher;
             _manager = null;
         }
     }

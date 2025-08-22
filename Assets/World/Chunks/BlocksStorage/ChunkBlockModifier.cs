@@ -8,17 +8,16 @@ namespace World.Chunks
     {
         public IBlockLayerStorage GetLayer(BlockLayer layer);
         public Block Get(BlockIndex index, BlockLayer layer);
-        public Block Get(byte x, byte y, BlockLayer layer);
     }
 
     // IChunkBlockModifier — чтение + модификация + события
     public interface IChunkBlockModifier : IChunkBlockAccessor
     {
         public ChunkBlockEvents Events { get; }
-        public void Set(BlockIndex index, Block block, BlockLayer layer);
-        public void Set(byte x, byte y, ushort blockId, BlockLayer layer);
-        public bool TrySet(BlockIndex index, Block block, BlockLayer layer);
-        public bool TryUnset(BlockIndex index, BlockLayer layer);
+        public void SetSilent(BlockIndex index, Block block, BlockLayer layer);
+        public void Set(BlockIndex index, Block block, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player);
+        public bool TrySet(BlockIndex index, Block block, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player);
+        public bool TryUnset(BlockIndex index, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player);
     }
     public class ChunkBlockModifier : IChunkBlockModifier
     {
@@ -30,37 +29,36 @@ namespace World.Chunks
         public IBlockLayerStorage GetLayer(BlockLayer layer) => _blockLayers[(int)layer];
 
         public Block Get(BlockIndex index, BlockLayer layer) => _blockLayers[(int)layer].Get(index);
-        public Block Get(byte x, byte y, BlockLayer layer) => Get(new BlockIndex(x, y), layer);
 
-        public void Set(BlockIndex index, Block block, BlockLayer layer)
+        public void SetSilent(BlockIndex index, Block block, BlockLayer layer)
+        {
+            _blockLayers[(int)layer].Set(index, block);
+        }
+        public void Set(BlockIndex index, Block block, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player)
         {
             _blockLayers[(int)layer].Set(index, block);
 
             if (block.IsAir)
-                Events.InvokeBlockBroken(index, block, layer);
+                Events.InvokeBlockBroken(index, block, layer, source);
             else
-                Events.InvokeBlockSet(index, block, layer);
-        }
-        public void Set(byte x, byte y, ushort blockId, BlockLayer layer)
-        {
-            Set(new BlockIndex(x, y), new Block(blockId), layer);
+                Events.InvokeBlockSet(index, block, layer, source);
         }
 
-        public bool TrySet(BlockIndex index, Block block, BlockLayer layer)
+        public bool TrySet(BlockIndex index, Block block, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player)
         {
             if (Get(index, layer).IsAir)
             {
-                Set(index, block, layer);
+                Set(index, block, layer, source);
                 return true;
             }
             return false;
         }
-        public bool TryUnset(BlockIndex index, BlockLayer layer)
+        public bool TryUnset(BlockIndex index, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player)
         {
             Block toRemoveBlock = Get(index, layer);
             if (!toRemoveBlock.IsAir)
             {
-                Set(index, Block.Air, layer);
+                Set(index, Block.Air, layer, source);
                 return true;
             }
             return false;

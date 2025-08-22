@@ -3,15 +3,20 @@ using World.Chunks.BlocksStorage;
 
 namespace World.Chunks
 {
+    public enum BlockBrokeSource
+    {
+        Player,
+        System
+    }
     public interface IChunksBlockModifier
     {
         public ChunksBlockEvents Events { get; }
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main);
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer);
         public BlockStyles GetBlockStyles(WorldPosition worldPosition, BlockLayer layer);
-        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles);
-        public bool Break(WorldPosition worldPosition, BlockLayer layer);
-        public bool BreakVisible(WorldPosition worldPosition);
+        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles, BlockBrokeSource source = BlockBrokeSource.Player);
+        public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player);
+        public bool BreakVisible(WorldPosition worldPosition, BlockBrokeSource source = BlockBrokeSource.Player);
     }
     public class ChunksBlockModifier : IChunksBlockModifier
     {
@@ -67,7 +72,7 @@ namespace World.Chunks
             return BlockStyles.ByLayer[(int)layer];
         }
 
-        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles)
+        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles, BlockBrokeSource source = BlockBrokeSource.Player)
         {
             if (!_chunksStorage.TryGetChunk(worldPosition, out var chunk))
                 return false;
@@ -75,30 +80,30 @@ namespace World.Chunks
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
             if (chunk.Render.TrySet(blockIndex, block, styles, layer))
             {
-                Events.InvokeBlockSet(worldPosition, block, layer);
+                Events.InvokeBlockSet(worldPosition, block, layer, source);
                 return true;
             }
 
             return false;
         }
 
-        public bool Break(WorldPosition worldPosition, BlockLayer layer)
+        public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player)
         {
             if (!_chunksStorage.TryGetChunk(worldPosition, out var chunk))
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
             Block block = chunk.Blocks.Get(blockIndex, layer);
-            if (chunk.Blocks.TryUnset(blockIndex, layer))
+            if (chunk.Blocks.TryUnset(blockIndex, layer, source))
             {
-                Events.InvokeBlockBroken(worldPosition, block, layer);
+                Events.InvokeBlockBroken(worldPosition, block, layer, source);
                 return true;
             }
 
             return false;
         }
 
-        public bool BreakVisible(WorldPosition worldPosition)
+        public bool BreakVisible(WorldPosition worldPosition, BlockBrokeSource source = BlockBrokeSource.Player)
         {
             if (!_chunksStorage.TryGetChunk(worldPosition, out var chunk))
                 return false;
@@ -113,9 +118,9 @@ namespace World.Chunks
                 block = chunk.Blocks.Get(blockIndex, layer);
             }
 
-            if (chunk.Blocks.TryUnset(blockIndex, layer))
+            if (chunk.Blocks.TryUnset(blockIndex, layer, source))
             {
-                Events.InvokeBlockBroken(worldPosition, block, layer);
+                Events.InvokeBlockBroken(worldPosition, block, layer, source);
                 return true;
             }
 

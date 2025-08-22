@@ -129,7 +129,7 @@ namespace World.Chunks.Generator.Providers
                     new WorldPosition(worldX, y),
                     out BlockIndex blockIndex))
                 {
-                    chunk.Render.Set(blockIndex, trunkBlock, BlockStyles.BehindLikeMain, BlockLayer.Behind);
+                    chunk.Render.SetSilent(blockIndex, trunkBlock, BlockStyles.BehindLikeMain, BlockLayer.Behind);
                 }
             }
 
@@ -156,7 +156,7 @@ namespace World.Chunks.Generator.Providers
                             new WorldPosition(leafX, leafY),
                             out BlockIndex blockIndex))
                         {
-                            chunk.Render.Set(blockIndex, leafBlock, BlockStyles.BehindLikeMain, BlockLayer.Behind);
+                            chunk.Render.SetSilent(blockIndex, leafBlock, BlockStyles.BehindLikeMain, BlockLayer.Behind);
                         }
                     }
                 }
