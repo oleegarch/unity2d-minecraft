@@ -38,7 +38,7 @@ namespace World.Chunks
             int baseVertex = _vertices.Count;
             var uvRect = BlockAtlas.GetRect(blockId);
 
-            // 1) Вершины
+            // Вершины
             var spriteSize = BlockAtlas.GetSpriteSize(blockId);
             var quadVerts = ComputeQuadVerticesForIndex(index, spriteSize);
             _vertices.Add(quadVerts[0]);
@@ -46,7 +46,7 @@ namespace World.Chunks
             _vertices.Add(quadVerts[2]);
             _vertices.Add(quadVerts[3]);
 
-            // 2) Треугольники — как было
+            // Треугольники
             _triangles.Add(baseVertex);
             _triangles.Add(baseVertex + 2);
             _triangles.Add(baseVertex + 1);
@@ -54,13 +54,13 @@ namespace World.Chunks
             _triangles.Add(baseVertex + 3);
             _triangles.Add(baseVertex + 2);
 
-            // 3) UV0 — как у тебя (хочешь — без eps)
+            // UV0
             _uvs.Add(new Vector2(uvRect.xMin, uvRect.yMin));
             _uvs.Add(new Vector2(uvRect.xMax, uvRect.yMin));
             _uvs.Add(new Vector2(uvRect.xMax, uvRect.yMax));
             _uvs.Add(new Vector2(uvRect.xMin, uvRect.yMax));
 
-            // 4) UV1: границы прямоугольника тайла (одинаковые для всех 4 вершин квада)
+            // UV1 (bounds)
             var bounds = new Vector4(uvRect.xMin, uvRect.yMin, uvRect.xMax, uvRect.yMax);
             _uvRects.Add(bounds);
             _uvRects.Add(bounds);
@@ -71,6 +71,8 @@ namespace World.Chunks
             var color = darkness ? DarknessColor : WhiteColor;
             for (int i = 0; i < 4; i++) _colors.Add(color);
 
+            // Remember
+            _quadCoordMap[quadIndex] = index;
             _isDirty = true;
 
             return quadIndex;
@@ -132,7 +134,7 @@ namespace World.Chunks
                 {
                     _vertices[dst + i] = _vertices[removeStart + i];
                     _uvs[dst + i] = _uvs[removeStart + i];
-                    _uvRects[dst + i] = _uvRects[removeStart + i]; // <-- добавь это
+                    _uvRects[dst + i] = _uvRects[removeStart + i];
                     _colors[dst + i] = _colors[removeStart + i];
                 }
                 _quadCoordMap[quadIndex] = movedCoord;
@@ -140,7 +142,7 @@ namespace World.Chunks
 
             _vertices.RemoveRange(removeStart, 4);
             _uvs.RemoveRange(removeStart, 4);
-            _uvRects.RemoveRange(removeStart, 4); // <-- добавь это
+            _uvRects.RemoveRange(removeStart, 4);
             _colors.RemoveRange(removeStart, 4);
 
             // Rebuild triangles
