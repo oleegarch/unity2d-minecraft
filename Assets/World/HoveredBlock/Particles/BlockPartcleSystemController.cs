@@ -6,15 +6,19 @@ namespace World.HoveredBlock.Particles
     public class BlockParticleSystemController : MonoBehaviour
     {
         [SerializeField] private Material _instanceMaterial;
-        [SerializeField] private ParticleSystem _particleSystem;
-        [SerializeField] private ParticleSystemRenderer _psRenderer;
+        [SerializeField] private ParticleSystem _breakingParticles;
+
+        private ParticleSystemRenderer _breakingRenderer;
 
         private void Awake()
         {
-            Stop();
+            _breakingRenderer = _breakingParticles.GetComponent<ParticleSystemRenderer>();
+        }
+        private void Start()
+        {
+            StopBlockBreaking();
         }
 
-        // Применить текстуру частиц из BlockInfo к этой ParticleSystem.
         public void AnimateBlockBreaking(WorldPosition position, BlockInfo block)
         {
             transform.position = position.ToVector3Int();
@@ -28,12 +32,12 @@ namespace World.HoveredBlock.Particles
             }
 
             _instanceMaterial.mainTexture = texture;
-            _psRenderer.material = _instanceMaterial;
-            _particleSystem.Play();
+            _breakingRenderer.material = _instanceMaterial;
+            _breakingParticles.Play();
         }
-        public void Stop()
+        public void StopBlockBreaking()
         {
-            _particleSystem.Stop();
+            _breakingParticles.Stop();
         }
     }
 }

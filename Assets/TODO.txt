@@ -1,4 +1,3 @@
-— Анимация поломки блока
 — Отмасштабировать BlockAtlasCategory
 — Перенести Camera объект в World структуру префаба
 — В chunk.TrySetBlock и подобные методы можно передавать BlockIndex как ref/in

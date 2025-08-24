@@ -122,7 +122,7 @@ namespace World.HoveredBlock
             StopCoroutine(_currentBreakingCoroutine);
             _currentBreakingCoroutine = null;
             _breakingMask.localScale = Vector3.zero;
-            _particlesController.Stop();
+            _particlesController.StopBlockBreaking();
         }
 
         private IEnumerator BreakingProcess(WorldPosition worldPosition)
@@ -160,7 +160,7 @@ namespace World.HoveredBlock
 
             OnBlockBreakAttempt?.Invoke(worldPosition);
             _breakingMask.localScale = Vector3.zero;
-            _particlesController.Stop();
+            _particlesController.StopBlockBreaking();
         }
     }
 }
