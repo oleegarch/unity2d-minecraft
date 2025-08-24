@@ -47,6 +47,9 @@ TagManager:
   - name: Chunks
     uniqueID: 278559775
     locked: 0
+  - name: BlockParticles
+    uniqueID: 3145116309
+    locked: 0
   - name: BlockUI
     uniqueID: 2693136387
     locked: 0

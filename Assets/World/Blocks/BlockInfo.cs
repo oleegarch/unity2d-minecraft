@@ -17,8 +17,17 @@ namespace World.Blocks
             BlockPlacementVariant.ForMain,
             BlockPlacementVariant.ForBehind
         };
+
+        [Tooltip("Имеет ли спрайт пиксели с прозрачностью")]
         public bool HasTransparentPixels;
+
+        [Tooltip("Если коллайдер не ровный квадрат 1x1 — нужно поставить флаг true")]
         public bool HasCustomCollider;
+
+        [Tooltip("Ломается ли блок если у него нет опоры")]
         public bool BreakableByGravity;
+
+        [Tooltip("Текстура для системы частиц (создаётся автоматически при упаковке атласа).")]
+        public Texture2D ParticleTexture;
     }
 }

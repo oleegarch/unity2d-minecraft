@@ -7,6 +7,7 @@ using World.Cameras;
 using World.InputActions;
 using World.Entities.Player;
 using World.Chunks;
+using World.HoveredBlock.Particles;
 
 namespace World.HoveredBlock
 {
@@ -20,6 +21,7 @@ namespace World.HoveredBlock
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private Transform _breakingMask;
         [SerializeField] private PlayerController _playerController;
+        [SerializeField] private BlockParticleSystemController _particlesController;
 
         [Header("Settings")]
         [SerializeField] private float _cameraDistanceChangedForCancelBreaking = 0.5f;
@@ -120,6 +122,7 @@ namespace World.HoveredBlock
             StopCoroutine(_currentBreakingCoroutine);
             _currentBreakingCoroutine = null;
             _breakingMask.localScale = Vector3.zero;
+            _particlesController.Stop();
         }
 
         private IEnumerator BreakingProcess(WorldPosition worldPosition)
@@ -139,6 +142,7 @@ namespace World.HoveredBlock
             BlockInfo hoveredInfo = _worldManager.BlockDatabase.Get(hoveredBlock.Id);
 
             _targetSpriteRenderer.color = hoveredInfo.OutlineColor;
+            _particlesController.AnimateBlockBreaking(worldPosition, hoveredInfo);
 
             float hardness = hoveredInfo.Hardness;
             float passed = 0f;
@@ -156,6 +160,7 @@ namespace World.HoveredBlock
 
             OnBlockBreakAttempt?.Invoke(worldPosition);
             _breakingMask.localScale = Vector3.zero;
+            _particlesController.Stop();
         }
     }
 }

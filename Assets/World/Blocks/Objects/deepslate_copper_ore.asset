@@ -27,4 +27,7 @@ MonoBehaviour:
     StylesOverrides:
       IsBehind: 1
       HasCollider: 0
-  IsTransparent: 0
+  HasTransparentPixels: 0
+  HasCustomCollider: 0
+  BreakableByGravity: 0
+  ParticleTexture: {fileID: 2800000, guid: e60197704b9c34748b36d43efdfd628c, type: 2}

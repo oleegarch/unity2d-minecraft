@@ -34,3 +34,4 @@ MonoBehaviour:
   HasTransparentPixels: 0
   HasCustomCollider: 0
   BreakableByGravity: 1
+  ParticleTexture: {fileID: 2800000, guid: 120f36c463ad4d643933d2279c9fd729, type: 2}
