@@ -17,7 +17,8 @@ MonoBehaviour:
   Hardness: 0
   OutlineColor: {r: 0, g: 0, b: 0, a: 0}
   Sprite: {fileID: 0}
-  AtlasCategory: 0
+  AtlasCategory:
+    name: Empty
   AvailablePlacements:
   - Layer: 0
     StylesOverrides:
@@ -27,4 +28,7 @@ MonoBehaviour:
     StylesOverrides:
       IsBehind: 1
       HasCollider: 0
-  IsTransparent: 1
+  HasTransparentPixels: 0
+  HasCustomCollider: 0
+  BreakableByGravity: 0
+  ParticleTexture: {fileID: 0}

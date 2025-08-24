@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17eafd19ac997ec45a19fe595171cdef, type: 3}
   m_Name: Ores
   m_EditorClassIdentifier: 
-  Category: 2
+  Category:
+    name: Ores
   Texture: {fileID: 2800000, guid: 1c276e43b914dab408ec128ec860b8de, type: 2}
   Material: {fileID: 2100000, guid: bee586c4a93045741bf82018fa4e558c, type: 2}
   TextureUVs:

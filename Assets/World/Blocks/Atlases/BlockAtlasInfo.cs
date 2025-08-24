@@ -13,16 +13,6 @@ namespace World.Blocks.Atlases
         public Rect SpriteSizeUnits;
     }
 
-    public enum BlockAtlasCategory
-    {
-        Empty,
-        MainTerrain,
-        Ores,
-        Surface,
-        SurfaceTransparent,
-        WorkbenchTransparent
-    }
-
     [CreateAssetMenu(menuName = "Blocks/New BlockAtlasInfo")]
     public class BlockAtlasInfo : ScriptableObject
     {

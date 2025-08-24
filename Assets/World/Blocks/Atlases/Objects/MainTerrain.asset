@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17eafd19ac997ec45a19fe595171cdef, type: 3}
   m_Name: MainTerrain
   m_EditorClassIdentifier: 
-  Category: 1
+  Category:
+    name: MainTerrain
   Texture: {fileID: 2800000, guid: df10bdec5638f8c4ebc84418609eef75, type: 2}
   Material: {fileID: 2100000, guid: 1ceb5f08ed557a44db5b95dd282544ff, type: 2}
   TextureUVs:

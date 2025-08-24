@@ -6,7 +6,7 @@ Texture2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: stone_gold_ore_particle_preview
+  m_Name: leaf_oak_particle_preview
   m_ImageContentsHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000
@@ -40,7 +40,7 @@ Texture2D:
   m_ColorSpace: 1
   m_PlatformBlob: 
   image data: 64
-  _typelessdata: 686868ff5c5c5cff747474ff7f7f7fff747474ff7f7f7fff8f8f8fff8f8f8fff7f7f7fff7f7f7fff747474ff747474ff7f7f7fff7f7f7fff7f7f7fff747474ff
+  _typelessdata: 989998ffb9bcb9ffb9bcb9ffb9bcb900989998ff989998ff98999800686468ff777577ff777577ff77757700777577ff7775770068646800686468ff777577ff
   m_StreamData:
     serializedVersion: 2
     offset: 0

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17eafd19ac997ec45a19fe595171cdef, type: 3}
   m_Name: WorkbenchTransparent
   m_EditorClassIdentifier: 
-  Category: 5
+  Category:
+    name: WorkbenchTransparent
   Texture: {fileID: 2800000, guid: 74f5c88e47daa7c4ea7112128bbb6788, type: 2}
   Material: {fileID: 2100000, guid: 4e3f1b65fa9d28f4597fe1be49757719, type: 2}
   TextureUVs:

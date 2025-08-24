@@ -17,7 +17,8 @@ MonoBehaviour:
   Hardness: 2
   OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   Sprite: {fileID: 21300000, guid: 6dc4c37bc3c369643b85cd47daef95ce, type: 3}
-  AtlasCategory: 2
+  AtlasCategory:
+    name: Ores
   AvailablePlacements:
   - Layer: 0
     StylesOverrides:

@@ -17,7 +17,8 @@ MonoBehaviour:
   Hardness: 2
   OutlineColor: {r: 1, g: 1, b: 1, a: 1}
   Sprite: {fileID: 21300000, guid: c0a92b7a6c40f764e978953cfd1f5085, type: 3}
-  AtlasCategory: 5
+  AtlasCategory:
+    name: WorkbenchTransparent
   AvailablePlacements:
   - Layer: 0
     StylesOverrides:

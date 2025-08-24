@@ -17,7 +17,8 @@ MonoBehaviour:
   Hardness: 3
   OutlineColor: {r: 1, g: 1, b: 1, a: 1}
   Sprite: {fileID: 21300000, guid: 13f5f0df4c5c25a45a691d4113b91a69, type: 3}
-  AtlasCategory: 1
+  AtlasCategory:
+    name: MainTerrain
   AvailablePlacements:
   - Layer: 0
     StylesOverrides:
