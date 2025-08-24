@@ -11,7 +11,7 @@ namespace World.HoveredBlock
     {
         [SerializeField] private WorldInputManager _inputManager;
         [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
-        [SerializeField] private ChunksManager _chunksManager;
+        [SerializeField] private WorldManager _worldManager;
 
         private Block _selectedBlock;
         private BlockLayer _selectedLayer;
@@ -37,8 +37,8 @@ namespace World.HoveredBlock
         private void HandleMouseMiddleClick(InputAction.CallbackContext context)
         {
             WorldPosition worldPosition = _blockHoveredObserver.HoveredPosition;
-            _selectedBlock = _chunksManager.Blocks.GetBreakable(worldPosition, out _selectedLayer);
-            _selectedStyles = _chunksManager.Blocks.GetBlockStyles(worldPosition, _selectedLayer);
+            _selectedBlock = _worldManager.Blocks.GetBreakable(worldPosition, out _selectedLayer);
+            _selectedStyles = _worldManager.Blocks.GetBlockStyles(worldPosition, _selectedLayer);
 
             OnBlockPickedChanged?.Invoke(worldPosition, _selectedBlock, _selectedLayer, _selectedStyles);
         }

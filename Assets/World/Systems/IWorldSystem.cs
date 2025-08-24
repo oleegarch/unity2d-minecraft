@@ -5,6 +5,6 @@ namespace World.Systems
 {
     public interface IWorldSystem : IDisposable
     {
-        public void RegisterSystem(ChunksManager manager);
+        public void RegisterSystem(WorldManager manager);
     }
 }

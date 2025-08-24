@@ -15,7 +15,7 @@ namespace World.HoveredBlock
         [SerializeField] private CameraModeController _cameraModeController;
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
-        [SerializeField] private ChunksManager _chunksManager;
+        [SerializeField] private WorldManager _worldManager;
         [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private Transform _breakingMask;
@@ -135,8 +135,8 @@ namespace World.HoveredBlock
                 holdPassed += Time.deltaTime;
             }
 
-            Block hoveredBlock = _chunksManager.Blocks.GetBreakable(worldPosition, out BlockLayer blockLayer);
-            BlockInfo hoveredInfo = _chunksManager.BlockDatabase.Get(hoveredBlock.Id);
+            Block hoveredBlock = _worldManager.Blocks.GetBreakable(worldPosition, out BlockLayer blockLayer);
+            BlockInfo hoveredInfo = _worldManager.BlockDatabase.Get(hoveredBlock.Id);
 
             _targetSpriteRenderer.color = hoveredInfo.OutlineColor;
 

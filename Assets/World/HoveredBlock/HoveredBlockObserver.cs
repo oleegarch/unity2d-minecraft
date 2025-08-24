@@ -11,7 +11,7 @@ namespace World.HoveredBlock
     {
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
-        [SerializeField] private ChunksManager _chunksManager;
+        [SerializeField] private WorldManager _worldManager;
         [SerializeField] private Transform _chunksParent;
 
         private Vector2 _pointerPosition;

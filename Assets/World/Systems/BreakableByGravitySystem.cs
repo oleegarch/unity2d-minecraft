@@ -7,7 +7,7 @@ namespace World.Systems
 {
     public class BreakableByGravitySystem : IWorldSystem
     {
-        private ChunksManager _manager;
+        private WorldManager _manager;
 
         // есть ли у узла "горизонтальная" цепочка до узла с опорой снизу?
         // цепочка идёт ТОЛЬКО по лево/право, узлы для цепочки — любые не-воздух.
@@ -115,7 +115,7 @@ namespace World.Systems
                 _manager.Blocks.Break(bp, layer, BlockUpdateSource.System);
         }
 
-        public void RegisterSystem(ChunksManager manager)
+        public void RegisterSystem(WorldManager manager)
         {
             _manager = manager;
             _manager.Blocks.Events.OnBlockBroken += BlockBreakMatcher;

@@ -10,7 +10,7 @@ namespace World.HoveredBlock
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
         [SerializeField] private HoveredBlockBreaker _blockBreakingProcess;
-        [SerializeField] private ChunksManager _chunksManager;
+        [SerializeField] private WorldManager _worldManager;
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private Material _blockHoveredMaterial;
 
@@ -33,14 +33,14 @@ namespace World.HoveredBlock
 
         private void SetOutline(WorldPosition worldPosition)
         {
-            Block hoveredBlock = _chunksManager.Blocks.GetBreakable(worldPosition, out BlockLayer blockLayer);
+            Block hoveredBlock = _worldManager.Blocks.GetBreakable(worldPosition, out BlockLayer blockLayer);
             bool enabled = !hoveredBlock.IsAir;
 
             _targetSpriteRenderer.enabled = enabled;
 
             if (enabled)
             {
-                BlockInfo hoveredInfo = _chunksManager.BlockDatabase.Get(hoveredBlock.Id);
+                BlockInfo hoveredInfo = _worldManager.BlockDatabase.Get(hoveredBlock.Id);
                 transform.position = new Vector3(worldPosition.x, worldPosition.y, 0f);
                 _targetSpriteRenderer.color = hoveredInfo.OutlineColor;
             }

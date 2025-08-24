@@ -22,8 +22,8 @@ namespace World.Chunks.Generator
         public byte ChunkSize { get; }
         public void CacheComputation(RectInt rect, int seed);
         public Task<Chunk> GenerateChunkAsync(ChunkIndex index, int seed);
-        public void RegisterWorldSystems(ChunksManager manager);
-        public void UnregisterWorldSystems(ChunksManager manager);
+        public void RegisterWorldSystems(WorldManager manager);
+        public void UnregisterWorldSystems(WorldManager manager);
     }
 
     // Composite generator orchestrates
@@ -81,12 +81,12 @@ namespace World.Chunks.Generator
             return await Task.Run(() => GenerateChunk(index, seed));
         }
 
-        public void RegisterWorldSystems(ChunksManager manager)
+        public void RegisterWorldSystems(WorldManager manager)
         {
             foreach (var ws in _worldSystems)
                 ws.RegisterSystem(manager);
         }
-        public void UnregisterWorldSystems(ChunksManager manager)
+        public void UnregisterWorldSystems(WorldManager manager)
         {
             foreach (var ws in _worldSystems)
                 ws.Dispose();

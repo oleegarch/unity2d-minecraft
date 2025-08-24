@@ -6,7 +6,7 @@ namespace World.Entities.Player
 {
     public class PlayerSpawner : MonoBehaviour
     {
-        [SerializeField] private ChunksManager _chunksManager;
+        [SerializeField] private WorldManager _worldManager;
         [SerializeField] private Transform _playerTransform;
         [SerializeField] private Rigidbody2D _playerRb2;
         [SerializeField] private SpriteRenderer _playerSprite;
@@ -15,11 +15,11 @@ namespace World.Entities.Player
         {
             _playerSprite.enabled = false;
             _playerRb2.simulated = false;
-            _chunksManager.OnVisibleChunksLoaded += SpawnPlayer;
+            _worldManager.OnVisibleChunksLoaded += SpawnPlayer;
         }
         private void OnDestroy()
         {
-            _chunksManager.OnVisibleChunksLoaded -= SpawnPlayer;
+            _worldManager.OnVisibleChunksLoaded -= SpawnPlayer;
         }
 
         private void SpawnPlayer()
@@ -27,7 +27,7 @@ namespace World.Entities.Player
             int y = 0;
             while (true)
             {
-                Block block = _chunksManager.Blocks.Get(new WorldPosition(0, y));
+                Block block = _worldManager.Blocks.Get(new WorldPosition(0, y));
 
                 if (block.IsAir)
                 {

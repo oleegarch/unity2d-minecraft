@@ -134,7 +134,7 @@ MonoBehaviour:
   _cameraModeController: {fileID: 0}
   _cameraObserver: {fileID: 0}
   _inputManager: {fileID: 3319511144438469435}
-  _chunksManager: {fileID: 5868988553912566916}
+  _worldManager: {fileID: 0}
   _blockHoveredObserver: {fileID: 167939084089460052}
   _targetSpriteRenderer: {fileID: 6296743431323333631}
   _breakingMask: {fileID: 4355383292382658617}
@@ -456,7 +456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f93609f61149bf34993185ee44da8270, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _chunksManager: {fileID: 5868988553912566916}
+  _worldManager: {fileID: 0}
   _playerTransform: {fileID: 282438840575209760}
   _playerRb2: {fileID: 4219367044316629845}
   _playerSprite: {fileID: 452010906287103615}
@@ -935,7 +935,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cameraObserver: {fileID: 0}
   _inputManager: {fileID: 3319511144438469435}
-  _chunksManager: {fileID: 5868988553912566916}
+  _worldManager: {fileID: 0}
   _chunksParent: {fileID: 4278272002193004716}
 --- !u!114 &3421474599134605749
 MonoBehaviour:
@@ -952,7 +952,7 @@ MonoBehaviour:
   _cameraObserver: {fileID: 0}
   _blockHoveredObserver: {fileID: 167939084089460052}
   _blockBreakingProcess: {fileID: 2572357408661218484}
-  _chunksManager: {fileID: 5868988553912566916}
+  _worldManager: {fileID: 0}
   _targetSpriteRenderer: {fileID: 1321473204780938483}
   _blockHoveredMaterial: {fileID: 2100000, guid: df08d6d1fa90de64ca01ae49c99aaad5, type: 2}
 --- !u!114 &6203515626348112953
@@ -969,7 +969,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputManager: {fileID: 3319511144438469435}
   _blockHoveredObserver: {fileID: 167939084089460052}
-  _chunksManager: {fileID: 5868988553912566916}
+  _worldManager: {fileID: 0}
 --- !u!114 &2604564451908335111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1003,7 +1003,7 @@ MonoBehaviour:
   _breaker: {fileID: 2572357408661218484}
   _picker: {fileID: 6203515626348112953}
   _placer: {fileID: 2604564451908335111}
-  _chunksManager: {fileID: 5868988553912566916}
+  _worldManager: {fileID: 0}
 --- !u!1 &7371231742770794637
 GameObject:
   m_ObjectHideFlags: 0
@@ -1093,7 +1093,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77a567fea6a0b5a418245e71e0877046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _chunksManager: {fileID: 5868988553912566916}
+  _worldManager: {fileID: 5868988553912566916}
   _cameraModeController: {fileID: 0}
   _worldTime: {fileID: 9144659093550293114}
   _blockPicker: {fileID: 6203515626348112953}
@@ -1201,7 +1201,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8834763025822503586
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1255,7 +1255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab2a074d7c37293459b0dd7950817b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _chunksManager: {fileID: 5868988553912566916}
+  _worldManager: {fileID: 0}
   _hoveredBlockPicker: {fileID: 6203515626348112953}
   _blockStylePrefab: {fileID: 4659035465478772154, guid: ee384b0102dab394ebfa9cf38f9cecfc, type: 3}
   _cameraObserver: {fileID: 0}

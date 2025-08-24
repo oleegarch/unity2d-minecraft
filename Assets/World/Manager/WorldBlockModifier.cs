@@ -8,9 +8,9 @@ namespace World.Chunks
         Player,
         System
     }
-    public interface IChunksBlockModifier
+    public interface IWorldBlockModifier
     {
-        public ChunksBlockEvents Events { get; }
+        public WorldBlockEvents Events { get; }
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main);
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer);
         public BlockStyles GetBlockStyles(WorldPosition worldPosition, BlockLayer layer);
@@ -18,21 +18,21 @@ namespace World.Chunks
         public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player);
         public bool BreakVisible(WorldPosition worldPosition, BlockUpdateSource source = BlockUpdateSource.Player);
     }
-    public class ChunksBlockModifier : IChunksBlockModifier
+    public class WorldBlockModifier : IWorldBlockModifier
     {
-        private readonly IChunksStorage _chunksStorage;
+        private readonly IWorldStorage _worldStorage;
 
-        public ChunksBlockEvents Events { get; private set; }
+        public WorldBlockEvents Events { get; private set; }
 
-        public ChunksBlockModifier(IChunksStorage storage)
+        public WorldBlockModifier(IWorldStorage storage)
         {
-            _chunksStorage = storage;
-            Events = new ChunksBlockEvents();
+            _worldStorage = storage;
+            Events = new WorldBlockEvents();
         }
 
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main)
         {
-            if (_chunksStorage.TryGetChunk(worldPosition, out Chunk chunk))
+            if (_worldStorage.TryGetChunk(worldPosition, out Chunk chunk))
             {
                 BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
                 Block mainBlock = chunk.Blocks.Get(blockIndex, blockLayer);
@@ -46,7 +46,7 @@ namespace World.Chunks
         {
             blockLayer = BlockLayer.Main;
 
-            if (_chunksStorage.TryGetChunk(worldPosition, out Chunk chunk))
+            if (_worldStorage.TryGetChunk(worldPosition, out Chunk chunk))
             {
                 BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
                 Block mainBlock = chunk.Blocks.Get(blockIndex, blockLayer);
@@ -64,7 +64,7 @@ namespace World.Chunks
         }
         public BlockStyles GetBlockStyles(WorldPosition worldPosition, BlockLayer layer)
         {
-            if (_chunksStorage.TryGetChunk(worldPosition, out Chunk chunk))
+            if (_worldStorage.TryGetChunk(worldPosition, out Chunk chunk))
             {
                 BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
                 return chunk.Render.GetBlockStyles(blockIndex, layer);
@@ -74,7 +74,7 @@ namespace World.Chunks
 
         public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles, BlockUpdateSource source = BlockUpdateSource.Player)
         {
-            if (!_chunksStorage.TryGetChunk(worldPosition, out var chunk))
+            if (!_worldStorage.TryGetChunk(worldPosition, out var chunk))
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
@@ -89,7 +89,7 @@ namespace World.Chunks
 
         public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player)
         {
-            if (!_chunksStorage.TryGetChunk(worldPosition, out var chunk))
+            if (!_worldStorage.TryGetChunk(worldPosition, out var chunk))
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
@@ -105,7 +105,7 @@ namespace World.Chunks
 
         public bool BreakVisible(WorldPosition worldPosition, BlockUpdateSource source = BlockUpdateSource.Player)
         {
-            if (!_chunksStorage.TryGetChunk(worldPosition, out var chunk))
+            if (!_worldStorage.TryGetChunk(worldPosition, out var chunk))
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);

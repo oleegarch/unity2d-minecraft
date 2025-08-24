@@ -10,7 +10,7 @@ namespace World.Chunks
         public event Action<RectInt> OnVisibleChunksChanged;
         public RectInt VisibleRect { get; }
     }
-    public class ChunksVisibleService : MonoBehaviour, IChunksVisible
+    public class WorldVisibleService : MonoBehaviour, IChunksVisible
     {
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;

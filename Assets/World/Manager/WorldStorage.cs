@@ -7,7 +7,7 @@ using World.Chunks.Generator;
 
 namespace World.Chunks
 {
-    public interface IChunksStorage
+    public interface IWorldStorage
     {
         public Task<bool> GetOrCreateAsync(ChunkIndex index, int seed);
 
@@ -25,17 +25,17 @@ namespace World.Chunks
         public IEnumerable<ChunkRenderer> GetAllRenderers();
     }
 
-    public class ChunksStorage : IChunksStorage
+    public class WorldStorage : IWorldStorage
     {
         private readonly IChunkGenerator _generator;
-        private readonly ChunksManager _manager;
+        private readonly WorldManager _manager;
         private readonly GameObject _prefab;
         private readonly Transform _parent;
         private readonly Dictionary<ChunkIndex, Chunk> _chunks = new();
         private readonly Dictionary<ChunkIndex, ChunkRenderer> _renderers = new();
         private readonly HashSet<ChunkIndex> _loadings = new();
 
-        public ChunksStorage(IChunkGenerator generator, GameObject prefab, Transform parent, ChunksManager manager)
+        public WorldStorage(IChunkGenerator generator, GameObject prefab, Transform parent, WorldManager manager)
         {
             _generator = generator;
             _prefab = prefab;

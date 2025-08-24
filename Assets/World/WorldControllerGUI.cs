@@ -8,7 +8,7 @@ namespace World
 {
     public class WorldControllerGUI : MonoBehaviour
     {
-        [SerializeField] private ChunksManager _chunksManager;
+        [SerializeField] private WorldManager _worldManager;
         [SerializeField] private CameraModeController _cameraModeController;
         [SerializeField] private WorldTime _worldTime;
         [SerializeField] private HoveredBlockPicker _blockPicker;
@@ -33,7 +33,7 @@ namespace World
             // Chunk Manager Methods
             if (GUILayout.Button("Rerender All Chunks"))
             {
-                _chunksManager.RerenderAll();
+                _worldManager.RerenderAll();
             }
 
             GUILayout.Space(10);
@@ -69,7 +69,7 @@ namespace World
             // Current picked block
             ushort blockId = _blockPicker.SelectedBlock.Id;
             BlockLayer blockLayer = _blockPicker.SelectedLayer;
-            GUILayout.Label($"Picked block: {_chunksManager.BlockDatabase.Get(blockId).Name}(Id:{blockId},Layer:{blockLayer})");
+            GUILayout.Label($"Picked block: {_worldManager.BlockDatabase.Get(blockId).Name}(Id:{blockId},Layer:{blockLayer})");
 
             GUILayout.EndVertical();
             GUILayout.EndArea();

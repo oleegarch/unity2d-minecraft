@@ -3,7 +3,7 @@ using World.Blocks;
 
 namespace World.Chunks
 {
-    public class ChunksBlockEvents
+    public class WorldBlockEvents
     {
         public event Action<WorldPosition, Block, BlockLayer> OnBlockSet;
         public event Action<WorldPosition, Block, BlockLayer> OnBlockBroken;

@@ -9,12 +9,12 @@ using World.Chunks.Generator;
 
 namespace World.Chunks
 {
-    public class ChunksManager : MonoBehaviour
+    public class WorldManager : MonoBehaviour
     {
         [SerializeField] private GameObject _chunkRendererPrefab;
         [SerializeField] private Transform _chunksParent;
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
-        [SerializeField] private ChunksVisibleService _visibility;
+        [SerializeField] private WorldVisibleService _visibility;
         [SerializeField] private int _seed;
 
         private int _version;
@@ -27,16 +27,16 @@ namespace World.Chunks
         public BlockAtlasDatabase BlockAtlasDatabase => _chunkGeneratorConfig.BlockAtlasDatabase;
 
         public IChunkGenerator Generator { get; private set; }
-        public IChunksBlockModifier Blocks { get; private set; }
-        public IChunksStorage Storage { get; private set; }
+        public IWorldBlockModifier Blocks { get; private set; }
+        public IWorldStorage Storage { get; private set; }
 
         [NonSerialized] public bool Loaded = false;
 
         private void Awake()
         {
             Generator = _chunkGeneratorConfig.GetChunkGenerator();
-            Storage = new ChunksStorage(Generator, _chunkRendererPrefab, _chunksParent, this);
-            Blocks = new ChunksBlockModifier(Storage);
+            Storage = new WorldStorage(Generator, _chunkRendererPrefab, _chunksParent, this);
+            Blocks = new WorldBlockModifier(Storage);
         }
         private void Start()
         {
