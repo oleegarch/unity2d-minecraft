@@ -12,7 +12,6 @@ namespace World.Blocks.Atlases
         private const string OBJECTS_FOLDER = "Assets/World/Blocks/Atlases/Objects";
         private const string OUTPUT_FOLDER = "Assets/World/Blocks/Atlases/Textures";
         private const string MATERIALS_FOLDER = "Assets/World/Blocks/Atlases/Materials";
-        private const string PARTICLE_OUTPUT_FOLDER = "Assets/World/Blocks/Atlases/ParticleTextures";
 
         private static Rect GetTightPixelRectForSprite(Sprite sprite)
         {
@@ -120,13 +119,6 @@ namespace World.Blocks.Atlases
                 return;
             }
 
-            // Убедимся, что папка текстур для частиц существует
-            if (!AssetDatabase.IsValidFolder(PARTICLE_OUTPUT_FOLDER))
-            {
-                Debug.LogError($"Particles folder not found at {PARTICLE_OUTPUT_FOLDER}");
-                return;
-            }
-
             // Найти все BlockInfo
             string[] guids = AssetDatabase.FindAssets("t:BlockInfo");
             var allInfos = guids
@@ -199,21 +191,6 @@ namespace World.Blocks.Atlases
                         Rect = textureRects[i],
                         SpriteSizeUnits = GetTightPixelRectForSprite(sprite)
                     });
-
-                    try
-                    {
-                        Texture2D particleTex = CreateParticleTextureFromSprite(infos[i]);
-                        string particlePath = $"{PARTICLE_OUTPUT_FOLDER}/{category}_{infos[i].Id}_particle.asset";
-                        AssetUtils.OverwriteAsset(particleTex, particlePath);
-
-                        var reloadedParticleTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(particlePath);
-                        infos[i].ParticleTexture = reloadedParticleTexture;
-                        EditorUtility.SetDirty(infos[i]);
-                    }
-                    catch (System.Exception ex)
-                    {
-                        Debug.LogError($"Failed to create particle texture for block {infos[i].name}: {ex}");
-                    }
                 }
 
                 EditorUtility.SetDirty(blockAtlas);
@@ -222,75 +199,6 @@ namespace World.Blocks.Atlases
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("✅ All atlases packed to " + OUTPUT_FOLDER);
-        }
-
-        private static Texture2D CreateParticleTextureFromSprite(BlockInfo info)
-        {
-            const int size = 4;
-            Texture2D particleTex = new Texture2D(size, size, TextureFormat.RGBA32, false);
-            particleTex.filterMode = FilterMode.Point;
-            particleTex.wrapMode = TextureWrapMode.Clamp;
-
-            Sprite sprite = info.Sprite;
-            Texture2D src = sprite.texture;
-            Rect texRect = sprite.textureRect;
-
-            int sx = Mathf.FloorToInt(texRect.x);
-            int sy = Mathf.FloorToInt(texRect.y);
-            int sw = Mathf.FloorToInt(texRect.width);
-            int sh = Mathf.FloorToInt(texRect.height);
-
-            // Начало выборки: по центру по X, сверху по Y (sy - нижняя граница, поэтому добавляем sh - size)
-            int sampleX = sx + Mathf.Max(0, (sw - size) / 2);
-            int sampleY = sy + Mathf.Max(0, sh - size);
-
-            // Защита от выхода за границы текстуры
-            sampleX = Mathf.Clamp(sampleX, 0, Mathf.Max(0, src.width - size));
-            sampleY = Mathf.Clamp(sampleY, 0, Mathf.Max(0, src.height - size));
-
-            try
-            {
-                // Попытка напрямую получить блок пикселей (это требует Read/Write enabled)
-                Color[] sampled = src.GetPixels(sampleX, sampleY, size, size);
-                if (sampled != null && sampled.Length == size * size)
-                {
-                    particleTex.SetPixels(sampled);
-                    particleTex.Apply();
-                    particleTex.name = $"{info.name}_particle_preview";
-                    return particleTex;
-                }
-            }
-            catch
-            {
-                // Если текстура не читаема — пойдем в fallback ниже
-                Debug.LogWarning($"Sprite texture '{src.name}' is not readable. Falling back to bilinear sampling for particle texture of '{info.name}'. Enable Read/Write in importer for faster direct sampling.");
-            }
-
-            // Fallback: сэмплим через GetPixelBilinear по координатам области (работает без GetPixels)
-            for (int y = 0; y < size; y++)
-            {
-                for (int x = 0; x < size; x++)
-                {
-                    float px = sampleX + (x + 0.5f);
-                    float py = sampleY + (y + 0.5f);
-                    float u = px / src.width;
-                    float v = py / src.height;
-                    Color c;
-                    try
-                    {
-                        c = src.GetPixelBilinear(u, v);
-                    }
-                    catch
-                    {
-                        c = Color.white;
-                    }
-                    particleTex.SetPixel(x, y, c);
-                }
-            }
-
-            particleTex.Apply();
-            particleTex.name = $"{info.name}_particle_preview";
-            return particleTex;
         }
     }
 }

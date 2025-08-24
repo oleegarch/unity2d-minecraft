@@ -155,6 +155,54 @@ PrefabInstance:
       propertyPath: _cameraObserver
       value: 
       objectReference: {fileID: 361995168}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.cycles
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.tilesX
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.tilesY
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.rowMode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.rowIndex
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.timeMode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.animationType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.startFrame.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.sprites.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2529594090003308844, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: UVModule.sprites.Array.data[0].sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b4afee41e95f5c8498f819cfdd77caa7, type: 3}
     - target: {fileID: 2572357408661218484, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: _cameraObserver
       value: 

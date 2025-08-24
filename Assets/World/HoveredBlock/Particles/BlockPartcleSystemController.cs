@@ -24,13 +24,7 @@ namespace World.HoveredBlock.Particles
         {
             transform.position = position.ToVector3Int();
 
-            Texture2D texture = block.ParticleTexture;
-            if (texture == null)
-            {
-                Debug.LogWarning($"BlockParticleSystemController: no particle texture or sprite texture available for block '{block.Name}'");
-                return;
-            }
-
+            Texture2D texture = block.Sprite.texture;
             _breakingRenderer.GetPropertyBlock(_mpb);
             _mpb.SetTexture("_MainTex", texture);
             _breakingRenderer.SetPropertyBlock(_mpb);

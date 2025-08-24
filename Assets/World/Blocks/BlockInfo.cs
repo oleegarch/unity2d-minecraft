@@ -26,8 +26,5 @@ namespace World.Blocks
 
         [Tooltip("Ломается ли блок если у него нет опоры")]
         public bool BreakableByGravity;
-
-        [Tooltip("Текстура для системы частиц (создаётся автоматически при упаковке атласа).")]
-        public Texture2D ParticleTexture;
     }
 }
