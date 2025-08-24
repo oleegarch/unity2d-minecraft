@@ -25,9 +25,8 @@ namespace World.Chunks
         public ChunkBlockEvents Events { get; } = new();
 
         public ChunkBlockModifier(IBlockLayerStorage[] blockLayers) => _blockLayers = blockLayers;
-
+        
         public IBlockLayerStorage GetLayer(BlockLayer layer) => _blockLayers[(int)layer];
-
         public Block Get(BlockIndex index, BlockLayer layer) => _blockLayers[(int)layer].Get(index);
 
         public void SetSilent(BlockIndex index, Block block, BlockLayer layer)

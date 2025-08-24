@@ -4,11 +4,18 @@ namespace World.Chunks.BlocksStorage.Storages
 {
     public class ArrayBlockStorage : IBlockLayerStorage
     {
-        private readonly Block[,] _blocks;
+        private readonly Block[] _blocks;
+        private readonly int _size;
 
-        public ArrayBlockStorage(byte size) => _blocks = new Block[size, size];
+        public ArrayBlockStorage(int size)
+        {
+            _size = size;
+            _blocks = new Block[size * size];
+        }
 
-        public Block Get(BlockIndex index) => _blocks[index.x, index.y];
-        public void Set(BlockIndex index, Block block) => _blocks[index.x, index.y] = block;
+        private int ToLinear(BlockIndex index) => index.y * _size + index.x;
+
+        public Block Get(BlockIndex index) => _blocks[ToLinear(index)];
+        public void Set(BlockIndex index, Block block) => _blocks[ToLinear(index)] = block;
     }
 }
