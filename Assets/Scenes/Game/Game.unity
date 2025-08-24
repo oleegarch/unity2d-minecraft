@@ -224,6 +224,10 @@ PrefabInstance:
       value: World
       objectReference: {fileID: 0}
     - target: {fileID: 9008502133466337078, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: _worldManager
+      value: 
+      objectReference: {fileID: 1017299177}
+    - target: {fileID: 9008502133466337078, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: _cameraObserver
       value: 
       objectReference: {fileID: 361995168}
