@@ -124,7 +124,7 @@ namespace World.Chunks
         {
             if (!_blockIndexes.TryGetValue(index, out var existing)) return;
 
-            // после удаления возможно появится новый стек (например main->behind)
+            // после удаления возможно появится новый стек
             var layers = _chunk.Render.GetRenderStack(index, _blockDatabase, _blockAtlasDatabase);
 
             var affectedErase = _EraseBlockStack(index);
@@ -132,9 +132,7 @@ namespace World.Chunks
             // если сейчас есть новые слои — нарисуем их
             HashSet<ChunkMeshData> affectedDraw = new();
             if (layers != null && layers.Count > 0)
-            {
                 affectedDraw = _DrawBlockStack(index, layers);
-            }
 
             foreach (var md in affectedErase) md.RefreshMesh();
             foreach (var md in affectedDraw) md.RefreshMesh();

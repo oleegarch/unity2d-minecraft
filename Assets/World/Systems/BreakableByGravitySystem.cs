@@ -112,7 +112,7 @@ namespace World.Systems
             toBreak.Sort((a, b) => b.y.CompareTo(a.y));
 
             foreach (var bp in toBreak)
-                _manager.Blocks.Break(bp, layer, BlockBrokeSource.System);
+                _manager.Blocks.Break(bp, layer, BlockUpdateSource.System);
         }
 
         public void RegisterSystem(ChunksManager manager)
@@ -124,8 +124,10 @@ namespace World.Systems
         public void Dispose()
         {
             if (_manager != null)
+            {
                 _manager.Blocks.Events.OnBlockBroken -= BlockBreakMatcher;
-            _manager = null;
+                _manager = null;
+            }
         }
     }
 }

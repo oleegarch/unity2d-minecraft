@@ -10,17 +10,17 @@ namespace World.Chunks
         public event Action<BlockIndex, Block, BlockLayer> OnBlockSetByPlayer;
         public event Action<BlockIndex, Block, BlockLayer> OnBlockBrokenByPlayer;
 
-        public void InvokeBlockSet(BlockIndex index, Block block, BlockLayer layer, BlockBrokeSource source)
+        public void InvokeBlockSet(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source)
         {
-            if (source == BlockBrokeSource.Player)
+            if (source == BlockUpdateSource.Player)
                 OnBlockSetByPlayer?.Invoke(index, block, layer);
 
             OnBlockSet?.Invoke(index, block, layer);
         }
 
-        public void InvokeBlockBroken(BlockIndex index, Block block, BlockLayer layer, BlockBrokeSource source)
+        public void InvokeBlockBroken(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source)
         {
-            if (source == BlockBrokeSource.Player)
+            if (source == BlockUpdateSource.Player)
                 OnBlockBrokenByPlayer?.Invoke(index, block, layer);
                 
             OnBlockBroken?.Invoke(index, block, layer);

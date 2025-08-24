@@ -3,7 +3,7 @@ using World.Chunks.BlocksStorage;
 
 namespace World.Chunks
 {
-    public enum BlockBrokeSource
+    public enum BlockUpdateSource
     {
         Player,
         System
@@ -14,9 +14,9 @@ namespace World.Chunks
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main);
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer);
         public BlockStyles GetBlockStyles(WorldPosition worldPosition, BlockLayer layer);
-        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles, BlockBrokeSource source = BlockBrokeSource.Player);
-        public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player);
-        public bool BreakVisible(WorldPosition worldPosition, BlockBrokeSource source = BlockBrokeSource.Player);
+        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles, BlockUpdateSource source = BlockUpdateSource.Player);
+        public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player);
+        public bool BreakVisible(WorldPosition worldPosition, BlockUpdateSource source = BlockUpdateSource.Player);
     }
     public class ChunksBlockModifier : IChunksBlockModifier
     {
@@ -72,7 +72,7 @@ namespace World.Chunks
             return BlockStyles.ByLayer[(int)layer];
         }
 
-        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles, BlockBrokeSource source = BlockBrokeSource.Player)
+        public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles, BlockUpdateSource source = BlockUpdateSource.Player)
         {
             if (!_chunksStorage.TryGetChunk(worldPosition, out var chunk))
                 return false;
@@ -87,7 +87,7 @@ namespace World.Chunks
             return false;
         }
 
-        public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player)
+        public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player)
         {
             if (!_chunksStorage.TryGetChunk(worldPosition, out var chunk))
                 return false;
@@ -103,7 +103,7 @@ namespace World.Chunks
             return false;
         }
 
-        public bool BreakVisible(WorldPosition worldPosition, BlockBrokeSource source = BlockBrokeSource.Player)
+        public bool BreakVisible(WorldPosition worldPosition, BlockUpdateSource source = BlockUpdateSource.Player)
         {
             if (!_chunksStorage.TryGetChunk(worldPosition, out var chunk))
                 return false;

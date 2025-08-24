@@ -15,9 +15,9 @@ namespace World.Chunks
     {
         public ChunkBlockEvents Events { get; }
         public void SetSilent(BlockIndex index, Block block, BlockLayer layer);
-        public void Set(BlockIndex index, Block block, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player);
-        public bool TrySet(BlockIndex index, Block block, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player);
-        public bool TryUnset(BlockIndex index, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player);
+        public void Set(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player);
+        public bool TrySet(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player);
+        public bool TryUnset(BlockIndex index, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player);
     }
     public class ChunkBlockModifier : IChunkBlockModifier
     {
@@ -34,7 +34,7 @@ namespace World.Chunks
         {
             _blockLayers[(int)layer].Set(index, block);
         }
-        public void Set(BlockIndex index, Block block, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player)
+        public void Set(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player)
         {
             _blockLayers[(int)layer].Set(index, block);
 
@@ -44,7 +44,7 @@ namespace World.Chunks
                 Events.InvokeBlockSet(index, block, layer, source);
         }
 
-        public bool TrySet(BlockIndex index, Block block, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player)
+        public bool TrySet(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player)
         {
             if (Get(index, layer).IsAir)
             {
@@ -53,7 +53,7 @@ namespace World.Chunks
             }
             return false;
         }
-        public bool TryUnset(BlockIndex index, BlockLayer layer, BlockBrokeSource source = BlockBrokeSource.Player)
+        public bool TryUnset(BlockIndex index, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player)
         {
             Block toRemoveBlock = Get(index, layer);
             if (!toRemoveBlock.IsAir)
