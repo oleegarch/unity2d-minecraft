@@ -9,12 +9,12 @@ namespace World.Entities.Player
         [SerializeField] private WorldManager _worldManager;
         [SerializeField] private Transform _playerTransform;
         [SerializeField] private Rigidbody2D _playerRb2;
-        [SerializeField] private SpriteRenderer _playerSprite;
+        [SerializeField] private GameObject _playerGO;
 
         private void Start()
         {
-            _playerSprite.enabled = false;
             _playerRb2.simulated = false;
+            _playerGO.SetActive(false);
             _worldManager.OnVisibleChunksLoaded += SpawnPlayer;
         }
         private void OnDestroy()
@@ -32,8 +32,8 @@ namespace World.Entities.Player
                 if (block.IsAir)
                 {
                     _playerTransform.position = new Vector3(0, y, 0);
-                    _playerSprite.enabled = true;
                     _playerRb2.simulated = true;
+                    _playerGO.SetActive(true);
                     break;
                 }
 

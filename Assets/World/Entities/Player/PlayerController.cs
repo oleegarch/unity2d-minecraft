@@ -12,7 +12,7 @@ namespace World.Entities.Player
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private Transform _groundCheck;
         [SerializeField] private Animator _animator;
-        [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private Transform _playerTransform;
 
         [Header("Movement Settings")]
         [SerializeField] private float moveSpeed = 5f;
@@ -82,7 +82,11 @@ namespace World.Entities.Player
 
             // Поворот спрайта
             if (Running)
-                _spriteRenderer.flipX = _moveInput < 0f;
+            {
+                Vector3 scale = _playerTransform.localScale;
+                scale.x = _moveInput < 0f ? -1f : 1f;
+                _playerTransform.localScale = scale;
+            }
         }
 
         private void OnMove(InputAction.CallbackContext ctx)
