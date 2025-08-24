@@ -24,10 +24,16 @@ namespace World.Chunks
             Collider = new ChunkColliderBuilder(_polygonCollider2D, blockDatabase, blockAtlasDatabase);
         }
 
+        private void LateUpdate()
+        {
+            Mesh.Refresh();
+            Collider.Refresh();
+        }
+
         public void Render(Chunk chunk)
         {
-            Mesh.BuildMesh(chunk).ApplyMesh();
-            Collider.BuildCollider(chunk).ApplyCollider();
+            Mesh.BuildMesh(chunk).ApplyMesh().Refresh();
+            Collider.BuildCollider(chunk).ApplyCollider().Refresh();
         }
         public async Task<bool> RenderAsync(Chunk chunk)
         {
@@ -55,8 +61,8 @@ namespace World.Chunks
                 return false;
             }
 
-            Mesh.ApplyMesh();
-            Collider.ApplyCollider();
+            Mesh.ApplyMesh().Refresh();
+            Collider.ApplyCollider().Refresh();
 
             return true;
         }

@@ -26,6 +26,7 @@ namespace World.Chunks
 
         private List<Vector2[]> _paths;
         private Chunk _chunk;
+        private bool _needRefresh;
 
         public ChunkColliderBuilder(PolygonCollider2D collider, BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase)
         {
@@ -33,6 +34,15 @@ namespace World.Chunks
             _blockDatabase = blockDatabase;
             _blockAtlasDatabase = blockAtlasDatabase;
             _paths = new List<Vector2[]>();
+        }
+
+        public void Refresh()
+        {
+            if (_needRefresh)
+            {
+                ApplyCollider();
+                _needRefresh = false;
+            }
         }
 
         public ChunkColliderBuilder BuildCollider(Chunk chunk)
@@ -191,10 +201,12 @@ namespace World.Chunks
                 _paths.Add(path.ToArray());
             }
 
+            _needRefresh = true;
+            
             return this;
         }
 
-        public void ApplyCollider()
+        public ChunkColliderBuilder ApplyCollider()
         {
             _collider.pathCount = _paths.Count;
 
@@ -202,17 +214,17 @@ namespace World.Chunks
             {
                 _collider.SetPath(i, _paths[i]);
             }
+
+            return this;
         }
 
         public void AddSquare(BlockIndex blockIndex)
         {
             BuildCollider(_chunk);
-            ApplyCollider();
         }
         public void RemoveSquare(BlockIndex blockIndex)
         {
             BuildCollider(_chunk);
-            ApplyCollider();
         }
 
         private void OnChunkBlockSet(BlockIndex index, Block block, BlockLayer layer)

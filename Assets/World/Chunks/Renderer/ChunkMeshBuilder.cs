@@ -23,6 +23,7 @@ namespace World.Chunks
         private readonly List<GameObject> _categoryObjects = new();
         private readonly Dictionary<BlockAtlasCategory, ChunkMeshData> _meshDatas = new();
         private readonly Dictionary<BlockIndex, List<RenderInfo>> _blockIndexes = new();
+        private readonly ChunkMeshesRefresher _refresher = new();
 
         private Chunk _chunk;
 
@@ -32,6 +33,8 @@ namespace World.Chunks
             _blockDatabase = blockDatabase;
             _blockAtlasDatabase = blockAtlasDatabase;
         }
+
+        public void Refresh() => _refresher.Refresh();
 
         public ChunkMeshBuilder BuildMesh(Chunk chunk)
         {
@@ -81,6 +84,8 @@ namespace World.Chunks
                     }
                 }
 
+            _refresher.ScheduleRefresh(_meshDatas.Values);
+
             return this;
         }
 
@@ -91,64 +96,51 @@ namespace World.Chunks
             go.transform.SetParent(_gameObject.transform, false);
             _categoryObjects.Add(go);
         }
-        public void ApplyMesh()
+        public ChunkMeshBuilder ApplyMesh()
         {
             foreach (var meshData in _meshDatas.Values)
                 CreateMesh(meshData);
+
+            return this;
         }
 
         public void DrawBlock(BlockIndex index)
         {
-            // Получаем текущий стэк из данных чанка
             var layers = _chunk.Render.GetRenderStack(index, _blockDatabase, _blockAtlasDatabase);
 
-            // Если нет старой записи — просто дорисовываем новый стэк
             if (!_blockIndexes.TryGetValue(index, out var existing))
             {
-                var changed = _DrawBlockStack(index, layers);
-                // refresh только затронутых мешей
-                foreach (var md in changed) md.RefreshMesh();
+                _DrawBlockStack(index, layers);
                 return;
             }
 
-            // Иначе перерисовываем: простая и безопасная стратегия — удалить старый, добавить новый
-            var affectedErase = _EraseBlockStack(index);
-            var affectedDraw = _DrawBlockStack(index, layers);
-
-            // Refresh всех затронутых meshData
-            foreach (var md in affectedErase) md.RefreshMesh();
-            foreach (var md in affectedDraw) md.RefreshMesh();
+            _EraseBlockStack(index);
+            _DrawBlockStack(index, layers);
         }
 
         public void EraseBlock(BlockIndex index)
         {
             if (!_blockIndexes.TryGetValue(index, out var existing)) return;
 
-            // после удаления возможно появится новый стек
             var layers = _chunk.Render.GetRenderStack(index, _blockDatabase, _blockAtlasDatabase);
 
-            var affectedErase = _EraseBlockStack(index);
+            _EraseBlockStack(index);
 
-            // если сейчас есть новые слои — нарисуем их
-            HashSet<ChunkMeshData> affectedDraw = new();
             if (layers != null && layers.Count > 0)
-                affectedDraw = _DrawBlockStack(index, layers);
-
-            foreach (var md in affectedErase) md.RefreshMesh();
-            foreach (var md in affectedDraw) md.RefreshMesh();
+                _DrawBlockStack(index, layers);
         }
 
-        // добавляет все слои (layers) на указанную координату, возвращает набор затронутых ChunkMeshData
-        private HashSet<ChunkMeshData> _DrawBlockStack(BlockIndex index, List<RenderLayer> layers)
+        private void _DrawBlockStack(BlockIndex index, List<RenderLayer> layers)
         {
-            var changed = new HashSet<ChunkMeshData>();
-            if (layers == null || layers.Count == 0) return changed;
+            if (layers == null || layers.Count == 0) return;
 
             if (!_blockIndexes.TryGetValue(index, out var list))
             {
                 list = new List<RenderInfo>();
                 _blockIndexes[index] = list;
             }
+
+            var changed = new HashSet<ChunkMeshData>();
 
             foreach (var layer in layers)
             {
@@ -175,48 +167,36 @@ namespace World.Chunks
                 changed.Add(meshData);
             }
 
-            return changed;
+            foreach (var md in changed) _refresher.ScheduleRefresh(md);
         }
 
-        // удаляет все квады, соответствующие данной координате
-        // возвращает набор ChunkMeshData, которые были изменены
-        private HashSet<ChunkMeshData> _EraseBlockStack(BlockIndex index)
+        private void _EraseBlockStack(BlockIndex index)
         {
+            if (!_blockIndexes.TryGetValue(index, out var list) || list == null || list.Count == 0)
+                return;
+
             var affected = new HashSet<ChunkMeshData>();
 
-            if (!_blockIndexes.TryGetValue(index, out var list) || list == null || list.Count == 0)
-                return affected;
-
-            // Удаляем квады в порядке убывания индекса (чтобы корректно работать со смещением "последнего в конец")
             var toRemove = list.Select(r => r.QuadIndex).OrderByDescending(i => i).ToList();
 
             foreach (var quadIndex in toRemove)
             {
-                // нужно найти renderInfo соответствующий этому quadIndex (и удалить из списка)
                 var renderInfo = list.FirstOrDefault(r => r.QuadIndex == quadIndex);
-                if (renderInfo.QuadIndex != quadIndex)
-                {
-                    // неожиданный случай — пропускаем
-                    continue;
-                }
+                if (renderInfo.QuadIndex != quadIndex) continue;
 
                 if (!_meshDatas.TryGetValue(renderInfo.MeshCategory, out var meshData))
                     continue;
 
-                // запомним последний (который может быть перемещён)
                 int last = meshData.QuadCount - 1;
-                // удаляем
                 BlockIndex? moved = meshData.RemoveQuadAt(quadIndex);
 
                 affected.Add(meshData);
 
-                // если что-то переместилось (return moved != null), обновляем соответствующую запись в _blockIndexes
                 if (moved.HasValue)
                 {
                     var movedCoord = moved.Value;
                     if (_blockIndexes.TryGetValue(movedCoord, out var movedList))
                     {
-                        // нашли renderInfo в списке movedCoord с QuadIndex == last и заменим на quadIndex
                         for (int i = 0; i < movedList.Count; i++)
                         {
                             if (movedList[i].QuadIndex == last)
@@ -230,8 +210,6 @@ namespace World.Chunks
                     }
                 }
 
-                // и удаляем соответствующий renderInfo из original list
-                // (используем поиск по original QuadIndex)
                 for (int i = 0; i < list.Count; i++)
                 {
                     if (list[i].QuadIndex == quadIndex)
@@ -242,11 +220,10 @@ namespace World.Chunks
                 }
             }
 
-            // Если после удаления список пуст — удаляем ключ
             if (list.Count == 0)
                 _blockIndexes.Remove(index);
 
-            return affected;
+            foreach (var md in affected) _refresher.ScheduleRefresh(md);
         }
 
         private void OnChunkBlockSet(BlockIndex index, Block block, BlockLayer layer)
@@ -272,6 +249,7 @@ namespace World.Chunks
 
         public void ClearAll()
         {
+            _refresher.UnscheduleAll();
             _categoryObjects.ForEach(Object.DestroyImmediate);
             _categoryObjects.Clear();
             _blockIndexes.Clear();
@@ -280,6 +258,7 @@ namespace World.Chunks
         public void Dispose()
         {
             UnsubscribeFromChunkChanges();
+            _refresher.UnscheduleAll();
             ClearAll();
         }
     }

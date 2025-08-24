@@ -186,8 +186,6 @@ namespace World.Chunks
                 _meshRenderer.sharedMaterial = BlockAtlas.Material;
             }
 
-            RefreshMesh();
-
             return _parentGO;
         }
 
