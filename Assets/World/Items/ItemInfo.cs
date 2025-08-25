@@ -9,5 +9,6 @@ namespace World.Items
         public string Name;
         public ushort BlockId;
         public Sprite Sprite;
+        public ushort MaxStack = 100;
     }
 }
