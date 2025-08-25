@@ -24,6 +24,13 @@ namespace World.HoveredBlock.Particles
         {
             transform.position = position.ToVector3Int();
 
+            if (block.Id == 0) return;
+            if (block.Sprite == null)
+            {
+                Debug.LogError($"In BlockInfo {block.Name} Sprite is null.");
+                return;
+            }
+
             Texture2D texture = block.Sprite.texture;
             _breakingRenderer.GetPropertyBlock(_mpb);
             _mpb.SetTexture("_MainTex", texture);
