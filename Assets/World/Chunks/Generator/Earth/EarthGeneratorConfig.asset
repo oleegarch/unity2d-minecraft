@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _blockDatabase: {fileID: 11400000, guid: c1425d5beff14834aae34abf0b9ef484, type: 2}
   _blockAtlasDatabase: {fileID: 11400000, guid: c1d7be8b0c58ca04ba4f6990cb37966b, type: 2}
+  _itemDatabase: {fileID: 11400000, guid: b60774e9ea7af34488c309d13a35c6ec, type: 2}
   _chunkSize: 16
   BiomeWidth: 200
   SurfaceBlendWidth: 20

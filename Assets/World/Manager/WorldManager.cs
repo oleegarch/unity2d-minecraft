@@ -6,6 +6,7 @@ using System.Linq;
 using World.Blocks;
 using World.Blocks.Atlases;
 using World.Chunks.Generator;
+using World.Items;
 
 namespace World.Chunks
 {
@@ -25,6 +26,7 @@ namespace World.Chunks
 
         public BlockDatabase BlockDatabase => _chunkGeneratorConfig.BlockDatabase;
         public BlockAtlasDatabase BlockAtlasDatabase => _chunkGeneratorConfig.BlockAtlasDatabase;
+        public ItemDatabase ItemDatabase => _chunkGeneratorConfig.ItemDatabase;
 
         public IChunkGenerator Generator { get; private set; }
         public IWorldBlockModifier Blocks { get; private set; }

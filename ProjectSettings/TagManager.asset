@@ -56,5 +56,8 @@ TagManager:
   - name: Player
     uniqueID: 4075600203
     locked: 0
+  - name: ItemsDropped
+    uniqueID: 263357289
+    locked: 0
   m_RenderingLayers:
   - Default
