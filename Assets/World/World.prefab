@@ -461,6 +461,7 @@ GameObject:
   - component: {fileID: 4219367044316629845}
   - component: {fileID: 1797841827800245505}
   - component: {fileID: 5961720312721555000}
+  - component: {fileID: 8717926869780470110}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -623,10 +624,22 @@ MonoBehaviour:
   measureVelocityY: 1
   groundCheckLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 576
   groundCheckTransform: {fileID: 7935461173147862630}
   groundCheckPositionSize: {x: 0.6, y: 0.25}
   groundCheckPositionAngle: 0
+--- !u!114 &8717926869780470110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185483721266730774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca646b1a9d207f74a9102023312fdc11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1809371026158279524
 GameObject:
   m_ObjectHideFlags: 0
@@ -1263,7 +1276,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6646365268364067081}
   - component: {fileID: 2970117667973166668}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ItemsDropped
   m_TagString: Untagged
   m_Icon: {fileID: 0}
