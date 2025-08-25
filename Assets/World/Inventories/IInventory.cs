@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using World.Items;
 
 namespace World.Inventories
 {
@@ -9,6 +10,7 @@ namespace World.Inventories
         public ItemStack GetSlot(int index);
 
         public bool TryAdd(ItemStack stack, out int remainder);
+        public bool TryAdd(ItemInfo stack);
         public bool TryRemove(int slotIndex, int amount, out ItemStack removed);
         public bool Move(int fromIndex, int toIndex, int amount = int.MaxValue);
 

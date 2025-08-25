@@ -1,4 +1,5 @@
 using UnityEngine;
+using World.Items;
 
 namespace World.Inventories
 {
@@ -11,6 +12,11 @@ namespace World.Inventories
         {
             _inventory = new PlayerInventory();
             _hotbar.SetUp(_inventory);
+        }
+
+        public bool TryCollect(ItemInfo item)
+        {
+            return _inventory.TryAdd(item);
         }
     }
 }

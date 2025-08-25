@@ -11,7 +11,7 @@ namespace World.Inventories
         public bool IsEmpty => Count <= 0;
         public int SpaceLeft => Item == null ? 0 : Item.MaxStack - Count;
 
-        public ItemStack(ItemInfo item, int count)
+        public ItemStack(ItemInfo item, int count = 1)
         {
             if (item == null)
             {

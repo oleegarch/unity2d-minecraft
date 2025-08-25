@@ -1,20 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using World.Items;
 
 namespace World.Inventories
 {
     public abstract class Inventory : IInventory
     {
         protected readonly ItemStack[] _slots;
+        public int SlotCount => _slots.Length;
+        public InventoryEvents Events { get; }
 
         protected Inventory(int slotCount)
         {
             if (slotCount <= 0) throw new ArgumentOutOfRangeException(nameof(slotCount));
             _slots = Enumerable.Repeat(ItemStack.Empty, slotCount).ToArray();
+            Events = new InventoryEvents();
         }
-
-        public int SlotCount => _slots.Length;
 
         public IReadOnlyList<ItemStack> GetAllSlots()
         {
@@ -55,6 +57,8 @@ namespace World.Inventories
                 if (!s.IsEmpty && s.Item != null && s.Item.Id == itemId)
                 {
                     int added = s.Add(toPlace);
+                    if (added > 0)
+                        Events.InvokeSlotChanged(i, _slots[i].Clone());
                     toPlace -= added;
                 }
             }
@@ -67,12 +71,19 @@ namespace World.Inventories
                 {
                     int put = Math.Min(toPlace, stack.Item.MaxStack);
                     _slots[i] = new ItemStack(stack.Item, put);
+                    Events.InvokeSlotChanged(i, _slots[i].Clone());
                     toPlace -= put;
                 }
             }
 
             remainder = toPlace;
             return remainder == 0;
+        }
+
+        public virtual bool TryAdd(ItemInfo item)
+        {
+            ItemStack stack = new ItemStack(item);
+            return TryAdd(stack, out int remainder);
         }
 
         /// <summary>
@@ -95,7 +106,11 @@ namespace World.Inventories
             {
                 removed = new ItemStack(item, removedCount);
                 // если стек стал пустым — убедимся, что он хранится как Empty
-                if (_slots[slotIndex].IsEmpty) _slots[slotIndex] = ItemStack.Empty;
+                if (_slots[slotIndex].IsEmpty)
+                    _slots[slotIndex] = ItemStack.Empty;
+
+                // уведомляем о новом состоянии слота
+                Events.InvokeSlotChanged(slotIndex, _slots[slotIndex].Clone());
                 return true;
             }
 
@@ -121,37 +136,54 @@ namespace World.Inventories
 
             if (from.IsEmpty) return false;
 
+            bool changed = false;
+
             // to пустой -> перенос
             if (to.IsEmpty)
             {
                 int toMove = Math.Min(amount, from.Count);
                 _slots[toIndex] = new ItemStack(from.Item, toMove);
-                int remaining = from.Remove(toMove);
+                from.Remove(toMove);
                 if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
-                return true;
+                changed = true;
             }
-
             // тот же тип -> слить
-            if (!to.IsEmpty && !from.IsEmpty && to.Item != null && from.Item != null && to.Item.Id == from.Item.Id)
+            else if (!to.IsEmpty && !from.IsEmpty && to.Item != null && from.Item != null && to.Item.Id == from.Item.Id)
             {
                 int canMove = Math.Min(amount, from.Count);
                 int added = Math.Min(canMove, to.Item.MaxStack - to.Count);
-                if (added <= 0) return false;
-                to.Add(added);
-                from.Remove(added);
-                if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
-                return true;
+                if (added > 0)
+                {
+                    to.Add(added);
+                    from.Remove(added);
+                    if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
+                    changed = true;
+                }
+            }
+            // разные предметы -> swap
+            else
+            {
+                _slots[fromIndex] = to;
+                _slots[toIndex] = from;
+                changed = true;
             }
 
-            // разные предметы -> swap
-            _slots[fromIndex] = to;
-            _slots[toIndex] = from;
-            return true;
+            if (changed)
+            {
+                Events.InvokeSlotChanged(fromIndex, _slots[fromIndex].Clone());
+                Events.InvokeSlotChanged(toIndex, _slots[toIndex].Clone());
+            }
+
+            return changed;
         }
 
         public virtual void Clear()
         {
-            for (int i = 0; i < _slots.Length; i++) _slots[i] = ItemStack.Empty;
+            for (int i = 0; i < _slots.Length; i++)
+            {
+                _slots[i] = ItemStack.Empty;
+                Events.InvokeSlotChanged(i, ItemStack.Empty);
+            }
         }
     }
 }
