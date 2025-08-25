@@ -6665,7 +6665,7 @@ GameObject:
   - component: {fileID: 8951159979048247713}
   - component: {fileID: 1839699180461737397}
   m_Layer: 0
-  m_Name: Canvas
+  m_Name: CanvasBlockStyleSelector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7058,7 +7058,7 @@ GameObject:
   - component: {fileID: 8994803090199299059}
   - component: {fileID: 2881983680894282949}
   m_Layer: 0
-  m_Name: CanvasInventory
+  m_Name: CanvasQuickInventoryItems
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

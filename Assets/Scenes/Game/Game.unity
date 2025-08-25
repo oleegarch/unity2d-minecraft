@@ -295,14 +295,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5614360546757656560, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: m_Name
-      value: CanvasBlockStyleSelector
-      objectReference: {fileID: 0}
-    - target: {fileID: 6526504875623071641, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: m_Name
-      value: CanvasQuickInventoryItems
-      objectReference: {fileID: 0}
     - target: {fileID: 6752283934456956255, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

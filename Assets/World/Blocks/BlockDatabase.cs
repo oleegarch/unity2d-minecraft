@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using World.Items;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -11,7 +13,8 @@ namespace World.Blocks
     [CreateAssetMenu(menuName = "Blocks/New BlockDatabase")]
     public class BlockDatabase : ScriptableObject
     {
-        public List<BlockInfo> blocks;
+        public List<BlockInfo> blocks = new();
+        public ItemDatabase itemDatabase;
 
         private Dictionary<string, ushort> _nameToId;
         private Dictionary<ushort, BlockInfo> _byId;
@@ -22,29 +25,29 @@ namespace World.Blocks
             _nameToId = blocks.ToDictionary(b => b.name, b => b.Id);
         }
 
+        public ushort GetNextId() => (ushort)blocks.Count;
+
         public BlockInfo Get(ushort id) => _byId[id];
         public ushort GetId(string name) => _nameToId[name];
 
 #if UNITY_EDITOR
-    [ContextMenu("Создать BlockInfo для всех спрайтов")]
+        [ContextMenu("Создать BlockInfo для всех спрайтов")]
         private void CreateBlockInfos()
         {
             // ищем все спрайты в проекте
             string[] guids = AssetDatabase.FindAssets("t:Sprite", new[] { "Assets/World/Blocks/Textures" });
-            int currentId = 0;
 
             foreach (string guid in guids)
             {
-                currentId++;
-
                 string path = AssetDatabase.GUIDToAssetPath(guid);
                 Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
 
                 // проверяем, есть ли уже такой блок
                 if (blocks.Exists(b => b != null && b.Sprite == sprite))
                 {
-                    blocks[currentId].Id = (ushort)currentId;
-                    EditorUtility.SetDirty(blocks[currentId]);
+                    ushort newId = GetNextId();
+                    blocks[newId].Id = newId;
+                    EditorUtility.SetDirty(blocks[newId]);
                     continue;
                 }
 
@@ -52,19 +55,47 @@ namespace World.Blocks
                 BlockInfo block = ScriptableObject.CreateInstance<BlockInfo>();
                 block.Name = sprite.name;
                 block.Sprite = sprite;
-                block.Id = (ushort)currentId;
+                block.Id = GetNextId();
 
                 // сохраняем в папку ScriptableObjects
                 string savePath = "Assets/World/Blocks/Objects/" + sprite.name + ".asset";
                 AssetDatabase.CreateAsset(block, savePath);
 
                 blocks.Add(block);
+                EditorUtility.SetDirty(this);
             }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log($"Создано {blocks.Count} BlockInfo");
+            Debug.Log($"Текущее количество блоков {blocks.Count} BlockInfo");
+        }
+
+        [ContextMenu("Создать ItemInfo для всех BlockInfo")]
+        private void CreateItemInfos()
+        {
+            foreach (BlockInfo blockInfo in blocks)
+            {
+                if (!itemDatabase.TryGetByBlockId(blockInfo.Id, out ItemInfo item))
+                {
+                    // создаём новый ScriptableObject
+                    item = ScriptableObject.CreateInstance<ItemInfo>();
+                    item.Name = blockInfo.Name;
+                    item.Sprite = blockInfo.Sprite;
+                    item.Id = itemDatabase.GetNextId();
+                    item.BlockId = blockInfo.Id;
+
+                    // сохраняем в папку ScriptableObjects
+                    string savePath = "Assets/World/Items/Objects/" + blockInfo.Name + ".asset";
+                    AssetDatabase.CreateAsset(item, savePath);
+
+                    itemDatabase.items.Add(item);
+                    EditorUtility.SetDirty(itemDatabase);
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 #endif
     }
