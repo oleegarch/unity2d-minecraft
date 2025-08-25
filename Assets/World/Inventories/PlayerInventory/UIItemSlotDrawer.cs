@@ -1,6 +1,7 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using TMPro;
 
 namespace World.Inventories
 {
@@ -17,6 +18,7 @@ namespace World.Inventories
         [SerializeField] private Sprite _rightItemSlot;
         [SerializeField] private Image _uiItemSlotImage;
         [SerializeField] private Image _uiItemImage;
+        [SerializeField] private TextMeshProUGUI _uiTextCount;
 
         private UIItemSlotDirection _currentDirection;
         private ItemStack _currentStack;
@@ -44,6 +46,7 @@ namespace World.Inventories
                         break;
                     }
             }
+            
             if (stack.Item != null)
             {
                 _uiItemImage.sprite = stack.Item.Sprite;
@@ -52,6 +55,16 @@ namespace World.Inventories
             else
             {
                 _uiItemImage.enabled = false;
+            }
+
+            if (stack.Count > 0)
+            {
+                _uiTextCount.SetText(stack.Count.ToString());
+                _uiTextCount.enabled = true;
+            }
+            else
+            {
+                _uiTextCount.enabled = false;
             }
         }
 
