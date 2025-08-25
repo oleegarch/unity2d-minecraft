@@ -44,7 +44,7 @@ Material:
     - _BorderWidth: 1
     - _DynamicInvert: 0
     - _EnableExternalAlpha: 0
-    - _OrthoSize: 5
+    - _OrthoSize: 12.920217
     - _PPU: 64
     - _ZWrite: 0
     m_Colors:

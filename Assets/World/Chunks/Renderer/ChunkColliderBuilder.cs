@@ -41,7 +41,6 @@ namespace World.Chunks
             if (_needRefresh)
             {
                 ApplyCollider();
-                _needRefresh = false;
             }
         }
 
@@ -214,6 +213,8 @@ namespace World.Chunks
             {
                 _collider.SetPath(i, _paths[i]);
             }
+            
+            _needRefresh = false;
 
             return this;
         }
