@@ -348,7 +348,6 @@ GameObject:
   - component: {fileID: 1797841827800245505}
   - component: {fileID: 5961720312721555000}
   - component: {fileID: 8717926869780470110}
-  - component: {fileID: 1658220853093455916}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -527,19 +526,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca646b1a9d207f74a9102023312fdc11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1658220853093455916
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1185483721266730774}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 874ef734f9e01e148aca22544d9af70f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _hotbar: {fileID: 2645306138954837417}
+  _inventoryController: {fileID: 352028823478520568}
 --- !u!1 &1809371026158279524
 GameObject:
   m_ObjectHideFlags: 0
@@ -6418,6 +6405,7 @@ GameObject:
   - component: {fileID: 6119999671373776053}
   - component: {fileID: 8994803090199299059}
   - component: {fileID: 2881983680894282949}
+  - component: {fileID: 352028823478520568}
   m_Layer: 0
   m_Name: CanvasInventory
   m_TagString: Untagged
@@ -6508,6 +6496,21 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &352028823478520568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6526504875623071641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 874ef734f9e01e148aca22544d9af70f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hotbar: {fileID: 2645306138954837417}
+  _blockPicker: {fileID: 6203515626348112953}
+  _manager: {fileID: 5868988553912566916}
 --- !u!1 &6616233381623590662
 GameObject:
   m_ObjectHideFlags: 0
@@ -6651,6 +6654,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _inputManager: {fileID: 3319511144438469435}
   _blockHoveredObserver: {fileID: 167939084089460052}
+  _inventoryController: {fileID: 0}
   _worldManager: {fileID: 5868988553912566916}
 --- !u!114 &2604564451908335111
 MonoBehaviour:
@@ -6680,8 +6684,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a83833eb9f0ae5f4cb6d6eca17f1fe81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _outliner: {fileID: 3421474599134605749}
-  _observer: {fileID: 167939084089460052}
   _breaker: {fileID: 2572357408661218484}
   _picker: {fileID: 6203515626348112953}
   _placer: {fileID: 2604564451908335111}

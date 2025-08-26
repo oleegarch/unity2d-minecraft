@@ -11,6 +11,7 @@ namespace World.Inventories
         [SerializeField] private UIPlayerHotbarDrawer _hotbar;
         [SerializeField] private HoveredBlockPicker _blockPicker;
         [SerializeField] private WorldManager _manager;
+        
         private PlayerInventory _inventory;
         private int _hotbarActiveIndex = 0;
 
