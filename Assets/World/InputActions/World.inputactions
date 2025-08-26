@@ -455,6 +455,34 @@
             ]
         },
         {
+            "name": "InventoryPlayer",
+            "id": "465eb9ea-6e91-49d1-89ca-b3ecd7cf60b2",
+            "actions": [
+                {
+                    "name": "Toggle",
+                    "type": "Button",
+                    "id": "814a4616-ec2d-4db8-bd78-8385b93e1e8f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "51c3281d-6654-47f5-8ea5-166e8288bb99",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
             "name": "InventoryPlayerHotbar",
             "id": "9ea46c91-2504-48f5-8868-280224b1a551",
             "actions": [

@@ -239,7 +239,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 818345371403355757}
-  - component: {fileID: 2071495930625889705}
   - component: {fileID: 2645306138954837417}
   m_Layer: 0
   m_Name: Hotbar
@@ -267,32 +266,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 320, y: 32}
   m_Pivot: {x: 0.5, y: 0}
---- !u!114 &2071495930625889705
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1095396689848798898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
-  m_ReverseArrangement: 0
 --- !u!114 &2645306138954837417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -306,6 +279,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _uiItemSlotPrefab: {fileID: 1274409073444489641, guid: fa13e6df0e4bdba40b7743f20c677e0d, type: 3}
+  _uiRowSlotsPrefab: {fileID: 8201986702071766256, guid: 48d96422a037fe845a29dad3cb5e2f03, type: 3}
+  _rowsCount: 1
+  _rowSlotsCount: 10
 --- !u!1 &1111133746723093537
 GameObject:
   m_ObjectHideFlags: 0
@@ -1375,6 +1351,58 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &4624545018050256509
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3810366770452468946}
+  - component: {fileID: 1566391599130695648}
+  m_Layer: 0
+  m_Name: MainSlots
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3810366770452468946
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4624545018050256509}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6188397585831326659}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1566391599130695648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4624545018050256509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31e023cc05eedd6439b369951d62a581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _uiItemSlotPrefab: {fileID: 1274409073444489641, guid: fa13e6df0e4bdba40b7743f20c677e0d, type: 3}
+  _uiRowSlotsPrefab: {fileID: 8201986702071766256, guid: 48d96422a037fe845a29dad3cb5e2f03, type: 3}
+  _rowsCount: 1
+  _rowSlotsCount: 10
 --- !u!1 &4989573799903828984
 GameObject:
   m_ObjectHideFlags: 0
@@ -6514,6 +6542,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 818345371403355757}
+  - {fileID: 3810366770452468946}
   m_Father: {fileID: 6752283934456956255}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6597,6 +6626,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hotbar: {fileID: 2645306138954837417}
+  _mainSlots: {fileID: 1566391599130695648}
   _blockPicker: {fileID: 6203515626348112953}
   _manager: {fileID: 5868988553912566916}
   _inputManager: {fileID: 3319511144438469435}

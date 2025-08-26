@@ -12,6 +12,7 @@ namespace World.Inventories
     public class PlayerInventoryController : MonoBehaviour
     {
         [SerializeField] private UIPlayerHotbarDrawer _hotbar;
+        [SerializeField] private UIPlayerMainSlotsDrawer _mainSlots;
         [SerializeField] private HoveredBlockPicker _blockPicker;
         [SerializeField] private WorldManager _manager;
         [SerializeField] private WorldInputManager _inputManager;
@@ -39,6 +40,7 @@ namespace World.Inventories
         {
             _inventory = new PlayerInventory();
             _hotbar.SetUp(_inventory);
+            _mainSlots.SetUp(_inventory);
             _blockPicker.OnBlockPickedChanged += HandleBlockPickedUpdate;
             _inventory.Events.SlotChanged += HandleInventorySlotChanged;
         }
@@ -54,15 +56,21 @@ namespace World.Inventories
         }
         private void OnEnable()
         {
-            var actions = _inputManager.Controls.InventoryPlayerHotbar;
-            actions.MouseScroll.performed += OnMouseScroll;
-            actions.Enable();
+            var inventory = _inputManager.Controls.InventoryPlayer;
+            inventory.Toggle.performed += TogglePlayerInventory;
+            inventory.Enable();
+            var hotbar = _inputManager.Controls.InventoryPlayerHotbar;
+            hotbar.MouseScroll.performed += OnMouseScroll;
+            hotbar.Enable();
         }
         private void OnDisable()
         {
-            var actions = _inputManager.Controls.InventoryPlayerHotbar;
-            actions.MouseScroll.performed -= OnMouseScroll;
-            actions.Disable();
+            var inventory = _inputManager.Controls.InventoryPlayer;
+            inventory.Toggle.performed -= TogglePlayerInventory;
+            inventory.Disable();
+            var hotbar = _inputManager.Controls.InventoryPlayerHotbar;
+            hotbar.MouseScroll.performed -= OnMouseScroll;
+            hotbar.Disable();
         }
         private void HandleBlockPickedUpdate(WorldPosition position, Block block, BlockLayer blockLayer, BlockStyles blockStyles)
         {
@@ -83,6 +91,10 @@ namespace World.Inventories
                 _itemOnRightHand.sprite = ActiveItemInfo.Sprite;
         }
 
+        private void TogglePlayerInventory(InputAction.CallbackContext context)
+        {
+            _mainSlots.Toggle();
+        }
         private void OnMouseScroll(InputAction.CallbackContext context)
         {
             ActiveHotbarIndex += Math.Sign(context.ReadValue<float>()) * -1; // reverse
