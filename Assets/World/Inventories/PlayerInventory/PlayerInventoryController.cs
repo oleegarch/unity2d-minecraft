@@ -85,7 +85,7 @@ namespace World.Inventories
 
         private void OnMouseScroll(InputAction.CallbackContext context)
         {
-            ActiveHotbarIndex += Math.Sign(context.ReadValue<float>());
+            ActiveHotbarIndex += Math.Sign(context.ReadValue<float>()) * -1; // reverse
         }
 
         public bool TryCollect(ItemInfo item)
