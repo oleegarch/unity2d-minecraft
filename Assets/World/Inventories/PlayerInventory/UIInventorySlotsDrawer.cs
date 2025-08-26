@@ -142,12 +142,16 @@ namespace World.Inventories
             UnsubscribeFromInventoryEvents();
             gameObject.SetActive(false);
         }
-        public virtual void Toggle()
+        public virtual bool Toggle()
         {
-            if (gameObject.activeInHierarchy)
+            bool isActive = gameObject.activeInHierarchy;
+            
+            if (isActive)
                 Close();
             else
                 Open();
+
+            return !isActive;
         }
 
         protected virtual void RefreshAll()

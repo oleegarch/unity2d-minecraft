@@ -1,4 +1,5 @@
 using System;
+using UIGlobal;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using World.Blocks;
@@ -17,6 +18,7 @@ namespace World.Inventories
         [SerializeField] private WorldManager _manager;
         [SerializeField] private WorldInputManager _inputManager;
         [SerializeField] private SpriteRenderer _itemOnRightHand;
+        [SerializeField] private UIMask _uiMask;
         
         private PlayerInventory _inventory;
         private int _hotbarActiveIndex;
@@ -93,7 +95,10 @@ namespace World.Inventories
 
         private void TogglePlayerInventory(InputAction.CallbackContext context)
         {
-            _mainSlots.Toggle();
+            if (_mainSlots.Toggle())
+                _uiMask.Appear();
+            else
+                _uiMask.Disappear();
         }
         private void OnMouseScroll(InputAction.CallbackContext context)
         {
