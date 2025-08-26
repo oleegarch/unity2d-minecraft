@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using World.Systems;
 using World.Chunks.Generator.Steps;
 using World.Chunks.BlocksStorage;
+using World.Rules;
 
 namespace World.Chunks.Generator
 {
@@ -20,6 +21,7 @@ namespace World.Chunks.Generator
     public interface IChunkGenerator
     {
         public byte ChunkSize { get; }
+        public WorldGlobalRules Rules { get; }
         public void CacheComputation(RectInt rect, int seed);
         public Task<Chunk> GenerateChunkAsync(ChunkIndex index, int seed);
         public void RegisterWorldSystems(WorldManager manager);
@@ -29,8 +31,11 @@ namespace World.Chunks.Generator
     // Composite generator orchestrates
     public class ChunkGeneratorPipeline : IChunkGenerator
     {
-        public byte ChunkSize { get; }
+        public byte ChunkSize => _settings.ChunkSize;
+        public WorldGlobalRules Rules => _rules;
 
+        private readonly ChunkGeneratorSettings _settings;
+        private readonly WorldGlobalRules _rules;
         private readonly IChunkCreationStep _creationStep;
         private readonly IReadOnlyList<IChunkPostStep> _postProcessingSteps;
         private readonly IReadOnlyList<IChunkCacheStep> _chunkCachingSteps;
@@ -38,12 +43,14 @@ namespace World.Chunks.Generator
 
         public ChunkGeneratorPipeline(
             ChunkGeneratorSettings settings,
+            WorldGlobalRules rules,
             IChunkCreationStep chunkCreationStep,
             IEnumerable<IChunkPostStep> chunkPostProcessingSteps,
             IEnumerable<IChunkCacheStep> chunkCachingSteps,
             IEnumerable<IWorldSystem> worldSystems)
         {
-            ChunkSize = settings.ChunkSize;
+            _settings = settings;
+            _rules = rules;
             _creationStep = chunkCreationStep;
             _postProcessingSteps = chunkPostProcessingSteps.ToList();
             _chunkCachingSteps = chunkCachingSteps.ToList();

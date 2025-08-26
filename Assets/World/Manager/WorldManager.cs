@@ -31,6 +31,7 @@ namespace World.Chunks
         public IChunkGenerator Generator { get; private set; }
         public IWorldBlockModifier Blocks { get; private set; }
         public IWorldStorage Storage { get; private set; }
+        public int Seed => _seed;
 
         [NonSerialized] public bool Loaded = false;
 
@@ -38,7 +39,7 @@ namespace World.Chunks
         {
             Generator = _chunkGeneratorConfig.GetChunkGenerator();
             Storage = new WorldStorage(Generator, _chunkRendererPrefab, _chunksParent, this);
-            Blocks = new WorldBlockModifier(Storage);
+            Blocks = new WorldBlockModifier(Storage, Generator.Rules);
         }
         private void Start()
         {

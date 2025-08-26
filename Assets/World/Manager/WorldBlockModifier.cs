@@ -1,5 +1,6 @@
 using World.Blocks;
 using World.Chunks.BlocksStorage;
+using World.Rules;
 
 namespace World.Chunks
 {
@@ -21,12 +22,14 @@ namespace World.Chunks
     public class WorldBlockModifier : IWorldBlockModifier
     {
         private readonly IWorldStorage _worldStorage;
+        private readonly WorldGlobalRules _rules;
 
         public WorldBlockEvents Events { get; private set; }
 
-        public WorldBlockModifier(IWorldStorage storage)
+        public WorldBlockModifier(IWorldStorage storage, WorldGlobalRules rules)
         {
             _worldStorage = storage;
+            _rules = rules;
             Events = new WorldBlockEvents();
         }
 
@@ -54,7 +57,11 @@ namespace World.Chunks
                 if (mainBlock.IsAir)
                 {
                     blockLayer = BlockLayer.Behind;
-                    return chunk.Blocks.Get(blockIndex, blockLayer);
+
+                    if (_rules.CanBreakBehindBlock(worldPosition, _worldStorage.Seed))
+                        return chunk.Blocks.Get(blockIndex, blockLayer);
+
+                    return Block.Air;
                 }
 
                 return mainBlock;

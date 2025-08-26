@@ -139,6 +139,8 @@ namespace World.HoveredBlock
             }
 
             Block hoveredBlock = _worldManager.Blocks.GetBreakable(worldPosition, out BlockLayer blockLayer);
+            if (hoveredBlock.IsAir) yield break;
+
             BlockInfo hoveredInfo = _worldManager.BlockDatabase.Get(hoveredBlock.Id);
 
             _targetSpriteRenderer.color = hoveredInfo.OutlineColor;

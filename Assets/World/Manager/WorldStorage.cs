@@ -9,6 +9,7 @@ namespace World.Chunks
 {
     public interface IWorldStorage
     {
+        public int Seed { get; }
         public Task<bool> GetOrCreateAsync(ChunkIndex index, int seed);
 
         public bool TryGetChunk(ChunkIndex index, out Chunk chunk);
@@ -34,6 +35,8 @@ namespace World.Chunks
         private readonly Dictionary<ChunkIndex, Chunk> _chunks = new();
         private readonly Dictionary<ChunkIndex, ChunkRenderer> _renderers = new();
         private readonly HashSet<ChunkIndex> _loadings = new();
+
+        public int Seed => _manager.Seed;
 
         public WorldStorage(IChunkGenerator generator, GameObject prefab, Transform parent, WorldManager manager)
         {

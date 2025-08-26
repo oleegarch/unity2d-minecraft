@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using World.Chunks.Generator.Steps;
 using World.Chunks.Generator.Providers;
 using World.Systems;
+using World.Rules;
 
 namespace World.Chunks.Generator
 {    
@@ -44,7 +45,11 @@ namespace World.Chunks.Generator
             // Compose generator
             var settings = new ChunkGeneratorSettings(_chunkSize);
             var worldSystems = new IWorldSystem[] { new BreakableByGravitySystem() };
-            var composite = new ChunkGeneratorPipeline(settings, creationStep, postSteps, cacheSteps, worldSystems);
+            var rules = new WorldGlobalRules()
+            {
+                CanBreakBehindBlock = blockGenerator.CanBreakBehindBlock
+            };
+            var composite = new ChunkGeneratorPipeline(settings, rules, creationStep, postSteps, cacheSteps, worldSystems);
 
             // Inject into manager
             return composite;

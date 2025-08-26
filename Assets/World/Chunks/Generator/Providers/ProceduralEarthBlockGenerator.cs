@@ -128,5 +128,12 @@ namespace World.Chunks.Generator.Providers
             float offsetY = Mathf.Cos(noiseSeed * 573.829f) * 1000f;
             return Mathf.PerlinNoise(worldX * scale + offsetX, worldY * scale + offsetY) > threshold;
         }
+
+        public bool CanBreakBehindBlock(WorldPosition position, int seed)
+        {
+            var biome = _biomeProvider.GetBiome(position.x, seed);
+            int surfaceY = _surfaceHeightProvider.GetSurfaceY(position.x, seed);
+            return position.y > surfaceY - biome.Depth;
+        }
     }
 }

@@ -78,28 +78,28 @@ namespace World.Chunks.BlocksStorage
             }
 
             if (!main.IsAir)
-            {
                 stack.Add(new RenderLayer { Id = main.Id, Behind = false });
-            }
 
             return stack;
         }
 
-        public BlockStyles GetDefaultBlockStyles(BlockLayer layer)
-        {
-            return BlockStyles.ByLayer[(int)layer];
-        }
         public BlockStyles GetBlockStyles(BlockIndex index, BlockLayer layer)
         {
             if (!_styleOverrides.TryGetValue(layer, out var overrides) || !overrides.ContainsKey(index))
-                return GetDefaultBlockStyles(layer);
+                return BlockStyles.ByLayer[(int)layer];
 
             return overrides[index];
         }
         public void OverrideBlockStyles(BlockIndex index, BlockStyles styles, BlockLayer layer)
         {
-            if (styles == GetDefaultBlockStyles(layer))
+            // устанавливаем такие же стили как у этого слоя они стоят по умолчанию
+            // поэтому попытаемся удалить их вовсе
+            // ведь, они итак возвращаются по умолчанию при отсутствии перезаписанных стилей
+            if (styles == BlockStyles.ByLayer[(int)layer])
+            {
+                RemoveOverrideBlockStyles(index, layer);
                 return;
+            }
 
             if (!_styleOverrides.TryGetValue(layer, out var overrides))
                 overrides = _styleOverrides[layer] = new();
@@ -118,7 +118,7 @@ namespace World.Chunks.BlocksStorage
         public bool ShouldBehind(BlockIndex index, BlockLayer layer = BlockLayer.Behind)
         {
             if (!_styleOverrides.TryGetValue(layer, out var overrides) || !overrides.ContainsKey(index))
-                return GetDefaultBlockStyles(layer).IsBehind;
+                return BlockStyles.ByLayer[(int)layer].IsBehind;
 
             return overrides[index].IsBehind;
         }
