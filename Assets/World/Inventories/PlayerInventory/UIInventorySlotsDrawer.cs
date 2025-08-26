@@ -10,14 +10,12 @@ namespace World.Inventories
     /// Универсальный drawer: рисует список слотов inventorySlotIndices (абсолютные индексы в Inventory).
     /// Рендерит слоты пачками (строками) через _uiRowSlotsPrefab.
     /// Количество слотов в одной строке задаётся _maxRowSlotsCount.
-    /// Каждая следующая строка смещается вниз на (предыдущая_высота + _rowMarginBottom).
     /// </summary>
     public class UIInventorySlotsDrawer : MonoBehaviour, IDisposable
     {
         [SerializeField] protected GameObject _uiItemSlotPrefab;
         [SerializeField] protected GameObject _uiRowSlotsPrefab;
         [SerializeField] protected int _maxRowSlotsCount = 10;
-        [SerializeField] protected int _rowMarginBottom = 8;
 
         protected Inventory _inventory;
         protected List<GameObject> _rowParents;
@@ -35,7 +33,6 @@ namespace World.Inventories
             if (_uiRowSlotsPrefab == null) throw new InvalidOperationException("_uiRowSlotsPrefab must be assigned.");
             if (_uiItemSlotPrefab == null) throw new InvalidOperationException("_uiItemSlotPrefab must be assigned.");
             if (_maxRowSlotsCount <= 0) throw new InvalidOperationException("_maxRowSlotsCount must be > 0.");
-            if (_rowMarginBottom < 0) _rowMarginBottom = 0; // допускаем 0, но не отрицательные
 
             _inventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
             _inventoryIndices = inventorySlotIndices.ToArray();
@@ -57,6 +54,11 @@ namespace World.Inventories
                 _rowParents.Add(rowGo);
             }
 
+            // Подготовим контейнеры для записи RectTransform'ов дочерних слотов по строкам,
+            // чтобы позже можно было при необходимости инвертировать порядок дочерних элементов.
+            var rowChildren = new List<List<RectTransform>>(rowsCount);
+            for (int r = 0; r < rowsCount; r++) rowChildren.Add(new List<RectTransform>());
+
             // Инстанцируем слоты и размещаем их в соответствующих строках
             for (int i = 0; i < _inventoryIndices.Length; i++)
             {
@@ -71,64 +73,97 @@ namespace World.Inventories
                 var uiSlot = go.GetComponent<UIItemSlotDrawer>();
                 if (uiSlot == null) throw new InvalidOperationException("Prefab must have UIItemSlotDrawer.");
 
+                // Запомним RectTransform дочернего слота для возможной перестановки порядка
+                var childRt = go.GetComponent<RectTransform>();
+                if (childRt != null) rowChildren[rowIndex].Add(childRt);
+
                 // передаём стартовое состояние
                 uiSlot.SetUp(DetermineSlotDirection(i), _inventory.GetSlot(invIndex));
                 _uiItemSlots[i] = uiSlot;
             }
 
-            // Обновляем layout'ы и корректируем позиции строк по высоте + отступ
-            // Force UI rebuild чтобы rect.height был корректным (важно при использовании LayoutGroup/ContentSizeFitter)
-            Canvas.ForceUpdateCanvases();
-            for (int r = 0; r < _rowParents.Count; r++)
-            {
-                var rt = _rowParents[r].GetComponent<RectTransform>();
-                if (rt == null) continue;
-                LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
-            }
-
-            // Ставим смещение для строк: row0 — оставляем на месте, последующие — под предыдущей с margin
+            // Ставим смещение для строк: row0 — оставляем на месте, последующие — под предыдущей
             for (int r = 1; r < _rowParents.Count; r++)
             {
                 var prevRt = _rowParents[r - 1].GetComponent<RectTransform>();
                 var curRt = _rowParents[r].GetComponent<RectTransform>();
                 if (prevRt == null || curRt == null) continue;
 
-                // берём высоту предыдущей строки
-                float prevHeight = prevRt.rect.height;
-
-                // Важное замечание: anchoredPosition.y ведёт себя в зависимости от якорей.
-                // Мы применяем смещение относительно текущей anchoredPosition.y предыдущей строки.
-                float prevY = prevRt.anchoredPosition.y;
-                float newCurY = prevY + (prevHeight + _rowMarginBottom);
-
-                // сохраняем X
-                Vector2 curAnch = curRt.anchoredPosition;
-                curRt.anchoredPosition = new Vector2(curAnch.x, newCurY);
+                // anchoredPosition.y: смещаем в нужную сторону
+                float newCurY = prevRt.anchoredPosition.y - prevRt.rect.height;
+                curRt.anchoredPosition = new Vector2(curRt.anchoredPosition.x, newCurY);
             }
 
             if (_alwaysUpdate) SubscribeToInventoryEvents();
         }
 
-        /// <summary>Можно переопределить, чтобы задавать Left/Right/Center в специфичных реализациях (например для хотбара).</summary>
+        /// <summary>
+        /// Возвращает флаговую комбинацию: тип (OneRow / MultiRow) + позиция по X (Left/XCenter/Right) + позиция по Y (Top/YCenter/Bottom).
+        /// Учитывает _rowsPivot: при Bottom2Top визуальная "верхняя" строка — это та, у которой логический индекс rowsCount-1.
+        /// </summary>
         protected virtual UIItemSlotDirection DetermineSlotDirection(int uiIndex)
         {
-            // Защита от некорректных состояний
+            // Защита на случай неверных входных данных
             if (_maxRowSlotsCount <= 0 || _inventoryIndices == null || _inventoryIndices.Length == 0)
-                return UIItemSlotDirection.Center;
+                return UIItemSlotDirection.OneRow | UIItemSlotDirection.XCenter | UIItemSlotDirection.YCenter;
 
+            int totalItems = _inventoryIndices.Length;
+            if (uiIndex < 0 || uiIndex >= totalItems)
+                return UIItemSlotDirection.OneRow | UIItemSlotDirection.XCenter | UIItemSlotDirection.YCenter;
+
+            int rowsCount = (totalItems + _maxRowSlotsCount - 1) / _maxRowSlotsCount; // округление вверх
             int rowIndex = uiIndex / _maxRowSlotsCount;
             int posInRow = uiIndex % _maxRowSlotsCount;
 
-            // Первый в ряду
-            if (posInRow == 0)
-                return UIItemSlotDirection.Left;
+            // Тип: OneRow если всего одна строка, иначе MultiRow
+            UIItemSlotDirection type = (rowsCount == 1)
+                ? UIItemSlotDirection.OneRow
+                : UIItemSlotDirection.MultiRow;
 
-            // Вычисляем индекс последнего слота в этом ряду (учитываем неполную последнюю строку)
-            int rowEndIndex = Math.Min((rowIndex + 1) * _maxRowSlotsCount - 1, _inventoryIndices.Length - 1);
-            if (uiIndex == rowEndIndex)
-                return UIItemSlotDirection.Right;
+            // Индексы начала/конца этой строки (учитываем неполную последнюю строку)
+            int rowStartIndex = rowIndex * _maxRowSlotsCount;
+            int rowEndIndex = Math.Min(rowStartIndex + _maxRowSlotsCount - 1, totalItems - 1);
+            int rowLength = rowEndIndex - rowStartIndex + 1;
 
-            return UIItemSlotDirection.Center;
+            // Горизонтальная позиция: Left / XCenter / Right
+            UIItemSlotDirection horiz;
+            if (rowLength == 1)
+            {
+                horiz = UIItemSlotDirection.XCenter;
+            }
+            else if (posInRow == 0)
+            {
+                horiz = UIItemSlotDirection.Left;
+            }
+            else if (uiIndex == rowEndIndex)
+            {
+                horiz = UIItemSlotDirection.Right;
+            }
+            else
+            {
+                horiz = UIItemSlotDirection.XCenter;
+            }
+
+            // Вертикальная позиция: Top / YCenter / Bottom в зависимости от логического положения строки от вершины
+            UIItemSlotDirection vert;
+            if (rowsCount == 1)
+            {
+                vert = UIItemSlotDirection.YCenter;
+            }
+            else if (rowIndex == 0)
+            {
+                vert = UIItemSlotDirection.Top;
+            }
+            else if (rowIndex == rowsCount - 1)
+            {
+                vert = UIItemSlotDirection.Bottom;
+            }
+            else
+            {
+                vert = UIItemSlotDirection.YCenter;
+            }
+
+            return type | horiz | vert;
         }
 
         public virtual void Open()
@@ -145,7 +180,7 @@ namespace World.Inventories
         public virtual bool Toggle()
         {
             bool isActive = gameObject.activeInHierarchy;
-            
+
             if (isActive)
                 Close();
             else

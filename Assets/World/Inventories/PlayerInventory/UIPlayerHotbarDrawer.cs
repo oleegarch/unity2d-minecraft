@@ -27,9 +27,9 @@ namespace World.Inventories
 
         protected override UIItemSlotDirection DetermineSlotDirection(int uiIndex)
         {
-            if (uiIndex == 0) return UIItemSlotDirection.Left;
-            if (uiIndex == PlayerInventory.HotbarSize - 1) return UIItemSlotDirection.Right;
-            return UIItemSlotDirection.Center;
+            if (uiIndex == 0) return UIItemSlotDirection.OneRow | UIItemSlotDirection.Left;
+            if (uiIndex == PlayerInventory.HotbarSize - 1) return UIItemSlotDirection.OneRow | UIItemSlotDirection.Right;
+            return UIItemSlotDirection.OneRow | UIItemSlotDirection.XCenter;
         }
 
         /// <summary>
