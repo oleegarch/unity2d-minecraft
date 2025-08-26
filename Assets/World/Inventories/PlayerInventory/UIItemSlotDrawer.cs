@@ -16,37 +16,24 @@ namespace World.Inventories
         [SerializeField] private Sprite _leftItemSlot;
         [SerializeField] private Sprite _centerItemSlot;
         [SerializeField] private Sprite _rightItemSlot;
+        [SerializeField] private Sprite _leftItemSlotActive;
+        [SerializeField] private Sprite _centerItemSlotActive;
+        [SerializeField] private Sprite _rightItemSlotActive;
         [SerializeField] private Image _uiItemSlotImage;
         [SerializeField] private Image _uiItemImage;
         [SerializeField] private TextMeshProUGUI _uiTextCount;
 
         private UIItemSlotDirection _currentDirection;
         private ItemStack _currentStack;
+        private bool _currentActive;
 
         public void SetUp(UIItemSlotDirection direction, ItemStack stack)
         {
             _currentDirection = direction;
             _currentStack = stack;
-
-            switch (direction)
-            {
-                case UIItemSlotDirection.Left:
-                    {
-                        _uiItemSlotImage.sprite = _leftItemSlot;
-                        break;
-                    }
-                case UIItemSlotDirection.Center:
-                    {
-                        _uiItemSlotImage.sprite = _centerItemSlot;
-                        break;
-                    }
-                case UIItemSlotDirection.Right:
-                    {
-                        _uiItemSlotImage.sprite = _rightItemSlot;
-                        break;
-                    }
-            }
             
+            SetActive(_currentActive);
+
             if (stack.Item != null)
             {
                 _uiItemImage.sprite = stack.Item.Sprite;
@@ -78,6 +65,29 @@ namespace World.Inventories
             )
             {
                 SetUp(_currentDirection, stack);
+            }
+        }
+        public void SetActive(bool isActive)
+        {
+            _currentActive = isActive;
+
+            switch (_currentDirection)
+            {
+                case UIItemSlotDirection.Left:
+                    {
+                        _uiItemSlotImage.sprite = isActive ? _leftItemSlotActive : _leftItemSlot;
+                        break;
+                    }
+                case UIItemSlotDirection.Center:
+                    {
+                        _uiItemSlotImage.sprite = isActive ? _centerItemSlotActive : _centerItemSlot;
+                        break;
+                    }
+                case UIItemSlotDirection.Right:
+                    {
+                        _uiItemSlotImage.sprite = isActive ? _rightItemSlotActive : _rightItemSlot;
+                        break;
+                    }
             }
         }
 

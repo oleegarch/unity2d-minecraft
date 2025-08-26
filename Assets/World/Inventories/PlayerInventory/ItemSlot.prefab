@@ -135,9 +135,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bf8bb4574e5094458e0a35a42eb0612, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _leftItemSlot: {fileID: -1130240792, guid: bf5adc860a2edc54c87f95e30da27c66, type: 3}
-  _centerItemSlot: {fileID: -1188288486, guid: bf5adc860a2edc54c87f95e30da27c66, type: 3}
-  _rightItemSlot: {fileID: 1007003417, guid: bf5adc860a2edc54c87f95e30da27c66, type: 3}
+  _leftItemSlot: {fileID: -3169798932818741779, guid: 725aa0ce1dd276f43af555a1b8938998, type: 3}
+  _centerItemSlot: {fileID: 1478879412, guid: 725aa0ce1dd276f43af555a1b8938998, type: 3}
+  _rightItemSlot: {fileID: 1431536433, guid: 725aa0ce1dd276f43af555a1b8938998, type: 3}
+  _leftItemSlotActive: {fileID: 492694768950714748, guid: 60b9ccc0a2a359147aa401427e5f15bd, type: 3}
+  _centerItemSlotActive: {fileID: -1134099188, guid: 60b9ccc0a2a359147aa401427e5f15bd, type: 3}
+  _rightItemSlotActive: {fileID: -1996149158, guid: 60b9ccc0a2a359147aa401427e5f15bd, type: 3}
   _uiItemSlotImage: {fileID: 6981248766187838049}
   _uiItemImage: {fileID: 9029016692568985739}
   _uiTextCount: {fileID: 387113478260966393}

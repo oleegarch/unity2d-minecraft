@@ -274,9 +274,9 @@ namespace World.InputActions
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""80295b8d-72e2-4607-aa73-6ad7683ca5fe"",
+                    ""id"": ""84c308a7-1bd4-4516-9f6e-692d60e12152"",
                     ""path"": ""<Mouse>/scroll/y"",
-                    ""interactions"": """",
+                    ""interactions"": ""RequireModifier"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""MouseZoom"",
@@ -541,6 +541,34 @@ namespace World.InputActions
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""InventoryPlayerHotbar"",
+            ""id"": ""9ea46c91-2504-48f5-8868-280224b1a551"",
+            ""actions"": [
+                {
+                    ""name"": ""MouseScroll"",
+                    ""type"": ""Value"",
+                    ""id"": ""800d0bc0-a2ac-46a0-b32c-12cbe04b8e0d"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""9e321a4d-79ab-492b-8830-bed8072441b1"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": ""RequireModifier(invert=true)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseScroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -570,6 +598,9 @@ namespace World.InputActions
             m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
             m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+            // InventoryPlayerHotbar
+            m_InventoryPlayerHotbar = asset.FindActionMap("InventoryPlayerHotbar", throwIfNotFound: true);
+            m_InventoryPlayerHotbar_MouseScroll = m_InventoryPlayerHotbar.FindAction("MouseScroll", throwIfNotFound: true);
         }
 
         ~@WorldInputActions()
@@ -581,6 +612,7 @@ namespace World.InputActions
             UnityEngine.Debug.Assert(!m_HoveredBlockPlacer.enabled, "This will cause a leak and performance issues, WorldInputActions.HoveredBlockPlacer.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_HoveredBlockPicker.enabled, "This will cause a leak and performance issues, WorldInputActions.HoveredBlockPicker.Disable() has not been called.");
             UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, WorldInputActions.Player.Disable() has not been called.");
+            UnityEngine.Debug.Assert(!m_InventoryPlayerHotbar.enabled, "This will cause a leak and performance issues, WorldInputActions.InventoryPlayerHotbar.Disable() has not been called.");
         }
 
         /// <summary>
@@ -1368,6 +1400,102 @@ namespace World.InputActions
         /// Provides a new <see cref="PlayerActions" /> instance referencing this action map.
         /// </summary>
         public PlayerActions @Player => new PlayerActions(this);
+
+        // InventoryPlayerHotbar
+        private readonly InputActionMap m_InventoryPlayerHotbar;
+        private List<IInventoryPlayerHotbarActions> m_InventoryPlayerHotbarActionsCallbackInterfaces = new List<IInventoryPlayerHotbarActions>();
+        private readonly InputAction m_InventoryPlayerHotbar_MouseScroll;
+        /// <summary>
+        /// Provides access to input actions defined in input action map "InventoryPlayerHotbar".
+        /// </summary>
+        public struct InventoryPlayerHotbarActions
+        {
+            private @WorldInputActions m_Wrapper;
+
+            /// <summary>
+            /// Construct a new instance of the input action map wrapper class.
+            /// </summary>
+            public InventoryPlayerHotbarActions(@WorldInputActions wrapper) { m_Wrapper = wrapper; }
+            /// <summary>
+            /// Provides access to the underlying input action "InventoryPlayerHotbar/MouseScroll".
+            /// </summary>
+            public InputAction @MouseScroll => m_Wrapper.m_InventoryPlayerHotbar_MouseScroll;
+            /// <summary>
+            /// Provides access to the underlying input action map instance.
+            /// </summary>
+            public InputActionMap Get() { return m_Wrapper.m_InventoryPlayerHotbar; }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+            public void Enable() { Get().Enable(); }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+            public void Disable() { Get().Disable(); }
+            /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+            public bool enabled => Get().enabled;
+            /// <summary>
+            /// Implicitly converts an <see ref="InventoryPlayerHotbarActions" /> to an <see ref="InputActionMap" /> instance.
+            /// </summary>
+            public static implicit operator InputActionMap(InventoryPlayerHotbarActions set) { return set.Get(); }
+            /// <summary>
+            /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+            /// </summary>
+            /// <param name="instance">Callback instance.</param>
+            /// <remarks>
+            /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+            /// </remarks>
+            /// <seealso cref="InventoryPlayerHotbarActions" />
+            public void AddCallbacks(IInventoryPlayerHotbarActions instance)
+            {
+                if (instance == null || m_Wrapper.m_InventoryPlayerHotbarActionsCallbackInterfaces.Contains(instance)) return;
+                m_Wrapper.m_InventoryPlayerHotbarActionsCallbackInterfaces.Add(instance);
+                @MouseScroll.started += instance.OnMouseScroll;
+                @MouseScroll.performed += instance.OnMouseScroll;
+                @MouseScroll.canceled += instance.OnMouseScroll;
+            }
+
+            /// <summary>
+            /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+            /// </summary>
+            /// <remarks>
+            /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+            /// </remarks>
+            /// <seealso cref="InventoryPlayerHotbarActions" />
+            private void UnregisterCallbacks(IInventoryPlayerHotbarActions instance)
+            {
+                @MouseScroll.started -= instance.OnMouseScroll;
+                @MouseScroll.performed -= instance.OnMouseScroll;
+                @MouseScroll.canceled -= instance.OnMouseScroll;
+            }
+
+            /// <summary>
+            /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="InventoryPlayerHotbarActions.UnregisterCallbacks(IInventoryPlayerHotbarActions)" />.
+            /// </summary>
+            /// <seealso cref="InventoryPlayerHotbarActions.UnregisterCallbacks(IInventoryPlayerHotbarActions)" />
+            public void RemoveCallbacks(IInventoryPlayerHotbarActions instance)
+            {
+                if (m_Wrapper.m_InventoryPlayerHotbarActionsCallbackInterfaces.Remove(instance))
+                    UnregisterCallbacks(instance);
+            }
+
+            /// <summary>
+            /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+            /// </summary>
+            /// <remarks>
+            /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+            /// </remarks>
+            /// <seealso cref="InventoryPlayerHotbarActions.AddCallbacks(IInventoryPlayerHotbarActions)" />
+            /// <seealso cref="InventoryPlayerHotbarActions.RemoveCallbacks(IInventoryPlayerHotbarActions)" />
+            /// <seealso cref="InventoryPlayerHotbarActions.UnregisterCallbacks(IInventoryPlayerHotbarActions)" />
+            public void SetCallbacks(IInventoryPlayerHotbarActions instance)
+            {
+                foreach (var item in m_Wrapper.m_InventoryPlayerHotbarActionsCallbackInterfaces)
+                    UnregisterCallbacks(item);
+                m_Wrapper.m_InventoryPlayerHotbarActionsCallbackInterfaces.Clear();
+                AddCallbacks(instance);
+            }
+        }
+        /// <summary>
+        /// Provides a new <see cref="InventoryPlayerHotbarActions" /> instance referencing this action map.
+        /// </summary>
+        public InventoryPlayerHotbarActions @InventoryPlayerHotbar => new InventoryPlayerHotbarActions(this);
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "CameraSpectator" which allows adding and removing callbacks.
         /// </summary>
@@ -1500,6 +1628,21 @@ namespace World.InputActions
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnJump(InputAction.CallbackContext context);
+        }
+        /// <summary>
+        /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "InventoryPlayerHotbar" which allows adding and removing callbacks.
+        /// </summary>
+        /// <seealso cref="InventoryPlayerHotbarActions.AddCallbacks(IInventoryPlayerHotbarActions)" />
+        /// <seealso cref="InventoryPlayerHotbarActions.RemoveCallbacks(IInventoryPlayerHotbarActions)" />
+        public interface IInventoryPlayerHotbarActions
+        {
+            /// <summary>
+            /// Method invoked when associated input action "MouseScroll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnMouseScroll(InputAction.CallbackContext context);
         }
     }
 }

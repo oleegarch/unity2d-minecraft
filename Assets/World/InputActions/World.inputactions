@@ -186,9 +186,9 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "80295b8d-72e2-4607-aa73-6ad7683ca5fe",
+                    "id": "84c308a7-1bd4-4516-9f6e-692d60e12152",
                     "path": "<Mouse>/scroll/y",
-                    "interactions": "",
+                    "interactions": "RequireModifier",
                     "processors": "",
                     "groups": "",
                     "action": "MouseZoom",
@@ -451,6 +451,34 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "InventoryPlayerHotbar",
+            "id": "9ea46c91-2504-48f5-8868-280224b1a551",
+            "actions": [
+                {
+                    "name": "MouseScroll",
+                    "type": "Value",
+                    "id": "800d0bc0-a2ac-46a0-b32c-12cbe04b8e0d",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "9e321a4d-79ab-492b-8830-bed8072441b1",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "RequireModifier(invert=true)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseScroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

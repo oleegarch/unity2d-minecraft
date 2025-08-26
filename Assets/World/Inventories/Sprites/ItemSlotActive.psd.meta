@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: bf5adc860a2edc54c87f95e30da27c66
+guid: 60b9ccc0a2a359147aa401427e5f15bd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8417420941954122440
-    second: Slot_0
+      213: 492694768950714748
+    second: ItemSlotActive_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -53,7 +53,7 @@ TextureImporter:
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 1
+  spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ItemSlotLeft
+      name: ItemSlotActiveLeft
       rect:
         serializedVersion: 2
         x: 0
@@ -121,21 +121,21 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 3a6e2a18f147a4146a352938ff6e9516
-      internalID: -1130240792
+      spriteID: c71200e284766d600800000000000000
+      internalID: 492694768950714748
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ItemSlotCenter
+      name: ItemSlotActiveCenter
       rect:
         serializedVersion: 2
         x: 32
@@ -143,21 +143,21 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e2e759a6df0ff10418f2cfb425fa2d1a
-      internalID: -1188288486
+      spriteID: 15ff3d2ae0ce98442b9b264ed0ce52ae
+      internalID: -1134099188
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ItemSlotRight
+      name: ItemSlotActiveRight
       rect:
         serializedVersion: 2
         x: 64
@@ -165,15 +165,15 @@ TextureImporter:
         width: 32
         height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f0c2c17a4ca72c54bbd558cdd0b58eaa
-      internalID: 1007003417
+      spriteID: 4edee1dcba4643c40a88751ed2e18142
+      internalID: -1996149158
       vertices: []
       indices: 
       edges: []
@@ -182,7 +182,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 5e6b382bd038e62468b3e5bb491e3a58
     internalID: 0
     vertices: []
     indices: 
@@ -194,11 +194,11 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":3.0,"y":1.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      ItemSlotCenter: -1188288486
-      ItemSlotLeft: -1130240792
-      ItemSlotRight: 1007003417
+      ItemSlotActiveCenter: -1134099188
+      ItemSlotActiveLeft: 492694768950714748
+      ItemSlotActiveRight: -1996149158
   mipmapLimitGroupName: 
-  pSDRemoveMatte: 0
+  pSDRemoveMatte: 1
   userData: 
   assetBundleName: 
   assetBundleVariant: 

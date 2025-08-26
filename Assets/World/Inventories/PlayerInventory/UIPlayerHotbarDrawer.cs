@@ -20,7 +20,6 @@ namespace World.Inventories
 
             SubscribeToInventoryEvents();
 
-
             RectTransform rt = transform as RectTransform;
             Vector2 size = rt.sizeDelta;
             size.x = PlayerInventory.HotbarSize * 32;
@@ -60,16 +59,29 @@ namespace World.Inventories
             _uiItemSlots[hotbarIndex].Refresh(_inventory.GetSlot(hotbarIndex));
         }
 
+        public int ChangeActiveHotbar(int newIndex)
+        {
+            if (_uiItemSlots.Length <= newIndex)
+                newIndex = 0;
+            else if (0 > newIndex)
+                newIndex = _uiItemSlots.Length - 1;
+
+            for (int i = 0; i < _uiItemSlots.Length; i++)
+                _uiItemSlots[i].SetActive(newIndex == i);
+
+            return newIndex;
+        }
+
         public void Clear()
         {
             if (_uiItemSlots != null)
             {
                 for (int i = 0; i < _uiItemSlots.Length; i++)
-                        _uiItemSlots[i].Dispose();
+                    _uiItemSlots[i].Dispose();
 
                 _uiItemSlots = null;
             }
-            
+
             _inventory = null;
         }
 
