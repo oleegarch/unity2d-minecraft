@@ -127,18 +127,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 352028823478520568, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: _itemOnRightHand
-      value: 
-      objectReference: {fileID: 925452461}
-    - target: {fileID: 789542655941134640, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 889780907184706039, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6752283934456956255, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -188,11 +176,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
---- !u!212 &925452461 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 889780907184706039, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-  m_PrefabInstance: {fileID: 201376899}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
