@@ -15,6 +15,7 @@ namespace World.Inventories
         [SerializeField] private HoveredBlockPicker _blockPicker;
         [SerializeField] private WorldManager _manager;
         [SerializeField] private WorldInputManager _inputManager;
+        [SerializeField] private SpriteRenderer _itemOnRightHand;
         
         private PlayerInventory _inventory;
         private int _hotbarActiveIndex;
@@ -28,6 +29,7 @@ namespace World.Inventories
             set
             {
                 _hotbarActiveIndex = _hotbar.ChangeActiveHotbar(value);
+                ChangeActiveItemInfoOnRightHand();
             }
         }
         public ItemStack ActiveItemStack => _inventory.GetSlot(ActiveHotbarIndex);
@@ -38,6 +40,7 @@ namespace World.Inventories
             _inventory = new PlayerInventory();
             _hotbar.SetUp(_inventory);
             _blockPicker.OnBlockPickedChanged += HandleBlockPickedUpdate;
+            _inventory.Events.SlotChanged += HandleInventorySlotChanged;
         }
         private void Start()
         {
@@ -46,6 +49,8 @@ namespace World.Inventories
         private void OnDestroy()
         {
             _blockPicker.OnBlockPickedChanged -= HandleBlockPickedUpdate;
+            _inventory.Events.SlotChanged -= HandleInventorySlotChanged;
+            _hotbar.Dispose();
         }
         private void OnEnable()
         {
@@ -64,6 +69,18 @@ namespace World.Inventories
             ItemInfo newItemInfo = _manager.ItemDatabase.GetByBlockId(block.Id);
             ItemStack newItemStack = new ItemStack(newItemInfo);
             _inventory.ReplaceSlot(ActiveHotbarIndex, newItemStack);
+        }
+        private void HandleInventorySlotChanged(int slotIndex, ItemStack newStack)
+        {
+            if (slotIndex == ActiveHotbarIndex)
+                ChangeActiveItemInfoOnRightHand();
+        }
+        private void ChangeActiveItemInfoOnRightHand()
+        {
+            _itemOnRightHand.enabled = ActiveItemInfo != null && ActiveItemInfo.Sprite != null;
+
+            if (_itemOnRightHand.enabled)
+                _itemOnRightHand.sprite = ActiveItemInfo.Sprite;
         }
 
         private void OnMouseScroll(InputAction.CallbackContext context)
