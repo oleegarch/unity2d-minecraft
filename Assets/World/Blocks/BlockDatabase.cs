@@ -44,12 +44,7 @@ namespace World.Blocks
 
                 // проверяем, есть ли уже такой блок
                 if (blocks.Exists(b => b != null && b.Sprite == sprite))
-                {
-                    ushort newId = GetNextId();
-                    blocks[newId].Id = newId;
-                    EditorUtility.SetDirty(blocks[newId]);
                     continue;
-                }
 
                 // создаём новый ScriptableObject
                 BlockInfo block = ScriptableObject.CreateInstance<BlockInfo>();

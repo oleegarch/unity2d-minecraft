@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85e7b53dab122f34ebc307a8de9de3f7, type: 3}
+  m_Name: crafting_table
+  m_EditorClassIdentifier: 
+  Id: 30
+  Name: crafting_table
+  Hardness: 1
+  OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  Sprite: {fileID: 21300000, guid: badc726a30b3160408e1c88df302c8be, type: 3}
+  AtlasCategory:
+    name: Workbench
+  AvailablePlacements:
+  - Layer: 0
+    StylesOverrides:
+      IsBehind: 0
+      HasCollider: 1
+  - Layer: 1
+    StylesOverrides:
+      IsBehind: 1
+      HasCollider: 0
+  HasTransparentPixels: 0
+  HasCustomCollider: 0
+  BreakableByGravity: 0
