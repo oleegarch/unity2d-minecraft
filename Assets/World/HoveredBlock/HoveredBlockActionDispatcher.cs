@@ -5,8 +5,6 @@ namespace World.HoveredBlock
 {
     public class HoveredBlockActionDispatcher : MonoBehaviour
     {
-        [SerializeField] private HoveredBlockOutlineRenderer _outliner;
-        [SerializeField] private HoveredBlockObserver _observer;
         [SerializeField] private HoveredBlockBreaker _breaker;
         [SerializeField] private HoveredBlockPicker _picker;
         [SerializeField] private HoveredBlockPlacer _placer;
@@ -22,7 +20,9 @@ namespace World.HoveredBlock
             _placer.OnBlockSetAttempt -= HandleBlockSet;
             _breaker.OnBlockBreakAttempt -= HandleBlockBroken;
         }
-        private void HandleBlockBroken(WorldPosition wc) => _worldManager.Blocks.BreakVisible(wc);
-        private void HandleBlockSet(WorldPosition wc) => _worldManager.Blocks.Set(wc, _picker.SelectedBlock, _picker.SelectedLayer, _picker.SelectedStyles);
+        private void HandleBlockBroken(WorldPosition wc) =>
+            _worldManager.Blocks.BreakVisible(wc);
+        private void HandleBlockSet(WorldPosition wc) =>
+            _worldManager.Blocks.Set(wc, _picker.SelectedBlock, _picker.SelectedLayer, _picker.SelectedStyles);
     }
 }

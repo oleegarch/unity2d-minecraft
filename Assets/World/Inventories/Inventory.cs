@@ -28,6 +28,12 @@ namespace World.Inventories
             ValidateIndex(index);
             return _slots[index]?.Clone() ?? ItemStack.Empty;
         }
+        public void ReplaceSlot(int index, ItemStack newStack)
+        {
+            ValidateIndex(index);
+            _slots[index] = newStack;
+            Events.InvokeSlotChanged(index, _slots[index].Clone());
+        }
 
         private void ValidateIndex(int index)
         {

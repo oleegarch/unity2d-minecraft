@@ -4,6 +4,7 @@ using System;
 using World.InputActions;
 using World.Chunks;
 using World.Blocks;
+using World.Inventories;
 
 namespace World.HoveredBlock
 {
@@ -11,16 +12,30 @@ namespace World.HoveredBlock
     {
         [SerializeField] private WorldInputManager _inputManager;
         [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
+        [SerializeField] private PlayerInventoryController _inventoryController;
         [SerializeField] private WorldManager _worldManager;
 
-        private Block _selectedBlock;
+        public event Action<WorldPosition, Block, BlockLayer, BlockStyles> OnBlockPickedChanged;
+
         private BlockLayer _selectedLayer;
         private BlockStyles _selectedStyles;
-
-        public Block SelectedBlock => _selectedBlock;
         public BlockLayer SelectedLayer => _selectedLayer;
         public BlockStyles SelectedStyles => _selectedStyles;
-        public event Action<WorldPosition, Block, BlockLayer, BlockStyles> OnBlockPickedChanged;
+        public Block SelectedBlock
+        {
+            get
+            {
+                if (
+                    _inventoryController.ActiveItemInfo == null ||
+                    _inventoryController.ActiveItemInfo.BlockId == Block.AirId
+                )
+                {
+                    return Block.Air;
+                }
+
+                return new Block(_inventoryController.ActiveItemInfo.BlockId);
+            }
+        }
 
         private void OnEnable()
         {
@@ -37,10 +52,10 @@ namespace World.HoveredBlock
         private void HandleMouseMiddleClick(InputAction.CallbackContext context)
         {
             WorldPosition worldPosition = _blockHoveredObserver.HoveredPosition;
-            _selectedBlock = _worldManager.Blocks.GetBreakable(worldPosition, out _selectedLayer);
+            Block selectedBlock = _worldManager.Blocks.GetBreakable(worldPosition, out _selectedLayer);
             _selectedStyles = _worldManager.Blocks.GetBlockStyles(worldPosition, _selectedLayer);
 
-            OnBlockPickedChanged?.Invoke(worldPosition, _selectedBlock, _selectedLayer, _selectedStyles);
+            OnBlockPickedChanged?.Invoke(worldPosition, selectedBlock, _selectedLayer, _selectedStyles);
         }
 
         public void ChangePlacementVariant(BlockPlacementVariant variant)

@@ -8,6 +8,7 @@ namespace World.Inventories
         public int SlotCount { get; }
         public IReadOnlyList<ItemStack> GetAllSlots();
         public ItemStack GetSlot(int index);
+        public void ReplaceSlot(int index, ItemStack newStack);
 
         public bool TryAdd(ItemStack stack, out int remainder);
         public bool TryAdd(ItemInfo stack);
