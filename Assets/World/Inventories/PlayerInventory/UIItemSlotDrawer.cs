@@ -31,7 +31,7 @@ namespace World.Inventories
         {
             _currentDirection = direction;
             _currentStack = stack;
-            
+
             SetActive(_currentActive);
 
             if (stack.Item != null)
@@ -94,6 +94,7 @@ namespace World.Inventories
         public void Dispose()
         {
             _currentStack = null;
+            _currentActive = false;
             Destroy(gameObject);
         }
     }
