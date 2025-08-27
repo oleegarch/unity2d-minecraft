@@ -15,8 +15,10 @@ namespace World.HoveredBlock
         [SerializeField] private Transform _chunksParent;
 
         private Vector2 _pointerPosition;
+        private Vector3 _cursorPosition = new Vector3(float.MinValue, float.MinValue);
         private WorldPosition _hovered = new WorldPosition(int.MinValue, int.MinValue);
 
+        public Vector3 CursorPosition => _cursorPosition;
         public WorldPosition HoveredPosition => _hovered;
         public event Action<WorldPosition> OnBlockHoveredChanged;
 
@@ -39,9 +41,9 @@ namespace World.HoveredBlock
 
         private void SetHovered(Vector2 screenPosition)
         {
-            Vector3 chunksPosition = _cameraObserver.Camera.ScreenToWorldPoint(screenPosition) - _chunksParent.position;
-            WorldPosition worldPosition = new WorldPosition(Mathf.FloorToInt(chunksPosition.x), Mathf.FloorToInt(chunksPosition.y));
-
+            _cursorPosition = _cameraObserver.Camera.ScreenToWorldPoint(screenPosition) - _chunksParent.position;
+            
+            WorldPosition worldPosition = new WorldPosition(Mathf.FloorToInt(_cursorPosition.x), Mathf.FloorToInt(_cursorPosition.y));
             if (worldPosition == _hovered)
                 return;
 

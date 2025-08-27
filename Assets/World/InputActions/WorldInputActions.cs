@@ -554,6 +554,15 @@ namespace World.InputActions
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Drop"",
+                    ""type"": ""Button"",
+                    ""id"": ""16754cbb-6828-475e-93f7-94aaeafef035"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -565,6 +574,17 @@ namespace World.InputActions
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Toggle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8cd27d64-28d3-49b2-b1f0-eb72a5e982d2"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drop"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -629,6 +649,7 @@ namespace World.InputActions
             // InventoryPlayer
             m_InventoryPlayer = asset.FindActionMap("InventoryPlayer", throwIfNotFound: true);
             m_InventoryPlayer_Toggle = m_InventoryPlayer.FindAction("Toggle", throwIfNotFound: true);
+            m_InventoryPlayer_Drop = m_InventoryPlayer.FindAction("Drop", throwIfNotFound: true);
             // InventoryPlayerHotbar
             m_InventoryPlayerHotbar = asset.FindActionMap("InventoryPlayerHotbar", throwIfNotFound: true);
             m_InventoryPlayerHotbar_MouseScroll = m_InventoryPlayerHotbar.FindAction("MouseScroll", throwIfNotFound: true);
@@ -1437,6 +1458,7 @@ namespace World.InputActions
         private readonly InputActionMap m_InventoryPlayer;
         private List<IInventoryPlayerActions> m_InventoryPlayerActionsCallbackInterfaces = new List<IInventoryPlayerActions>();
         private readonly InputAction m_InventoryPlayer_Toggle;
+        private readonly InputAction m_InventoryPlayer_Drop;
         /// <summary>
         /// Provides access to input actions defined in input action map "InventoryPlayer".
         /// </summary>
@@ -1452,6 +1474,10 @@ namespace World.InputActions
             /// Provides access to the underlying input action "InventoryPlayer/Toggle".
             /// </summary>
             public InputAction @Toggle => m_Wrapper.m_InventoryPlayer_Toggle;
+            /// <summary>
+            /// Provides access to the underlying input action "InventoryPlayer/Drop".
+            /// </summary>
+            public InputAction @Drop => m_Wrapper.m_InventoryPlayer_Drop;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1481,6 +1507,9 @@ namespace World.InputActions
                 @Toggle.started += instance.OnToggle;
                 @Toggle.performed += instance.OnToggle;
                 @Toggle.canceled += instance.OnToggle;
+                @Drop.started += instance.OnDrop;
+                @Drop.performed += instance.OnDrop;
+                @Drop.canceled += instance.OnDrop;
             }
 
             /// <summary>
@@ -1495,6 +1524,9 @@ namespace World.InputActions
                 @Toggle.started -= instance.OnToggle;
                 @Toggle.performed -= instance.OnToggle;
                 @Toggle.canceled -= instance.OnToggle;
+                @Drop.started -= instance.OnDrop;
+                @Drop.performed -= instance.OnDrop;
+                @Drop.canceled -= instance.OnDrop;
             }
 
             /// <summary>
@@ -1771,6 +1803,13 @@ namespace World.InputActions
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnToggle(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Drop" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnDrop(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "InventoryPlayerHotbar" which allows adding and removing callbacks.

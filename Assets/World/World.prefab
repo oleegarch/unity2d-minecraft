@@ -572,7 +572,7 @@ MonoBehaviour:
   measureVelocityY: 1
   groundCheckLayer:
     serializedVersion: 2
-    m_Bits: 576
+    m_Bits: 64
   groundCheckTransform: {fileID: 7935461173147862630}
   groundCheckPositionSize: {x: 0.6, y: 0.25}
   groundCheckPositionAngle: 0
@@ -6626,6 +6626,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hotbar: {fileID: 2645306138954837417}
   _mainSlots: {fileID: 1566391599130695648}
+  _itemOnRightHandTransform: {fileID: 5480467092549927400}
+  _itemsSpawner: {fileID: 2970117667973166668}
+  _blockObserver: {fileID: 167939084089460052}
   _blockPicker: {fileID: 6203515626348112953}
   _manager: {fileID: 5868988553912566916}
   _inputManager: {fileID: 3319511144438469435}

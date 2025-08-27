@@ -24,11 +24,18 @@ namespace World.Items
             ItemInfo info = _manager.ItemDatabase.GetByBlockId(block.Id);
             DropItemAt(position, info);
         }
-        private void DropItemAt(WorldPosition worldPosition, ItemInfo itemInfo)
+        public ItemDropped DropItemAt(WorldPosition worldPosition, ItemInfo itemInfo)
         {
             Vector3 position = worldPosition.ToVector3Int();
+            return DropItemAt(position, itemInfo);
+        }
+        public ItemDropped DropItemAt(Vector3 position, ItemInfo itemInfo)
+        {
             GameObject item = Instantiate(_itemDroppedPrefab, position, Quaternion.identity, _itemsDroppedParent);
-            item.GetComponent<ItemDropped>().SetUp(itemInfo);
+            ItemDropped dropped = item.GetComponent<ItemDropped>();
+            dropped.SetUp(itemInfo);
+
+            return dropped;
         }
     }
 }

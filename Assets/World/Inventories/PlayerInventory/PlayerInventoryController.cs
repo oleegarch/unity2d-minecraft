@@ -14,6 +14,9 @@ namespace World.Inventories
     {
         [SerializeField] private UIPlayerHotbarDrawer _hotbar;
         [SerializeField] private UIPlayerMainSlotsDrawer _mainSlots;
+        [SerializeField] private Transform _itemOnRightHandTransform;
+        [SerializeField] private ItemsDroppedSpawner _itemsSpawner;
+        [SerializeField] private HoveredBlockObserver _blockObserver;
         [SerializeField] private HoveredBlockPicker _blockPicker;
         [SerializeField] private WorldManager _manager;
         [SerializeField] private WorldInputManager _inputManager;
@@ -59,7 +62,8 @@ namespace World.Inventories
         private void OnEnable()
         {
             var inventory = _inputManager.Controls.InventoryPlayer;
-            inventory.Toggle.performed += TogglePlayerInventory;
+            inventory.Toggle.performed += ToggleInventory;
+            inventory.Drop.performed += DropCurrentItem;
             inventory.Enable();
             var hotbar = _inputManager.Controls.InventoryPlayerHotbar;
             hotbar.MouseScroll.performed += OnMouseScroll;
@@ -68,7 +72,8 @@ namespace World.Inventories
         private void OnDisable()
         {
             var inventory = _inputManager.Controls.InventoryPlayer;
-            inventory.Toggle.performed -= TogglePlayerInventory;
+            inventory.Toggle.performed -= ToggleInventory;
+            inventory.Drop.performed -= DropCurrentItem;
             inventory.Disable();
             var hotbar = _inputManager.Controls.InventoryPlayerHotbar;
             hotbar.MouseScroll.performed -= OnMouseScroll;
@@ -93,12 +98,23 @@ namespace World.Inventories
                 _itemOnRightHand.sprite = ActiveItemInfo.Sprite;
         }
 
-        private void TogglePlayerInventory(InputAction.CallbackContext context)
+        private void ToggleInventory(InputAction.CallbackContext context)
         {
             if (_mainSlots.Toggle())
                 _uiMask.Appear();
             else
                 _uiMask.Disappear();
+        }
+        private void DropCurrentItem(InputAction.CallbackContext context)
+        {
+            if (_inventory.TryRemove(ActiveHotbarIndex, 1, out ItemStack removed))
+            {
+                for (int i = 0; i < removed.Count; i++)
+                {
+                    ItemDropped dropped = _itemsSpawner.DropItemAt(_itemOnRightHandTransform.position, removed.Item);
+                    dropped.ThrowItem(_blockObserver.CursorPosition);
+                }
+            }
         }
         private void OnMouseScroll(InputAction.CallbackContext context)
         {
