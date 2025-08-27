@@ -29,10 +29,10 @@ namespace World.Chunks.Generator
         {
             // Procedural providers
             var biomeProvider = new BiomeProvider(Biomes, BiomeWidth, seed);
-            var surfaceProvider = new SurfaceYProvider(biomeProvider, BiomeWidth, SurfaceBlendWidth, seed);
+            var surfaceYProvider = new SurfaceYProvider(biomeProvider, BiomeWidth, SurfaceBlendWidth, seed);
 
             // Procedural chunk generation step
-            var blockGenerator = new BlockGenerator(_blockDatabase, biomeProvider, surfaceProvider, CaveLevels, seed); // Procedural generation
+            var blockGenerator = new BlockGenerator(_blockDatabase, biomeProvider, surfaceYProvider, CaveLevels, seed); // Procedural generation
             var creationStep = new ChunkCreationStep(blockGenerator);
 
             // Global rules for this world
@@ -42,11 +42,11 @@ namespace World.Chunks.Generator
             };
 
             // Procedural post-processing steps
-            var plants = new IPlantPlacer[] { new TreePlantPlacer(Plants, biomeProvider, surfaceProvider, _blockDatabase, seed) }; // Plant placers
+            var plants = new IPlantPlacer[] { new TreePlantPlacer(Plants, biomeProvider, surfaceYProvider, _blockDatabase, seed) }; // Plant placers
             var postSteps = new IChunkPostStep[] { new ChunkPlantsPostStep(plants) };
 
             // Cache computation for procedural generation steps
-            var cacheSteps = new IChunkCacheStep[] { biomeProvider, surfaceProvider };
+            var cacheSteps = new IChunkCacheStep[] { biomeProvider, surfaceYProvider };
 
             // Compose generator
             var settings = new ChunkGeneratorSettings(_chunkSize);
