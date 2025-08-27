@@ -51,7 +51,7 @@ namespace World.Chunks.Generator.Procedural
     {
         private readonly List<BiomePlants> _biomePlantsList;
         private readonly IBiomeProvider _biomeProvider;
-        private readonly ISurfaceHeightProvider _surfaceHeightProvider;
+        private readonly ISurfaceYProvider _surfaceHeightProvider;
         private readonly BlockDatabase _blockDatabase;
         private readonly int _seed;
         
@@ -60,7 +60,7 @@ namespace World.Chunks.Generator.Procedural
         public TreePlantPlacer(
             List<BiomePlants> biomePlants,
             IBiomeProvider biomeProvider,
-            ISurfaceHeightProvider surfaceHeightProvider,
+            ISurfaceYProvider surfaceHeightProvider,
             BlockDatabase blockDatabase,
             int seed)
         {

@@ -1,6 +1,6 @@
 namespace World.Chunks.Generator.Procedural
 {
-    public interface ISurfaceHeightProvider
+    public interface ISurfaceYProvider
     {
         public int GetSurfaceY(int worldX);
     }

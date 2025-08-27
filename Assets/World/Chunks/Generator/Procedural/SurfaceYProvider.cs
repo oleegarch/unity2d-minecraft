@@ -4,7 +4,7 @@ using World.Chunks.Generator.Steps;
 namespace World.Chunks.Generator.Procedural
 {
     // Surface height provider with biome-based Perlin blending + caching
-    public class SurfaceYProvider : ISurfaceHeightProvider, IChunkCacheStep
+    public class SurfaceYProvider : ISurfaceYProvider, IChunkCacheStep
     {
         private readonly CacheComputationByX<int> _cacheHelper;
         private readonly IBiomeProvider _biomeProvider;

@@ -32,17 +32,17 @@ namespace World.Chunks.Generator.Procedural
     }
 
     // Procedural Earth block generator: surface, depth, cave, ores
-    public class ProceduralBlockGenerator : IProceduralBlockProvider
+    public class BlockGenerator : IProceduralBlockProvider
     {
         private readonly BlockDatabase _blockDatabase;
         private readonly IBiomeProvider _biomeProvider;
-        private readonly ISurfaceHeightProvider _surfaceHeightProvider;
+        private readonly ISurfaceYProvider _surfaceHeightProvider;
         private readonly List<CaveLevel> _caveLevelList;
         private readonly int _seed;
-        public ProceduralBlockGenerator(
+        public BlockGenerator(
             BlockDatabase blockDatabase,
             IBiomeProvider biomeProvider,
-            ISurfaceHeightProvider surfaceHeightProvider,
+            ISurfaceYProvider surfaceHeightProvider,
             List<CaveLevel> caveLevelList,
             int seed)
         {

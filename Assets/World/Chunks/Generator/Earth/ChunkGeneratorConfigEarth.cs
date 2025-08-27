@@ -32,7 +32,7 @@ namespace World.Chunks.Generator
             var surfaceProvider = new SurfaceYProvider(biomeProvider, BiomeWidth, SurfaceBlendWidth, seed);
 
             // Procedural chunk generation step
-            var blockGenerator = new ProceduralBlockGenerator(_blockDatabase, biomeProvider, surfaceProvider, CaveLevels, seed); // Procedural generation
+            var blockGenerator = new BlockGenerator(_blockDatabase, biomeProvider, surfaceProvider, CaveLevels, seed); // Procedural generation
             var creationStep = new ChunkCreationStep(blockGenerator);
 
             // Global rules for this world
