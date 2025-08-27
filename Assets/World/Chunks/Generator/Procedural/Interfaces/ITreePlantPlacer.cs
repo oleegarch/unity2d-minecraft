@@ -1,6 +1,6 @@
 using World.Chunks.BlocksStorage;
 
-namespace World.Chunks.Generator.Providers
+namespace World.Chunks.Generator.Procedural
 {
     public interface IPlantPlacer
     {

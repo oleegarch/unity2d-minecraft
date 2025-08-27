@@ -1,8 +1,8 @@
 using World.Blocks;
 using World.Chunks.BlocksStorage;
-using World.Chunks.Generator.Providers;
+using World.Chunks.Generator.Steps;
 
-namespace World.Chunks.Generator.Steps
+namespace World.Chunks.Generator.Procedural
 {
     public class ChunkCreationStep : IChunkCreationStep
     {

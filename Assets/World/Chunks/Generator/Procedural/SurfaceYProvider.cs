@@ -1,7 +1,7 @@
 using UnityEngine;
 using World.Chunks.Generator.Steps;
 
-namespace World.Chunks.Generator.Providers
+namespace World.Chunks.Generator.Procedural
 {
     // Surface height provider with biome-based Perlin blending + caching
     public class SurfaceYProvider : ISurfaceHeightProvider, IChunkCacheStep

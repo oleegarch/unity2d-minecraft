@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace World.Chunks.Generator.Providers
+namespace World.Chunks.Generator.Procedural
 {
     public class CacheComputationByX<T>
     {

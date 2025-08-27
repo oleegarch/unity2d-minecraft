@@ -1,4 +1,4 @@
-namespace World.Chunks.Generator.Providers
+namespace World.Chunks.Generator.Procedural
 {
     public interface IBiomeProvider
     {

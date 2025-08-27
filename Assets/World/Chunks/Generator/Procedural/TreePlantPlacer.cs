@@ -5,7 +5,7 @@ using UnityEngine;
 using World.Blocks;
 using World.Chunks.BlocksStorage;
 
-namespace World.Chunks.Generator.Providers
+namespace World.Chunks.Generator.Procedural
 {
     [Serializable]
     public class BiomePlants

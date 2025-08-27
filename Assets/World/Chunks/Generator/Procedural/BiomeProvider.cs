@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using World.Chunks.Generator.Steps;
 
-namespace World.Chunks.Generator.Providers
+namespace World.Chunks.Generator.Procedural
 {
     [Serializable]
     public class Biome
