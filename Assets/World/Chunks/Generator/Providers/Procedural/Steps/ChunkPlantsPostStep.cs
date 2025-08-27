@@ -4,11 +4,11 @@ using World.Chunks.Generator.Providers;
 
 namespace World.Chunks.Generator.Steps
 {
-    public class PlantPlaceStep : IChunkPostStep
+    public class ChunkPlantsPostStep : IChunkPostStep
     {
         private readonly IEnumerable<IPlantPlacer> _placers;
 
-        public PlantPlaceStep(IEnumerable<IPlantPlacer> placers)
+        public ChunkPlantsPostStep(IEnumerable<IPlantPlacer> placers)
             => _placers = placers;
 
         public void Execute(Chunk chunk)

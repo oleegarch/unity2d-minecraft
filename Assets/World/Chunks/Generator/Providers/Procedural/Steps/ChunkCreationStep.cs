@@ -4,11 +4,11 @@ using World.Chunks.Generator.Providers;
 
 namespace World.Chunks.Generator.Steps
 {
-    public class ChunkProceduralCreation : IChunkCreationStep
+    public class ChunkCreationStep : IChunkCreationStep
     {
         private readonly IProceduralBlockProvider _provider;
 
-        public ChunkProceduralCreation(IProceduralBlockProvider provider)
+        public ChunkCreationStep(IProceduralBlockProvider provider)
             => _provider = provider;
 
         public Chunk Execute(ChunkIndex chunkIndex, byte size)

@@ -32,12 +32,18 @@ namespace World.Chunks.Generator
             var surfaceProvider = new SurfaceYProvider(biomeProvider, BiomeWidth, SurfaceBlendWidth, seed);
 
             // Create steps
-            var blockGenerator = new ProceduralEarthBlockGenerator(_blockDatabase, biomeProvider, surfaceProvider, CaveLevels, seed); // Procedural Earth generation
-            var creationStep = new ChunkProceduralCreation(blockGenerator);
+            var blockGenerator = new ProceduralBlockGenerator(_blockDatabase, biomeProvider, surfaceProvider, CaveLevels, seed); // Procedural generation
+            var creationStep = new ChunkCreationStep(blockGenerator);
+
+            // global rules for this world
+            var rules = new WorldGlobalRules()
+            {
+                CanBreakBehindBlock = blockGenerator.CanBreakBehindBlock
+            };
 
             // Post processing steps
             var plants = new IPlantPlacer[] { new TreePlantPlacer(Plants, biomeProvider, surfaceProvider, _blockDatabase, seed) }; // Plant placers
-            var postSteps = new IChunkPostStep[] { new PlantPlaceStep(plants) };
+            var postSteps = new IChunkPostStep[] { new ChunkPlantsPostStep(plants) };
 
             // Cache computation steps
             var cacheSteps = new IChunkCacheStep[] { biomeProvider, surfaceProvider };
@@ -45,10 +51,6 @@ namespace World.Chunks.Generator
             // Compose generator
             var settings = new ChunkGeneratorSettings(_chunkSize);
             var worldSystems = new IWorldSystem[] { new BreakableByGravitySystem() };
-            var rules = new WorldGlobalRules()
-            {
-                CanBreakBehindBlock = blockGenerator.CanBreakBehindBlock
-            };
             var composite = new ChunkGeneratorPipeline(settings, rules, creationStep, postSteps, cacheSteps, worldSystems);
 
             // Inject into manager
