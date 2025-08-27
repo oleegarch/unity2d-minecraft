@@ -4,6 +4,6 @@ namespace World.Chunks.Generator.Steps
 {
     public interface IChunkCreationStep
     {
-        public Chunk Execute(ChunkIndex index, byte chunkSize, int seed);
+        public Chunk Execute(ChunkIndex index, byte chunkSize);
     }
 }

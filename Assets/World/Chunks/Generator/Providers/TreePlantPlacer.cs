@@ -53,6 +53,7 @@ namespace World.Chunks.Generator.Providers
         private readonly IBiomeProvider _biomeProvider;
         private readonly ISurfaceHeightProvider _surfaceHeightProvider;
         private readonly BlockDatabase _blockDatabase;
+        private readonly int _seed;
         
         private Dictionary<string, BiomePlants> _biomeNameToBiomePlants;
 
@@ -60,16 +61,18 @@ namespace World.Chunks.Generator.Providers
             List<BiomePlants> biomePlants,
             IBiomeProvider biomeProvider,
             ISurfaceHeightProvider surfaceHeightProvider,
-            BlockDatabase blockDatabase)
+            BlockDatabase blockDatabase,
+            int seed)
         {
             _biomePlantsList = biomePlants;
             _biomeNameToBiomePlants = _biomePlantsList.ToDictionary(b => b.BiomeName);
             _biomeProvider = biomeProvider;
             _surfaceHeightProvider = surfaceHeightProvider;
             _blockDatabase = blockDatabase;
+            _seed = seed;
         }
 
-        public void PlacePlants(Chunk chunk, int seed)
+        public void PlacePlants(Chunk chunk)
         {
             if (_biomePlantsList == null || _biomePlantsList.Count == 0)
                 return;
@@ -81,27 +84,26 @@ namespace World.Chunks.Generator.Providers
             for (int localX = -overflowMargin; localX < chunkSize + overflowMargin; localX++)
             {
                 int worldX = chunkWorldStartX + localX;
-                int surfaceY = _surfaceHeightProvider.GetSurfaceY(worldX, seed);
+                int surfaceY = _surfaceHeightProvider.GetSurfaceY(worldX);
                 
-                Biome biome = _biomeProvider.GetBiome(worldX, seed);
+                Biome biome = _biomeProvider.GetBiome(worldX);
                 BiomePlants biomePlants = _biomeNameToBiomePlants[biome.Name];
 
                 if (biomePlants == null || biomePlants.Plants == null || biomePlants.Plants.Count == 0)
                     continue;
 
-                if (ShouldPlacePlant(biomePlants, worldX, seed, out BiomePlant selectedPlant))
-                    GrowPlant(chunk, worldX, surfaceY, selectedPlant, seed);
+                if (ShouldPlacePlant(biomePlants, worldX, out BiomePlant selectedPlant))
+                    GrowPlant(chunk, worldX, surfaceY, selectedPlant);
             }
         }
 
         private bool ShouldPlacePlant(
             BiomePlants biomePlants,
             int worldX,
-            int seed,
             out BiomePlant plant)
         {
             int bucketIndex = Mathf.FloorToInt((float)worldX / biomePlants.Interval);
-            var random = new System.Random(seed ^ bucketIndex);
+            var random = new System.Random(_seed ^ bucketIndex);
             int offset = random.Next(-biomePlants.OffsetRange, biomePlants.OffsetRange + 1);
 
             plant = biomePlants.Plants[random.Next(biomePlants.Plants.Count)];
@@ -113,10 +115,9 @@ namespace World.Chunks.Generator.Providers
             Chunk chunk,
             int worldX,
             int surfaceY,
-            BiomePlant plant,
-            int seed)
+            BiomePlant plant)
         {
-            var random = new System.Random(seed ^ worldX);
+            var random = new System.Random(_seed ^ worldX);
             int height = plant.MinHeight + random.Next(plant.MaxHeight - plant.MinHeight);
             int trunkBottomY = surfaceY + 1;
             int trunkTopY = trunkBottomY + height;

@@ -25,18 +25,18 @@ namespace World.Chunks.Generator
         [Tooltip("шахты по уровням")]
         public List<CaveLevel> CaveLevels;
 
-        public override IChunkGenerator GetChunkGenerator()
+        public override IChunkGenerator GetChunkGenerator(int seed)
         {
             // Create providers
-            var biomeProvider = new BiomeProvider(Biomes, BiomeWidth);
-            var surfaceProvider = new SurfaceYProvider(biomeProvider, BiomeWidth, SurfaceBlendWidth);
+            var biomeProvider = new BiomeProvider(Biomes, BiomeWidth, seed);
+            var surfaceProvider = new SurfaceYProvider(biomeProvider, BiomeWidth, SurfaceBlendWidth, seed);
 
             // Create steps
-            var blockGenerator = new ProceduralEarthBlockGenerator(_blockDatabase, biomeProvider, surfaceProvider, CaveLevels); // Procedural Earth generation
+            var blockGenerator = new ProceduralEarthBlockGenerator(_blockDatabase, biomeProvider, surfaceProvider, CaveLevels, seed); // Procedural Earth generation
             var creationStep = new ChunkProceduralCreation(blockGenerator);
 
             // Post processing steps
-            var plants = new IPlantPlacer[] { new TreePlantPlacer(Plants, biomeProvider, surfaceProvider, _blockDatabase) }; // Plant placers
+            var plants = new IPlantPlacer[] { new TreePlantPlacer(Plants, biomeProvider, surfaceProvider, _blockDatabase, seed) }; // Plant placers
             var postSteps = new IChunkPostStep[] { new PlantPlaceStep(plants) };
 
             // Cache computation steps

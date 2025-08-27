@@ -11,10 +11,10 @@ namespace World.Chunks.Generator.Steps
         public PlantPlaceStep(IEnumerable<IPlantPlacer> placers)
             => _placers = placers;
 
-        public void Execute(Chunk chunk, int seed)
+        public void Execute(Chunk chunk)
         {
             foreach (var p in _placers)
-                p.PlacePlants(chunk, seed);
+                p.PlacePlants(chunk);
         }
     }
 }

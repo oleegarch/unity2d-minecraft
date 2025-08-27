@@ -9,8 +9,7 @@ namespace World.Chunks
 {
     public interface IWorldStorage
     {
-        public int Seed { get; }
-        public Task<bool> GetOrCreateAsync(ChunkIndex index, int seed);
+        public Task<bool> GetOrCreateAsync(ChunkIndex index);
 
         public bool TryGetChunk(ChunkIndex index, out Chunk chunk);
         public bool TryGetRenderer(ChunkIndex index, out ChunkRenderer renderer);
@@ -36,8 +35,6 @@ namespace World.Chunks
         private readonly Dictionary<ChunkIndex, ChunkRenderer> _renderers = new();
         private readonly HashSet<ChunkIndex> _loadings = new();
 
-        public int Seed => _manager.Seed;
-
         public WorldStorage(IChunkGenerator generator, GameObject prefab, Transform parent, WorldManager manager)
         {
             _generator = generator;
@@ -46,7 +43,7 @@ namespace World.Chunks
             _manager = manager;
         }
 
-        public async Task<bool> GetOrCreateAsync(ChunkIndex index, int seed)
+        public async Task<bool> GetOrCreateAsync(ChunkIndex index)
         {
             if (!_chunks.TryGetValue(index, out var chunk) && !_loadings.Contains(index))
             {
@@ -56,7 +53,7 @@ namespace World.Chunks
                 _loadings.Add(index);
 
                 // Генерируем данные чанка
-                chunk = await _generator.GenerateChunkAsync(index, seed);
+                chunk = await _generator.GenerateChunkAsync(index);
 
                 // Создаём рендерер чанка
                 var go = Object.Instantiate(_prefab, _parent);

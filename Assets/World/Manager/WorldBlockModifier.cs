@@ -58,7 +58,7 @@ namespace World.Chunks
                 {
                     blockLayer = BlockLayer.Behind;
 
-                    if (_rules.CanBreakBehindBlock(worldPosition, _worldStorage.Seed))
+                    if (_rules.CanBreakBehindBlock(worldPosition))
                         return chunk.Blocks.Get(blockIndex, blockLayer);
 
                     return Block.Air;

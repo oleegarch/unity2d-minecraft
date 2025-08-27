@@ -31,13 +31,12 @@ namespace World.Chunks
         public IChunkGenerator Generator { get; private set; }
         public IWorldBlockModifier Blocks { get; private set; }
         public IWorldStorage Storage { get; private set; }
-        public int Seed => _seed;
 
         [NonSerialized] public bool Loaded = false;
 
         private void Awake()
         {
-            Generator = _chunkGeneratorConfig.GetChunkGenerator();
+            Generator = _chunkGeneratorConfig.GetChunkGenerator(_seed);
             Storage = new WorldStorage(Generator, _chunkRendererPrefab, _chunksParent, this);
             Blocks = new WorldBlockModifier(Storage, Generator.Rules);
         }
@@ -63,7 +62,7 @@ namespace World.Chunks
 
         private void HandleVisibleChanged(RectInt viewRect)
         {
-            Generator.CacheComputation(viewRect, _seed);
+            Generator.CacheComputation(viewRect);
             
             int version = ++_version;
             _ = UpdateVisibleAsync(viewRect, version);
@@ -83,7 +82,7 @@ namespace World.Chunks
 
                     try
                     {
-                        await Storage.GetOrCreateAsync(index, _seed);
+                        await Storage.GetOrCreateAsync(index);
                     }
                     catch (Exception ex)
                     {

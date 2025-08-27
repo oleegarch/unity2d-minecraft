@@ -5,6 +5,6 @@ namespace World.Rules
     public struct WorldGlobalRules
     {
         // глобальное правило для определения: можем ли мы ломать блок позади на этих мировых координатам
-        public Func<WorldPosition, int, bool> CanBreakBehindBlock;
+        public Func<WorldPosition, bool> CanBreakBehindBlock;
     }
 }

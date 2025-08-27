@@ -11,7 +11,7 @@ namespace World.Chunks.Generator.Steps
         public ChunkProceduralCreation(IProceduralBlockProvider provider)
             => _provider = provider;
 
-        public Chunk Execute(ChunkIndex chunkIndex, byte size, int seed)
+        public Chunk Execute(ChunkIndex chunkIndex, byte size)
         {
             Chunk chunk = new Chunk(chunkIndex, size);
             
@@ -24,7 +24,7 @@ namespace World.Chunks.Generator.Steps
                 {
                     int worldX = worldChunkX + x;
                     int worldY = worldChunkY + y;
-                    var (mainId, behindId) = _provider.GenerateBlock(worldX, worldY, seed);
+                    var (mainId, behindId) = _provider.GenerateBlock(worldX, worldY);
                     chunk.Blocks.SetSilent(new BlockIndex(x, y), new Block(mainId), BlockLayer.Main);
                     chunk.Blocks.SetSilent(new BlockIndex(x, y), new Block(behindId), BlockLayer.Behind);
                 }

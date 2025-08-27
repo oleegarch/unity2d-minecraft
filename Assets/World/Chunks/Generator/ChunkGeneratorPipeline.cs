@@ -22,8 +22,8 @@ namespace World.Chunks.Generator
     {
         public byte ChunkSize { get; }
         public WorldGlobalRules Rules { get; }
-        public void CacheComputation(RectInt rect, int seed);
-        public Task<Chunk> GenerateChunkAsync(ChunkIndex index, int seed);
+        public void CacheComputation(RectInt rect);
+        public Task<Chunk> GenerateChunkAsync(ChunkIndex index);
         public void RegisterWorldSystems(WorldManager manager);
         public void UnregisterWorldSystems(WorldManager manager);
     }
@@ -58,7 +58,7 @@ namespace World.Chunks.Generator
             _worldSystems = worldSystems.ToList();
         }
 
-        public void CacheComputation(RectInt chunksVisibleRect, int seed)
+        public void CacheComputation(RectInt chunksVisibleRect)
         {
             RectInt blocksVisibleRect = new RectInt(
                 chunksVisibleRect.xMin * ChunkSize,
@@ -68,24 +68,24 @@ namespace World.Chunks.Generator
             );
 
             foreach (var step in _chunkCachingSteps)
-                step.CacheComputation(blocksVisibleRect, seed);
+                step.CacheComputation(blocksVisibleRect);
         }
 
-        private Chunk GenerateChunk(ChunkIndex index, int seed)
+        private Chunk GenerateChunk(ChunkIndex index)
         {
             // chunk creation step
-            Chunk chunk = _creationStep.Execute(index, ChunkSize, seed);
+            Chunk chunk = _creationStep.Execute(index, ChunkSize);
 
             // chunk post processing steps
             foreach (var step in _postProcessingSteps)
-                step.Execute(chunk, seed);
+                step.Execute(chunk);
 
             return chunk;
         }
 
-        public async Task<Chunk> GenerateChunkAsync(ChunkIndex index, int seed)
+        public async Task<Chunk> GenerateChunkAsync(ChunkIndex index)
         {
-            return await Task.Run(() => GenerateChunk(index, seed));
+            return await Task.Run(() => GenerateChunk(index));
         }
 
         public void RegisterWorldSystems(WorldManager manager)

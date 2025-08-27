@@ -10,25 +10,28 @@ namespace World.Chunks.Generator.Providers
         private readonly IBiomeProvider _biomeProvider;
         private readonly float _blendDistance;
         private readonly float _biomeWidth;
+        private readonly int _seed;
 
         public SurfaceYProvider(
             IBiomeProvider biomeProvider,
             float biomeWidth,
-            float blendDistance)
+            float blendDistance,
+            int seed)
         {
-            _cacheHelper = new CacheComputationByX<int>(ComputeSurfaceY);
+            _cacheHelper = new CacheComputationByX<int>(ComputeSurfaceY, seed);
             _biomeProvider = biomeProvider;
             _biomeWidth = biomeWidth;
             _blendDistance = blendDistance;
+            _seed = seed;
         }
 
-        public void CacheComputation(RectInt rect, int seed) => _cacheHelper.CacheComputation(rect, seed);
-        public int GetSurfaceY(int worldX, int seed) => _cacheHelper.GetValue(worldX, seed);
+        public void CacheComputation(RectInt rect) => _cacheHelper.CacheComputation(rect);
+        public int GetSurfaceY(int worldX) => _cacheHelper.GetValue(worldX);
 
-        public int ComputeSurfaceY(int worldX, int seed)
+        public int ComputeSurfaceY(int worldX)
         {
-            Biome biome = _biomeProvider.GetBiome(worldX, seed);
-            float rawNoise = CalculateHeightNoise(worldX, seed, biome);
+            Biome biome = _biomeProvider.GetBiome(worldX);
+            float rawNoise = CalculateHeightNoise(worldX, biome);
             float leftXToNextBiome = _biomeWidth - worldX % _biomeWidth;
             int biomeWidthInt = (int)_biomeWidth;
 
@@ -36,8 +39,8 @@ namespace World.Chunks.Generator.Providers
             if (leftXToNextBiome < _blendDistance)
             {
                 int adjacentX = Mathf.FloorToInt(worldX / _biomeWidth + 1) * biomeWidthInt;
-                Biome adjacentBiome = _biomeProvider.GetBiome(adjacentX, seed);
-                float adjacentNoise = CalculateHeightNoise(adjacentX, seed, adjacentBiome);
+                Biome adjacentBiome = _biomeProvider.GetBiome(adjacentX);
+                float adjacentNoise = CalculateHeightNoise(adjacentX, adjacentBiome);
                 float blendFactor = leftXToNextBiome / _blendDistance;
 
                 float blendedHeight = Mathf.Lerp(adjacentNoise, rawNoise, blendFactor);
@@ -47,9 +50,9 @@ namespace World.Chunks.Generator.Providers
             return Mathf.FloorToInt(rawNoise);
         }
 
-        private float CalculateHeightNoise(int worldX, int seed, Biome biome)
+        private float CalculateHeightNoise(int worldX, Biome biome)
         {
-            float samplePositionX = (worldX + seed) * biome.SurfaceScale;
+            float samplePositionX = (worldX + _seed) * biome.SurfaceScale;
             float perlinValue = Mathf.PerlinNoise(samplePositionX, 0f);
 
             return perlinValue * biome.SurfaceHeightRange + biome.SurfaceBaseHeight;

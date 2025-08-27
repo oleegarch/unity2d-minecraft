@@ -38,26 +38,27 @@ namespace World.Chunks.Generator.Providers
         private readonly IBiomeProvider _biomeProvider;
         private readonly ISurfaceHeightProvider _surfaceHeightProvider;
         private readonly List<CaveLevel> _caveLevelList;
-
+        private readonly int _seed;
         public ProceduralEarthBlockGenerator(
             BlockDatabase blockDatabase,
             IBiomeProvider biomeProvider,
             ISurfaceHeightProvider surfaceHeightProvider,
-            List<CaveLevel> caveLevelList)
+            List<CaveLevel> caveLevelList,
+            int seed)
         {
             _blockDatabase = blockDatabase;
             _biomeProvider = biomeProvider;
             _surfaceHeightProvider = surfaceHeightProvider;
             _caveLevelList = caveLevelList;
+            _seed = seed;
         }
 
         public (ushort mainId, ushort backgroundId) GenerateBlock(
             int worldX,
-            int worldY,
-            int seed)
+            int worldY)
         {
-            var biome = _biomeProvider.GetBiome(worldX, seed);
-            int surfaceY = _surfaceHeightProvider.GetSurfaceY(worldX, seed);
+            var biome = _biomeProvider.GetBiome(worldX);
+            int surfaceY = _surfaceHeightProvider.GetSurfaceY(worldX);
             int caveStartY = surfaceY - biome.Depth;
 
             // Chest test
@@ -102,7 +103,7 @@ namespace World.Chunks.Generator.Providers
 
                     foreach (var oreEntry in caveLevel.Ores)
                     {
-                        int oreSeed = seed ^ (_blockDatabase.GetId(oreEntry.OreBlockName) * 73856093);
+                        int oreSeed = _seed ^ (_blockDatabase.GetId(oreEntry.OreBlockName) * 73856093);
 
                         if (ShouldPlaceOre(worldX, worldY, oreSeed, oreEntry.Threshold, oreEntry.Scale))
                         {
@@ -129,10 +130,10 @@ namespace World.Chunks.Generator.Providers
             return Mathf.PerlinNoise(worldX * scale + offsetX, worldY * scale + offsetY) > threshold;
         }
 
-        public bool CanBreakBehindBlock(WorldPosition position, int seed)
+        public bool CanBreakBehindBlock(WorldPosition position)
         {
-            var biome = _biomeProvider.GetBiome(position.x, seed);
-            int surfaceY = _surfaceHeightProvider.GetSurfaceY(position.x, seed);
+            var biome = _biomeProvider.GetBiome(position.x);
+            int surfaceY = _surfaceHeightProvider.GetSurfaceY(position.x);
             return position.y > surfaceY - biome.Depth;
         }
     }

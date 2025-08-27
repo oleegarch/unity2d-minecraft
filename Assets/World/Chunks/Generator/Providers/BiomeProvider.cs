@@ -36,21 +36,23 @@ namespace World.Chunks.Generator.Providers
         private readonly CacheComputationByX<Biome> _cacheHelper;
         private readonly List<Biome> _biomes;
         private readonly float _biomeWidth;
+        private readonly int _seed;
 
-        public BiomeProvider(List<Biome> biomes, float biomeWidth)
+        public BiomeProvider(List<Biome> biomes, float biomeWidth, int seed)
         {
-            _cacheHelper = new CacheComputationByX<Biome>(ComputeBiome);
+            _cacheHelper = new CacheComputationByX<Biome>(ComputeBiome, seed);
             _biomes = biomes;
             _biomeWidth = biomeWidth;
+            _seed = seed;
         }
 
-        public void CacheComputation(RectInt rect, int seed) => _cacheHelper.CacheComputation(rect, seed);
-        public Biome GetBiome(int worldX, int seed) => _cacheHelper.GetValue(worldX, seed);
+        public void CacheComputation(RectInt rect) => _cacheHelper.CacheComputation(rect);
+        public Biome GetBiome(int worldX) => _cacheHelper.GetValue(worldX);
 
-        private Biome ComputeBiome(int worldX, int seed)
+        private Biome ComputeBiome(int worldX)
         {
             int zone = Mathf.FloorToInt(worldX / _biomeWidth);
-            var rand = new System.Random(seed + zone);
+            var rand = new System.Random(_seed + zone);
             return _biomes[rand.Next(_biomes.Count)];
         }
     }

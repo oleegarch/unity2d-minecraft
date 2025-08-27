@@ -17,6 +17,6 @@ namespace World.Chunks.Generator
         public ItemDatabase ItemDatabase => _itemDatabase;
         public byte ChunkSize => _chunkSize;
 
-        public abstract IChunkGenerator GetChunkGenerator();
+        public abstract IChunkGenerator GetChunkGenerator(int seed);
     }
 }
