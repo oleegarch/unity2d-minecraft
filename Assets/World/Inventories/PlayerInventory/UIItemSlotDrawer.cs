@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 namespace World.Inventories
 {
@@ -59,66 +58,53 @@ namespace World.Inventories
 
         [Header("UI references")]
         [SerializeField] private Image _uiItemSlotImage;
-        [SerializeField] private Image _uiItemImage;
-        [SerializeField] private TextMeshProUGUI _uiTextCount;
+        [SerializeField] private UIStackSlotDrawer _stackDrawer;
 
-        private UIItemSlotDirection _currentDirection = UIItemSlotDirection.None;
-        private ItemStack _currentStack;
-        private bool _currentActive;
+        [NonSerialized] public UIItemSlotDirection Direction = UIItemSlotDirection.None;
+        [NonSerialized] public ItemStack Stack;
+        [NonSerialized] public int SlotIndex;
+        [NonSerialized] public bool Active;
+        [NonSerialized] public Inventory Inventory;
 
-        public void SetUp(UIItemSlotDirection direction, ItemStack stack)
+        public void SetUp(UIItemSlotDirection direction, Inventory inventory, int slotIndex)
         {
-            _currentDirection = direction;
-            _currentStack = stack;
-
-            SetActive(_currentActive); // установит спрайт рамки
-
-            if (stack?.Item?.Sprite != null)
-            {
-                _uiItemImage.sprite = stack.Item.Sprite;
-                _uiItemImage.enabled = true;
-            }
-            else
-            {
-                _uiItemImage.enabled = false;
-            }
-
-            if (stack?.Count > 0)
-            {
-                _uiTextCount.SetText(stack.Count.ToString());
-                _uiTextCount.enabled = true;
-            }
-            else
-            {
-                _uiTextCount.enabled = false;
-            }
+            Direction = direction;
+            Inventory = inventory;
+            SlotIndex = slotIndex;
+            Stack = inventory.GetSlot(slotIndex);
+            Refresh();
         }
 
         public void Refresh(ItemStack stack)
         {
-            if (_currentStack == null) throw new InvalidOperationException($"SetUp not called for Refresh");
+            if (Stack == null) throw new InvalidOperationException($"SetUp not called for Refresh");
 
             if (
-                _currentStack.Item?.Sprite != stack.Item?.Sprite ||
-                _currentStack.Count != stack.Count
+                Stack.Item?.Sprite != stack.Item?.Sprite ||
+                Stack.Count != stack.Count
             )
             {
-                SetUp(_currentDirection, stack);
+                Stack = stack;
+                Refresh();
             }
+        }
+        public void Refresh()
+        {
+            _stackDrawer.SetUp(Stack);
+            SetActive(Active);
         }
 
         public void SetActive(bool isActive)
         {
-            _currentActive = isActive;
-            var sprite = GetSpriteFor(_currentDirection, isActive);
-            if (_uiItemSlotImage != null)
-                _uiItemSlotImage.sprite = sprite;
+            Active = isActive;
+            _uiItemSlotImage.sprite = GetSpriteFor(Direction, isActive);
         }
 
         public void Dispose()
         {
-            _currentStack = null;
-            _currentActive = false;
+            Stack = null;
+            Active = false;
+            _stackDrawer.Dispose();
             Destroy(gameObject);
         }
 
@@ -161,6 +147,5 @@ namespace World.Inventories
             // Если вдруг ничего не нашлось — дефолты
             return active ? (_defaultActive ?? _defaultNormal) : _defaultNormal;
         }
-
     }
 }

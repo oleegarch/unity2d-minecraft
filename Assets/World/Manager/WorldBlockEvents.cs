@@ -12,7 +12,7 @@ namespace World.Chunks
         public event Action<WorldPosition, Block, BlockLayer> OnBlockBroken;
         public event Action<WorldPosition, Block, BlockLayer> OnBlockSetByPlayer;
         public event Action<WorldPosition, Block, BlockLayer> OnBlockBrokenByPlayer;
-        public event Action<WorldPosition, IInventory, BlockLayer> OnBlockInventoryDropped;
+        public event Action<WorldPosition, Inventory, BlockLayer> OnBlockInventoryDropped;
 
         // Храним делегаты, чтобы можно было корректно отписаться потом
         private class Subscriptions
@@ -21,7 +21,7 @@ namespace World.Chunks
             public Action<BlockIndex, Block, BlockLayer> BlockBroken;
             public Action<BlockIndex, Block, BlockLayer> BlockSetByPlayer;
             public Action<BlockIndex, Block, BlockLayer> BlockBrokenByPlayer;
-            public Action<BlockIndex, IInventory, BlockLayer> BlockInventoryDropped;
+            public Action<BlockIndex, Inventory, BlockLayer> BlockInventoryDropped;
         }
 
         private readonly Dictionary<Chunk, Subscriptions> _subscriptions = new Dictionary<Chunk, Subscriptions>();

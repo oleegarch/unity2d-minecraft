@@ -183,6 +183,75 @@ namespace World.Inventories
             return changed;
         }
 
+        /// <summary>
+        /// Переместить amount (или максимум) из слота fromIndex этого инвентаря в слот toIndex другого инвентаря.
+        /// Поведение:
+        /// - если target == this — делегируется существующему Move.
+        /// - если to пустой -> перенос части/всего (но не больше MaxStack этого предмета).
+        /// - если тот же тип -> попытка слить в стек (up to max stack).
+        /// - если разные предметы -> swap (полный обмен стеков между инвентарями).
+        /// Возвращает true если произошли изменения.
+        /// </summary>
+        public virtual bool MoveTo(Inventory target, int fromIndex, int toIndex, int amount = int.MaxValue)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            ValidateIndex(fromIndex);
+            target.ValidateIndex(toIndex);
+
+            if (amount <= 0) return false;
+            if (target == this) return Move(fromIndex, toIndex, amount);
+
+            var from = _slots[fromIndex];
+            var to = target._slots[toIndex];
+
+            if (from.IsEmpty) return false;
+
+            bool changed = false;
+
+            // to пустой -> перенос (но не больше MaxStack)
+            if (to.IsEmpty)
+            {
+                int toMove = Math.Min(amount, from.Count);
+                var item = from.Item;
+                if (item != null)
+                    toMove = Math.Min(toMove, item.MaxStack);
+
+                target._slots[toIndex] = new ItemStack(from.Item, toMove);
+                from.Remove(toMove);
+                if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
+                changed = true;
+            }
+            // тот же тип -> слить (до max stack)
+            else if (!to.IsEmpty && !from.IsEmpty && to.Item != null && from.Item != null && to.Item.Id == from.Item.Id)
+            {
+                int canMove = Math.Min(amount, from.Count);
+                int space = to.Item.MaxStack - to.Count;
+                int added = Math.Min(canMove, space);
+                if (added > 0)
+                {
+                    to.Add(added);
+                    from.Remove(added);
+                    if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
+                    changed = true;
+                }
+            }
+            // разные предметы -> swap (полный обмен стеков)
+            else
+            {
+                _slots[fromIndex] = to;
+                target._slots[toIndex] = from;
+                changed = true;
+            }
+
+            if (changed)
+            {
+                Events.InvokeSlotChanged(fromIndex, _slots[fromIndex].Clone());
+                target.Events.InvokeSlotChanged(toIndex, target._slots[toIndex].Clone());
+            }
+
+            return changed;
+        }
+
         public virtual void Clear()
         {
             for (int i = 0; i < _slots.Length; i++)

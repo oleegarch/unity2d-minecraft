@@ -16,19 +16,19 @@ namespace World.Inventories
         [SerializeField] protected GameObject _uiRowSlotsPrefab;
         [SerializeField] protected int _maxRowSlotsCount = 10;
 
-        protected IInventory _inventory;
+        protected Inventory _inventory;
         protected List<GameObject> _rowParents;
         protected UIItemSlotDrawer[] _uiItemSlots;
         protected int[] _inventoryIndices; // mapping: uiIndex -> inventoryIndex
         protected Dictionary<int, int> _invIndexToUiIndex; // mapping: inventoryIndex -> uiIndex
         protected bool _alwaysUpdate;
 
-        public virtual void SetUp(IInventory inventory, bool alwaysUpdate = false)
+        public virtual void SetUp(Inventory inventory, bool alwaysUpdate = false)
         {
             var indices = Enumerable.Range(0, inventory.SlotCount);
             SetUp(inventory, indices, alwaysUpdate: false);
         }
-        public virtual void SetUp(IInventory inventory, IEnumerable<int> inventorySlotIndices, bool alwaysUpdate = false)
+        public virtual void SetUp(Inventory inventory, IEnumerable<int> inventorySlotIndices, bool alwaysUpdate = false)
         {
             UnsubscribeFromInventoryEvents();
             Clear();
@@ -82,7 +82,7 @@ namespace World.Inventories
                 if (childRt != null) rowChildren[rowIndex].Add(childRt);
 
                 // передаём стартовое состояние
-                uiSlot.SetUp(DetermineSlotDirection(i), _inventory.GetSlot(invIndex));
+                uiSlot.SetUp(DetermineSlotDirection(i), _inventory, invIndex);
                 _uiItemSlots[i] = uiSlot;
             }
 

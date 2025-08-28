@@ -15,7 +15,7 @@ namespace World.Chunks
         public WorldBlockEvents Events { get; }
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main);
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer);
-        public bool TryGetInventory(WorldPosition worldPosition, out IInventory inventory);
+        public bool TryGetInventory(WorldPosition worldPosition, out Inventory inventory);
         public BlockStyles GetBlockStyles(WorldPosition worldPosition, BlockLayer layer);
         public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles, BlockUpdateSource source = BlockUpdateSource.Player);
         public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player);
@@ -71,7 +71,7 @@ namespace World.Chunks
 
             return Block.Air;
         }
-        public bool TryGetInventory(WorldPosition worldPosition, out IInventory inventory)
+        public bool TryGetInventory(WorldPosition worldPosition, out Inventory inventory)
         {
             inventory = null;
 

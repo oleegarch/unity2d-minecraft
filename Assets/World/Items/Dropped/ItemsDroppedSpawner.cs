@@ -28,7 +28,7 @@ namespace World.Items
             ItemStack stack = new ItemStack(info, 1);
             DropItemAt(position, stack);
         }
-        private void HandleWorldBlockInventoryDropped(WorldPosition position, IInventory inventory, BlockLayer layer)
+        private void HandleWorldBlockInventoryDropped(WorldPosition position, Inventory inventory, BlockLayer layer)
         {
             foreach (var stack in inventory.GetAllSlots())
             {

@@ -15,6 +15,7 @@ namespace World.Inventories
         public bool TryAdd(ItemInfo stack);
         public bool TryRemove(int slotIndex, int amount, out ItemStack removed);
         public bool Move(int fromIndex, int toIndex, int amount = int.MaxValue);
+        public bool MoveTo(Inventory target, int fromIndex, int toIndex, int amount = int.MaxValue);
 
         public void Clear();
     }
