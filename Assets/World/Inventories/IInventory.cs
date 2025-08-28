@@ -6,6 +6,7 @@ namespace World.Inventories
     public interface IInventory
     {
         public int SlotCount { get; }
+        public InventoryEvents Events { get; }
         public IReadOnlyList<ItemStack> GetAllSlots();
         public ItemStack GetSlot(int index);
         public void ReplaceSlot(int index, ItemStack newStack);

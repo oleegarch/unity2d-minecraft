@@ -563,6 +563,15 @@ namespace World.InputActions
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""OpenForeign"",
+                    ""type"": ""Button"",
+                    ""id"": ""c634766c-b5ab-478b-a04e-f585b0362a13"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -585,6 +594,17 @@ namespace World.InputActions
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Drop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""451c455c-dc41-471d-beca-0519fdb73fd6"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenForeign"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -650,6 +670,7 @@ namespace World.InputActions
             m_InventoryPlayer = asset.FindActionMap("InventoryPlayer", throwIfNotFound: true);
             m_InventoryPlayer_Toggle = m_InventoryPlayer.FindAction("Toggle", throwIfNotFound: true);
             m_InventoryPlayer_Drop = m_InventoryPlayer.FindAction("Drop", throwIfNotFound: true);
+            m_InventoryPlayer_OpenForeign = m_InventoryPlayer.FindAction("OpenForeign", throwIfNotFound: true);
             // InventoryPlayerHotbar
             m_InventoryPlayerHotbar = asset.FindActionMap("InventoryPlayerHotbar", throwIfNotFound: true);
             m_InventoryPlayerHotbar_MouseScroll = m_InventoryPlayerHotbar.FindAction("MouseScroll", throwIfNotFound: true);
@@ -1459,6 +1480,7 @@ namespace World.InputActions
         private List<IInventoryPlayerActions> m_InventoryPlayerActionsCallbackInterfaces = new List<IInventoryPlayerActions>();
         private readonly InputAction m_InventoryPlayer_Toggle;
         private readonly InputAction m_InventoryPlayer_Drop;
+        private readonly InputAction m_InventoryPlayer_OpenForeign;
         /// <summary>
         /// Provides access to input actions defined in input action map "InventoryPlayer".
         /// </summary>
@@ -1478,6 +1500,10 @@ namespace World.InputActions
             /// Provides access to the underlying input action "InventoryPlayer/Drop".
             /// </summary>
             public InputAction @Drop => m_Wrapper.m_InventoryPlayer_Drop;
+            /// <summary>
+            /// Provides access to the underlying input action "InventoryPlayer/OpenForeign".
+            /// </summary>
+            public InputAction @OpenForeign => m_Wrapper.m_InventoryPlayer_OpenForeign;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1510,6 +1536,9 @@ namespace World.InputActions
                 @Drop.started += instance.OnDrop;
                 @Drop.performed += instance.OnDrop;
                 @Drop.canceled += instance.OnDrop;
+                @OpenForeign.started += instance.OnOpenForeign;
+                @OpenForeign.performed += instance.OnOpenForeign;
+                @OpenForeign.canceled += instance.OnOpenForeign;
             }
 
             /// <summary>
@@ -1527,6 +1556,9 @@ namespace World.InputActions
                 @Drop.started -= instance.OnDrop;
                 @Drop.performed -= instance.OnDrop;
                 @Drop.canceled -= instance.OnDrop;
+                @OpenForeign.started -= instance.OnOpenForeign;
+                @OpenForeign.performed -= instance.OnOpenForeign;
+                @OpenForeign.canceled -= instance.OnOpenForeign;
             }
 
             /// <summary>
@@ -1810,6 +1842,13 @@ namespace World.InputActions
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnDrop(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "OpenForeign" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnOpenForeign(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "InventoryPlayerHotbar" which allows adding and removing callbacks.

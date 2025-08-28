@@ -9,7 +9,7 @@ namespace World.Chunks.BlocksStorage
     public interface IChunkBlockInventories : IDisposable
     {
         public void OverrideInventory(BlockIndex index, BlockLayer layer, IInventory inventory);
-        public IInventory GetInventory(BlockIndex index, BlockLayer layer);
+        public bool TryGetInventory(BlockIndex index, BlockLayer layer, out IInventory inventory);
     }
     public class ChunkBlockInventories : IChunkBlockInventories
     {
@@ -29,18 +29,21 @@ namespace World.Chunks.BlocksStorage
 
             _inventories[index] = inventory;
         }
-        public IInventory GetInventory(BlockIndex index, BlockLayer layer)
+        public bool TryGetInventory(BlockIndex index, BlockLayer layer, out IInventory inventory)
         {
             if (!_inventoriesByLayer.TryGetValue(layer, out var _inventories) || !_inventories.ContainsKey(index))
-                return null;
+            {
+                inventory = null;
+                return false;
+            }
 
-            return _inventories[index];
+            inventory = _inventories[index];
+            return true;
         }
 
         private void HandleBlockBroken(BlockIndex index, Block block, BlockLayer layer)
         {
-            IInventory inventory = GetInventory(index, layer);
-            if (inventory != null)
+            if (TryGetInventory(index, layer, out IInventory inventory))
                 _blocks.Events.InvokeBlockInventoryDropped(index, inventory, layer);
         }
 

@@ -26,5 +26,8 @@ namespace World.Blocks
 
         [Tooltip("Ломается ли блок если у него нет опоры")]
         public bool BreakableByGravity;
+
+        [Tooltip("Имеется ли у этого блока инвентарь (для сундуков)")]
+        public int InventorySlotCount;
     }
 }

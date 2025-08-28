@@ -35,4 +35,4 @@ MonoBehaviour:
   HasTransparentPixels: 1
   HasCustomCollider: 1
   BreakableByGravity: 0
-  ParticleTexture: {fileID: 2800000, guid: 9bcecd93e2f60c44e8f18290c8b0d271, type: 2}
+  InventorySlotCount: 30

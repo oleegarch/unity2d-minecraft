@@ -14,6 +14,12 @@ namespace World.Inventories
             Columns = columns;
             Rows = rows;
         }
+        public ChestInventory(int slotCount) : base(slotCount)
+        {
+            if (slotCount <= 0) throw new ArgumentOutOfRangeException(nameof(slotCount));
+            Columns = slotCount / 10;
+            Rows = 10;
+        }
 
         public int IndexAt(int column, int row)
         {

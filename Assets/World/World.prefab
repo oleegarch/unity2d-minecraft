@@ -6234,6 +6234,57 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &5388030124393772811
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2327528537260013126}
+  - component: {fileID: 598011219572350564}
+  m_Layer: 0
+  m_Name: ForeignSlots
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &2327528537260013126
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5388030124393772811}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6188397585831326659}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 160}
+  m_SizeDelta: {x: 320, y: 96}
+  m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &598011219572350564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5388030124393772811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3f7942ac6f6fc54ba371b7ba527e95a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _uiItemSlotPrefab: {fileID: 1274409073444489641, guid: fa13e6df0e4bdba40b7743f20c677e0d, type: 3}
+  _uiRowSlotsPrefab: {fileID: 8201986702071766256, guid: 48d96422a037fe845a29dad3cb5e2f03, type: 3}
+  _maxRowSlotsCount: 10
 --- !u!1 &5614360546757656560
 GameObject:
   m_ObjectHideFlags: 0
@@ -6542,6 +6593,7 @@ RectTransform:
   - {fileID: 295967530719988836}
   - {fileID: 818345371403355757}
   - {fileID: 3810366770452468946}
+  - {fileID: 2327528537260013126}
   m_Father: {fileID: 6752283934456956255}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -6626,6 +6678,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hotbar: {fileID: 2645306138954837417}
   _mainSlots: {fileID: 1566391599130695648}
+  _foreignSlots: {fileID: 598011219572350564}
   _itemOnRightHandTransform: {fileID: 5480467092549927400}
   _itemsSpawner: {fileID: 2970117667973166668}
   _blockObserver: {fileID: 167939084089460052}

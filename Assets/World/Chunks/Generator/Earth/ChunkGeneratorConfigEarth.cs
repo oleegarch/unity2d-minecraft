@@ -51,7 +51,7 @@ namespace World.Chunks.Generator
             // Compose generator
             var settings = new ChunkGeneratorSettings(_chunkSize);
             var worldSystems = new IWorldSystem[] { new BreakableByGravitySystem() };
-            var composite = new ChunkGeneratorPipeline(settings, rules, creationStep, postSteps, cacheSteps, worldSystems);
+            var composite = new ChunkGeneratorPipeline(this, settings, rules, creationStep, postSteps, cacheSteps, worldSystems);
 
             return composite;
         }

@@ -38,7 +38,7 @@ namespace World.Chunks
         {
             Generator = _chunkGeneratorConfig.GetChunkGenerator(_seed);
             Storage = new WorldStorage(Generator, _chunkRendererPrefab, _chunksParent, this);
-            Blocks = new WorldBlockModifier(Storage, Generator.Rules);
+            Blocks = new WorldBlockModifier(Storage, Generator);
         }
         private void Start()
         {

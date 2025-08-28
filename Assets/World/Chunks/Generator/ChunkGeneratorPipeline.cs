@@ -22,6 +22,7 @@ namespace World.Chunks.Generator
     {
         public byte ChunkSize { get; }
         public WorldGlobalRules Rules { get; }
+        public ChunkGeneratorConfig Config { get; }
         public void CacheComputation(RectInt rect);
         public Task<Chunk> GenerateChunkAsync(ChunkIndex index);
         public void RegisterWorldSystems(WorldManager manager);
@@ -33,7 +34,9 @@ namespace World.Chunks.Generator
     {
         public byte ChunkSize => _settings.ChunkSize;
         public WorldGlobalRules Rules => _rules;
+        public ChunkGeneratorConfig Config => _config;
 
+        private readonly ChunkGeneratorConfig _config;
         private readonly ChunkGeneratorSettings _settings;
         private readonly WorldGlobalRules _rules;
         private readonly IChunkCreationStep _creationStep;
@@ -42,6 +45,7 @@ namespace World.Chunks.Generator
         private readonly IReadOnlyList<IWorldSystem> _worldSystems;
 
         public ChunkGeneratorPipeline(
+            ChunkGeneratorConfig config,
             ChunkGeneratorSettings settings,
             WorldGlobalRules rules,
             IChunkCreationStep chunkCreationStep,
@@ -49,6 +53,7 @@ namespace World.Chunks.Generator
             IEnumerable<IChunkCacheStep> chunkCachingSteps,
             IEnumerable<IWorldSystem> worldSystems)
         {
+            _config = config;
             _settings = settings;
             _rules = rules;
             _creationStep = chunkCreationStep;

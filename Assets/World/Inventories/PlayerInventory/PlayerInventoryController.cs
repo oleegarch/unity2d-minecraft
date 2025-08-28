@@ -14,6 +14,7 @@ namespace World.Inventories
     {
         [SerializeField] private UIPlayerHotbarDrawer _hotbar;
         [SerializeField] private UIPlayerMainSlotsDrawer _mainSlots;
+        [SerializeField] private UIInventorySlotsDrawer _foreignSlots;
         [SerializeField] private Transform _itemOnRightHandTransform;
         [SerializeField] private ItemsDroppedSpawner _itemsSpawner;
         [SerializeField] private HoveredBlockObserver _blockObserver;
@@ -64,6 +65,7 @@ namespace World.Inventories
             var inventory = _inputManager.Controls.InventoryPlayer;
             inventory.Toggle.performed += ToggleInventory;
             inventory.Drop.performed += DropCurrentItem;
+            inventory.OpenForeign.performed += OpenForeignInventory;
             inventory.Enable();
             var hotbar = _inputManager.Controls.InventoryPlayerHotbar;
             hotbar.MouseScroll.performed += OnMouseScroll;
@@ -74,6 +76,7 @@ namespace World.Inventories
             var inventory = _inputManager.Controls.InventoryPlayer;
             inventory.Toggle.performed -= ToggleInventory;
             inventory.Drop.performed -= DropCurrentItem;
+            inventory.OpenForeign.performed -= OpenForeignInventory;
             inventory.Disable();
             var hotbar = _inputManager.Controls.InventoryPlayerHotbar;
             hotbar.MouseScroll.performed -= OnMouseScroll;
@@ -103,7 +106,24 @@ namespace World.Inventories
             if (_mainSlots.Toggle())
                 _uiMask.Appear();
             else
+            {
+                _foreignSlots.Close();
                 _uiMask.Disappear();
+            }
+        }
+        private void OpenInventory()
+        {
+            _mainSlots.Open();
+            _uiMask.Appear();
+        }
+        private void OpenForeignInventory(InputAction.CallbackContext context)
+        {
+            if (_manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out IInventory inventory))
+            {
+                _foreignSlots.SetUp(inventory);
+                _foreignSlots.Open();
+                OpenInventory();
+            }
         }
         private void DropCurrentItem(InputAction.CallbackContext context)
         {
