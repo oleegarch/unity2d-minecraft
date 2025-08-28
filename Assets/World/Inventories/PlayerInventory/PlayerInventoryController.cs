@@ -111,7 +111,7 @@ namespace World.Inventories
             {
                 for (int i = 0; i < removed.Count; i++)
                 {
-                    ItemDropped dropped = _itemsSpawner.DropItemAt(_itemOnRightHandTransform.position, removed.Item);
+                    ItemDropped dropped = _itemsSpawner.DropItemAt(_itemOnRightHandTransform.position, removed);
                     dropped.ThrowItem(_blockObserver.CursorPosition);
                 }
             }
@@ -121,9 +121,9 @@ namespace World.Inventories
             ActiveHotbarIndex += Math.Sign(context.ReadValue<float>()) * -1; // reverse
         }
 
-        public bool TryCollect(ItemInfo item)
+        public bool TryCollect(ItemStack stack)
         {
-            return _inventory.TryAdd(item);
+            return _inventory.TryAdd(stack, out int remainder);
         }
     }
 }

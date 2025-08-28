@@ -11,16 +11,16 @@ namespace World.Entities.Player
         private void OnTriggerEnter2D(Collider2D collision)
         {
             ItemDropped itemDropped = collision.GetComponent<ItemDropped>();
-            if (itemDropped == null || itemDropped.ItemInfo == null) return;
+            if (itemDropped == null || itemDropped.Stack == null) return;
 
             Collect(itemDropped);
         }
 
         public void Collect(ItemDropped itemDropped)
         {
-            ItemInfo item = itemDropped.ItemInfo;
+            ItemStack stack = itemDropped.Stack;
 
-            if (_inventoryController.TryCollect(item))
+            if (_inventoryController.TryCollect(stack))
                 itemDropped.Dispose();
         }
     }

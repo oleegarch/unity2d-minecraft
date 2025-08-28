@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using World.Inventories;
 
 namespace World.Items
 {
@@ -13,7 +14,7 @@ namespace World.Items
         private SpriteRenderer _spriteRenderer;
         private Rigidbody2D _rb2d;
 
-        [NonSerialized] public ItemInfo ItemInfo;
+        [NonSerialized] public ItemStack Stack;
 
         private void Awake()
         {
@@ -24,10 +25,12 @@ namespace World.Items
                 _collectCollider.enabled = false;
         }
 
-        public void SetUp(ItemInfo info)
+        public void SetUp(ItemStack stack)
         {
-            ItemInfo = info;
-            _spriteRenderer.sprite = info.Sprite;
+            Stack = stack;
+
+            // Меняем спрайт предмета
+            _spriteRenderer.sprite = stack.Item.Sprite;
 
             // Запускаем корутину включения коллайдера через задержку
             StartCoroutine(EnableColliderAfterDelay());
@@ -52,7 +55,7 @@ namespace World.Items
 
         public void Dispose()
         {
-            ItemInfo = null;
+            Stack = null;
             Destroy(gameObject);
         }
     }
