@@ -86,10 +86,7 @@ namespace World.Chunks
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
             if (chunk.Render.TrySet(blockIndex, block, styles, layer))
-            {
-                Events.InvokeBlockSet(worldPosition, block, layer, source);
                 return true;
-            }
 
             return false;
         }
@@ -100,12 +97,8 @@ namespace World.Chunks
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-            Block block = chunk.Blocks.Get(blockIndex, layer);
             if (chunk.Blocks.TryUnset(blockIndex, layer, source))
-            {
-                Events.InvokeBlockBroken(worldPosition, block, layer, source);
                 return true;
-            }
 
             return false;
         }
@@ -120,16 +113,10 @@ namespace World.Chunks
             Block block = chunk.Blocks.Get(blockIndex, layer);
 
             if (block.IsAir)
-            {
                 layer = BlockLayer.Behind;
-                block = chunk.Blocks.Get(blockIndex, layer);
-            }
 
             if (chunk.Blocks.TryUnset(blockIndex, layer, source))
-            {
-                Events.InvokeBlockBroken(worldPosition, block, layer, source);
                 return true;
-            }
 
             return false;
         }

@@ -35,12 +35,17 @@ namespace World.Chunks
         }
         public void Set(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player)
         {
-            _blockLayers[(int)layer].Set(index, block);
-
             if (block.IsAir)
-                Events.InvokeBlockBroken(index, block, layer, source);
+            {
+                Block oldBlock = Get(index, layer);
+                _blockLayers[(int)layer].Set(index, block);
+                Events.InvokeBlockBroken(index, oldBlock, layer, source);
+            }
             else
+            {
+                _blockLayers[(int)layer].Set(index, block);
                 Events.InvokeBlockSet(index, block, layer, source);
+            }
         }
 
         public bool TrySet(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player)

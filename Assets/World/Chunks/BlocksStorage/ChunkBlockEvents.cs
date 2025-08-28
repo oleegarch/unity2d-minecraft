@@ -1,5 +1,6 @@
 using System;
 using World.Blocks;
+using World.Inventories;
 
 namespace World.Chunks
 {
@@ -9,6 +10,7 @@ namespace World.Chunks
         public event Action<BlockIndex, Block, BlockLayer> OnBlockBroken;
         public event Action<BlockIndex, Block, BlockLayer> OnBlockSetByPlayer;
         public event Action<BlockIndex, Block, BlockLayer> OnBlockBrokenByPlayer;
+        public event Action<BlockIndex, IInventory, BlockLayer> OnBlockInventoryDropped;
 
         public void InvokeBlockSet(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source)
         {
@@ -22,8 +24,13 @@ namespace World.Chunks
         {
             if (source == BlockUpdateSource.Player)
                 OnBlockBrokenByPlayer?.Invoke(index, block, layer);
-                
+
             OnBlockBroken?.Invoke(index, block, layer);
+        }
+
+        public void InvokeBlockInventoryDropped(BlockIndex index, IInventory inventory, BlockLayer layer)
+        {
+            OnBlockInventoryDropped?.Invoke(index, inventory, layer);
         }
     }
 }

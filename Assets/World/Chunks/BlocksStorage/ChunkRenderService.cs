@@ -18,16 +18,15 @@ namespace World.Chunks.BlocksStorage
         public bool TrySet(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer);
     }
     // Интерфейс для логики, связанной с визуальной информацией
-    public interface IChunkRenderService : IChunkBlockModifierWithStyles
+    public interface IChunkRenderService : IChunkBlockModifierWithStyles, IDisposable
     {
         public List<RenderLayer> GetRenderStack(BlockIndex index, BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase);
         public BlockStyles GetBlockStyles(BlockIndex index, BlockLayer layer);
         public void OverrideBlockStyles(BlockIndex index, BlockStyles styles, BlockLayer layer);
         public bool RemoveOverrideBlockStyles(BlockIndex index, BlockLayer layer);
         public bool ShouldBehind(BlockIndex index, BlockLayer layer = BlockLayer.Behind);
-        public void Dispose();
     }
-    public class ChunkRenderService : IChunkRenderService, IDisposable
+    public class ChunkRenderService : IChunkRenderService
     {
         private readonly Dictionary<BlockLayer, Dictionary<BlockIndex, BlockStyles>> _styleOverrides = new();
         private readonly IChunkBlockModifier _blocks;

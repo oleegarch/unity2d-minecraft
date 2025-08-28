@@ -75,6 +75,9 @@ namespace World.Chunks
                     return false;
                 }
 
+                // Подписываемся на события чанка
+                _manager.Blocks.Events.SubscribeToChunkEvents(chunk);
+
                 await renderer.RenderAsync(chunk);
             }
 
@@ -90,6 +93,9 @@ namespace World.Chunks
             }
             if (_chunks.TryGetValue(index, out var chunk))
             {
+                // Отписываемся от событий чанка
+                _manager.Blocks.Events.UnsubscribeFromChunkEvents(chunk);
+
                 chunk.Dispose();
                 _chunks.Remove(index);
             }

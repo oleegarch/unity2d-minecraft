@@ -11,6 +11,7 @@ namespace World.Chunks.BlocksStorage
 
         public readonly IChunkBlockModifier Blocks;
         public readonly IChunkRenderService Render;
+        public readonly ChunkBlockInventories Inventories;
 
         public Chunk(ChunkIndex index, byte size)
         {
@@ -24,6 +25,7 @@ namespace World.Chunks.BlocksStorage
                 new SparseBlockStorage()      // BlockLayer.Front
             });
             Render = new ChunkRenderService(Blocks);
+            Inventories = new ChunkBlockInventories(Blocks);
         }
 
         public bool TryGetBlockIndex(WorldPosition worldPosition, out BlockIndex blockIndex)
@@ -41,6 +43,7 @@ namespace World.Chunks.BlocksStorage
         public void Dispose()
         {
             Render.Dispose();
+            Inventories.Dispose();
         }
     }
 }
