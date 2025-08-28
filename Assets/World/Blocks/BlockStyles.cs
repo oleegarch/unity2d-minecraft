@@ -8,6 +8,7 @@ namespace World.Blocks
         Behind,
         Front
     }
+    
     [Serializable]
     public struct BlockStyles
     {
@@ -43,6 +44,7 @@ namespace World.Blocks
         public static bool operator ==(BlockStyles left, BlockStyles right) => left.Equals(right);
         public static bool operator !=(BlockStyles left, BlockStyles right) => !left.Equals(right);
     }
+    
     [Serializable]
     public struct BlockPlacementVariant
     {

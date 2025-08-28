@@ -17,15 +17,18 @@ namespace World.Chunks
         public ChunkColliderBuilder Collider { get; private set; }
 
         private CancellationTokenSource _cts;
+        private bool _initialized;
 
         public void Initialize(BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase)
         {
             Mesh = new ChunkMeshBuilder(gameObject, blockDatabase, blockAtlasDatabase);
             Collider = new ChunkColliderBuilder(_polygonCollider2D, blockDatabase, blockAtlasDatabase);
+            _initialized = true;
         }
 
         private void LateUpdate()
         {
+            if (_initialized == false) return;
             Mesh.Refresh();
             Collider.Refresh();
         }

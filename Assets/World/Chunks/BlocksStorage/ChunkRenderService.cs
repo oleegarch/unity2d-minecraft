@@ -10,15 +10,15 @@ namespace World.Chunks.BlocksStorage
         public ushort Id;
         public bool Behind; // влияет на "darkness" при рендере
     }
-    // IChunkBlockPlacerWithStyles — модификация блоков по слоям как в IChunkBlockModifier, но с перезаписью стилей
-    public interface IChunkBlockPlacerWithStyles
+    // IChunkBlockModifierWithStyles — модификация блоков по слоям как в IChunkBlockModifier, но с перезаписью стилей
+    public interface IChunkBlockModifierWithStyles
     {
         public void Set(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer);
         public void SetSilent(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer);
         public bool TrySet(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer);
     }
     // Интерфейс для логики, связанной с визуальной информацией
-    public interface IChunkRenderService : IChunkBlockPlacerWithStyles
+    public interface IChunkRenderService : IChunkBlockModifierWithStyles
     {
         public List<RenderLayer> GetRenderStack(BlockIndex index, BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase);
         public BlockStyles GetBlockStyles(BlockIndex index, BlockLayer layer);
