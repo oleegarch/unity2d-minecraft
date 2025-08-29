@@ -41,6 +41,7 @@ namespace World.Inventories
         }
         public ItemStack ActiveItemStack => _inventory.GetSlot(ActiveHotbarIndex);
         public ItemInfo ActiveItemInfo => ActiveItemStack.Item;
+        public PlayerInventory Inventory => _inventory;
 
         private void Awake()
         {
@@ -85,7 +86,7 @@ namespace World.Inventories
         private void HandleBlockPickedUpdate(WorldPosition position, Block block, BlockLayer blockLayer, BlockStyles blockStyles)
         {
             ItemInfo newItemInfo = _manager.ItemDatabase.GetByBlockId(block.Id);
-            ItemStack newItemStack = new ItemStack(newItemInfo);
+            ItemStack newItemStack = new ItemStack(newItemInfo, newItemInfo.MaxStack);
             _inventory.ReplaceSlot(ActiveHotbarIndex, newItemStack);
         }
         private void HandleInventorySlotChanged(int slotIndex, ItemStack newStack)

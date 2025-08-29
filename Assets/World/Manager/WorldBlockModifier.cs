@@ -120,10 +120,7 @@ namespace World.Chunks
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-            if (chunk.Render.TrySet(blockIndex, block, styles, layer))
-                return true;
-
-            return false;
+            return chunk.Render.TrySet(blockIndex, block, styles, layer);
         }
 
         public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player)
@@ -132,10 +129,7 @@ namespace World.Chunks
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-            if (chunk.Blocks.TryUnset(blockIndex, layer, source))
-                return true;
-
-            return false;
+            return chunk.Blocks.TryUnset(blockIndex, layer, source);
         }
 
         public bool BreakVisible(WorldPosition worldPosition, BlockUpdateSource source = BlockUpdateSource.Player)
@@ -150,10 +144,7 @@ namespace World.Chunks
             if (block.IsAir)
                 layer = BlockLayer.Behind;
 
-            if (chunk.Blocks.TryUnset(blockIndex, layer, source))
-                return true;
-
-            return false;
+            return chunk.Blocks.TryUnset(blockIndex, layer, source);
         }
     }
 }

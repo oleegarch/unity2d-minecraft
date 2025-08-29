@@ -1,10 +1,13 @@
 using UnityEngine;
 using World.Chunks;
+using World.Inventories;
+using World.Items;
 
 namespace World.HoveredBlock
 {
     public class HoveredBlockActionDispatcher : MonoBehaviour
     {
+        [SerializeField] private PlayerInventoryController _inventoryController;
         [SerializeField] private HoveredBlockBreaker _breaker;
         [SerializeField] private HoveredBlockPicker _picker;
         [SerializeField] private HoveredBlockPlacer _placer;
@@ -22,7 +25,17 @@ namespace World.HoveredBlock
         }
         private void HandleBlockBroken(WorldPosition wc) =>
             _worldManager.Blocks.BreakVisible(wc);
-        private void HandleBlockSet(WorldPosition wc) =>
-            _worldManager.Blocks.Set(wc, _picker.SelectedBlock, _picker.SelectedLayer, _picker.SelectedStyles);
+
+        private void HandleBlockSet(WorldPosition wc)
+        {
+            ItemInfo itemInfo = _worldManager.ItemDatabase.GetByBlockId(_picker.SelectedBlock.Id);
+            if (
+                _inventoryController.Inventory.Has(itemInfo, _inventoryController.ActiveHotbarIndex, 1) &&
+                _worldManager.Blocks.Set(wc, _picker.SelectedBlock, _picker.SelectedLayer, _picker.SelectedStyles)
+            )
+            {
+                _inventoryController.Inventory.TryRemove(_inventoryController.ActiveHotbarIndex, 1, out ItemStack removed);
+            }
+        }
     }
 }

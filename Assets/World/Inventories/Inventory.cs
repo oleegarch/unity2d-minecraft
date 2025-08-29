@@ -40,6 +40,50 @@ namespace World.Inventories
             if (index < 0 || index >= _slots.Length) throw new ArgumentOutOfRangeException(nameof(index));
         }
 
+        // проверяет, что в указанном слоте лежит именно этот предмет (совпадает Id) и количество там ≥ нужного.
+        public virtual bool Has(ItemStack stack, int slotIndex)
+        {
+            if (stack == null || stack.IsEmpty || stack.Item == null || stack.Count <= 0)
+                return false;
+
+            ValidateIndex(slotIndex);
+
+            var slot = _slots[slotIndex];
+            if (slot.IsEmpty || slot.Item == null)
+                return false;
+
+            return slot.Item.Id == stack.Item.Id && slot.Count >= stack.Count;
+        }
+        public bool Has(ItemInfo item, int slotIndex, int count = 1)
+        {
+            return Has(new ItemStack(item, count), slotIndex);
+        }
+        // проверяет, что во всём инвентаре есть хотя бы нужное количество предмета (суммируем по слотам).
+        public virtual bool Has(ItemStack stack)
+        {
+            if (stack == null || stack.IsEmpty || stack.Item == null || stack.Count <= 0)
+                return false;
+
+            int needed = stack.Count;
+            var itemId = stack.Item.Id;
+
+            foreach (var slot in _slots)
+            {
+                if (!slot.IsEmpty && slot.Item != null && slot.Item.Id == itemId)
+                {
+                    needed -= slot.Count;
+                    if (needed <= 0)
+                        return true; // уже достаточно
+                }
+            }
+
+            return false; // не хватило
+        }
+        public bool Has(ItemInfo item, int count = 1)
+        {
+            return Has(new ItemStack(item, count));
+        }
+
         /// <summary>
         /// Попытаться добавить стек: сначала заполняем существующие стеки того же типа, затем пустые слоты.
         /// remainder - количество, которое не удалось разместить (0 если всё поместилось).
@@ -86,10 +130,10 @@ namespace World.Inventories
             return remainder == 0;
         }
 
-        public virtual bool TryAdd(ItemInfo item)
+        public virtual bool TryAdd(ItemInfo item, int count, out int remainder)
         {
-            ItemStack stack = new ItemStack(item);
-            return TryAdd(stack, out int remainder);
+            ItemStack stack = new ItemStack(item, count);
+            return TryAdd(stack, out remainder);
         }
 
         /// <summary>
