@@ -123,8 +123,6 @@ namespace World.HoveredBlock
         {
             CancelBreaking();
 
-            Debug.Log($"RestartBreaking: {_pointerPressing} {!_blockHoveredObserver.ReachedLimitPosition && _pointerPressing}");
-
             if (!_blockHoveredObserver.ReachedLimitPosition && _pointerPressing)
             {
                 StartBreaking(_blockHoveredObserver.HoveredPosition);

@@ -29,7 +29,7 @@ namespace World.HoveredBlock
 
         private void HandleBlockSet(WorldPosition wc)
         {
-            if (!_observer.ReachedLimitPosition)
+            if (!_observer.ReachedLimitPosition && !_picker.SelectedBlock.IsAir)
             {
                 ItemInfo itemInfo = _worldManager.ItemDatabase.GetByBlockId(_picker.SelectedBlock.Id);
                 if (
