@@ -26,14 +26,14 @@ namespace World.Systems
                 // если этот узел сам помечен к ломанию — он не держит никого
                 if (planned.Contains(p)) continue;
 
-                var b = _manager.Blocks.Get(p, layer);
+                var b = _manager.Blocks.GetSimilar(p, layer, out BlockLayer currentLayer);
                 if (b.IsAir) continue;
 
                 // проверяем НИЗ
                 var below = p + Vector2Int.down;
                 if (!planned.Contains(below))
                 {
-                    var bb = _manager.Blocks.Get(below, layer);
+                    var bb = _manager.Blocks.GetSimilar(below, layer, out currentLayer);
                     if (!bb.IsAir)
                         return true; // нашли опору снизу
                 }
@@ -43,10 +43,10 @@ namespace World.Systems
                 var right = p + Vector2Int.right;
 
                 // добавляем соседей, если там не воздух и они не "виртуально" сломаны
-                var lb = _manager.Blocks.Get(left, layer);
+                var lb = _manager.Blocks.GetSimilar(left, layer, out currentLayer);
                 if (!lb.IsAir && !planned.Contains(left)) q.Enqueue(left);
 
-                var rb = _manager.Blocks.Get(right, layer);
+                var rb = _manager.Blocks.GetSimilar(right, layer, out currentLayer);
                 if (!rb.IsAir && !planned.Contains(right)) q.Enqueue(right);
             }
 
@@ -56,7 +56,7 @@ namespace World.Systems
         // главный обработчик: «вверх и по бокам», c переоценкой при расширении planned
         private void BlockBreakMatcher(WorldPosition start, Block brokenBlock, BlockLayer layer)
         {
-            var toBreak = new List<WorldPosition>();
+            var toBreak = new List<(WorldPosition position, BlockLayer layer)>();
             var planned = new HashSet<WorldPosition> { start }; // начально считаем нижний уже сломанным
 
             // processedVersion: чтобы переоценивать узлы, когда план ломания растёт
@@ -75,7 +75,7 @@ namespace World.Systems
                     continue;
                 processedAtVersion[pos] = version;
 
-                var cur = _manager.Blocks.Get(pos, layer);
+                var cur = _manager.Blocks.GetSimilar(pos, layer, out BlockLayer currentLayer);
                 if (cur.IsAir) continue;
 
                 var info = _manager.BlockDatabase.Get(cur.Id);
@@ -94,7 +94,7 @@ namespace World.Systems
                 // поддержки нет — планируем ломание
                 if (planned.Add(pos))
                 {
-                    toBreak.Add(pos);
+                    toBreak.Add((pos, currentLayer));
 
                     // план изменился -> увеличиваем версию, чтобы переоценить ранее просмотренных соседей
                     version++;
@@ -108,11 +108,8 @@ namespace World.Systems
 
             if (toBreak.Count == 0) return;
 
-            // рушим сверху вниз для красивого эффекта
-            toBreak.Sort((a, b) => b.y.CompareTo(a.y));
-
-            foreach (var bp in toBreak)
-                _manager.Blocks.Break(bp, layer, BlockUpdateSource.System);
+            foreach (var data in toBreak)
+                _manager.Blocks.Break(data.position, data.layer, BlockUpdateSource.System);
         }
 
         public void RegisterSystem(WorldManager manager)

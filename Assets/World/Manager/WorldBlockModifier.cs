@@ -14,6 +14,7 @@ namespace World.Chunks
     {
         public WorldBlockEvents Events { get; }
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main);
+        public Block GetSimilar(WorldPosition worldPosition, BlockLayer blockLayer, out BlockLayer currentLayer);
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer);
         public bool TryGetInventory(WorldPosition worldPosition, out Inventory inventory);
         public BlockStyles GetBlockStyles(WorldPosition worldPosition, BlockLayer layer);
@@ -46,6 +47,20 @@ namespace World.Chunks
             }
 
             return Block.Air;
+        }
+        public Block GetSimilar(WorldPosition worldPosition, BlockLayer blockLayer, out BlockLayer currentLayer)
+        {
+            currentLayer = blockLayer;
+
+            Block simple = Get(worldPosition, blockLayer);
+
+            if (simple.IsAir && blockLayer == BlockLayer.Main && GetBlockStyles(worldPosition, BlockLayer.Behind).IsBehind == false)
+            {
+                currentLayer = BlockLayer.Behind;
+                return Get(worldPosition, currentLayer);
+            }
+
+            return simple;
         }
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer)
         {
