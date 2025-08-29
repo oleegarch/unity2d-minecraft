@@ -51,6 +51,10 @@ namespace World.Chunks.BlocksStorage
         {
             if (_blocks.Get(index, layer).IsAir)
             {
+                // Нельзя ставить Main блок на Behind блок с IsBehind==false
+                if (layer == BlockLayer.Main && GetBlockStyles(index, BlockLayer.Behind).IsBehind == false)
+                    return false;
+
                 OverrideBlockStyles(index, overrided, layer);
                 _blocks.Set(index, block, layer);
                 return true;
