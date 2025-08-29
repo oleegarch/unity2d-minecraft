@@ -8,8 +8,8 @@ namespace World.Inventories
         public int SlotCount { get; }
         public InventoryEvents Events { get; }
         public IReadOnlyList<ItemStack> GetAllSlots();
+        public IReadOnlyList<ItemStack> GetAllNotEmptySlots();
         public ItemStack GetSlot(int index);
-        public void ReplaceSlot(int index, ItemStack newStack);
 
         bool Has(ItemStack stack, int slotIndex);
         bool Has(ItemInfo item, int slotIndex, int count = 1);
@@ -21,6 +21,7 @@ namespace World.Inventories
         public bool TryRemove(int slotIndex, int amount, out ItemStack removed);
         public bool Move(int fromIndex, int toIndex, int amount = int.MaxValue);
         public bool MoveTo(Inventory target, int fromIndex, int toIndex, int amount = int.MaxValue);
+        public void ReplaceSlot(int index, ItemStack newStack);
 
         public void Clear();
     }

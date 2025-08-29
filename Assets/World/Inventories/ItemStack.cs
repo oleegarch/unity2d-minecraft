@@ -8,7 +8,7 @@ namespace World.Inventories
         public ItemInfo Item { get; private set; }
         public int Count { get; private set; }
 
-        public bool IsEmpty => Count <= 0;
+        public bool IsEmpty => Item == null || Count <= 0;
         public int SpaceLeft => Item == null ? 0 : Item.MaxStack - Count;
 
         public ItemStack(ItemInfo item, int count = 1)

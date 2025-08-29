@@ -30,10 +30,8 @@ namespace World.Items
         }
         private void HandleWorldBlockInventoryDropped(WorldPosition position, Inventory inventory, BlockLayer layer)
         {
-            foreach (var stack in inventory.GetAllSlots())
-            {
+            foreach (var stack in inventory.GetAllNotEmptySlots())
                 DropItemAt(position, stack);
-            }
         }
         public ItemDropped DropItemAt(WorldPosition worldPosition, ItemStack stack)
         {
@@ -42,6 +40,8 @@ namespace World.Items
         }
         public ItemDropped DropItemAt(Vector3 position, ItemStack stack)
         {
+            if (stack.IsEmpty) return null;
+
             GameObject item = Instantiate(_itemDroppedPrefab, position, Quaternion.identity, _itemsDroppedParent);
             ItemDropped dropped = item.GetComponent<ItemDropped>();
             dropped.SetUp(stack);

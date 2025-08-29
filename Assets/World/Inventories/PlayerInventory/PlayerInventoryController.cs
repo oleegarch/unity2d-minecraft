@@ -128,7 +128,7 @@ namespace World.Inventories
         }
         private void DropCurrentItem(InputAction.CallbackContext context)
         {
-            if (_inventory.TryRemove(ActiveHotbarIndex, 1, out ItemStack removed))
+            if (_inventory.TryRemove(ActiveHotbarIndex, 1, out ItemStack removed) && !removed.IsEmpty)
             {
                 for (int i = 0; i < removed.Count; i++)
                 {

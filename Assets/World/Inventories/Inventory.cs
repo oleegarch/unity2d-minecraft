@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using World.Items;
 
@@ -18,34 +19,42 @@ namespace World.Inventories
             Events = new InventoryEvents();
         }
 
-        public IReadOnlyList<ItemStack> GetAllSlots()
+        #region VALIDATORS
+        private int ValidateIndex(int index)
         {
-            return _slots.Select(s => s?.Clone() ?? ItemStack.Empty).ToArray();
+            if (
+                index < 0 ||
+                index >= _slots.Length
+            )
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+            return index;
         }
+        private void ValidateStack(ItemStack stack)
+        {
+            if (
+                stack == null ||
+                stack.IsEmpty ||
+                stack.Item.Sprite == null ||
+                stack.Item.Id == 0 ||
+                stack.Item.BlockId == 0
+            )
+            {
+                throw new InvalidDataException(nameof(stack));
+            }
+        }
+        #endregion
 
-        public ItemStack GetSlot(int index)
-        {
-            ValidateIndex(index);
-            return _slots[index]?.Clone() ?? ItemStack.Empty;
-        }
-        public void ReplaceSlot(int index, ItemStack newStack)
-        {
-            ValidateIndex(index);
-            _slots[index] = newStack;
-            Events.InvokeSlotChanged(index, _slots[index].Clone());
-        }
-
-        private void ValidateIndex(int index)
-        {
-            if (index < 0 || index >= _slots.Length) throw new ArgumentOutOfRangeException(nameof(index));
-        }
+        #region GET OPERATIONS
+        public IReadOnlyList<ItemStack> GetAllSlots() => _slots.Select(s => s?.Clone() ?? ItemStack.Empty).ToArray();
+        public IReadOnlyList<ItemStack> GetAllNotEmptySlots() => _slots.Where(s => !s.IsEmpty).Select(s => s.Clone()).ToArray();
+        public ItemStack GetSlot(int index) => _slots[ValidateIndex(index)]?.Clone() ?? ItemStack.Empty;
 
         // проверяет, что в указанном слоте лежит именно этот предмет (совпадает Id) и количество там ≥ нужного.
         public virtual bool Has(ItemStack stack, int slotIndex)
         {
-            if (stack == null || stack.IsEmpty || stack.Item == null || stack.Count <= 0)
-                return false;
-
+            ValidateStack(stack);
             ValidateIndex(slotIndex);
 
             var slot = _slots[slotIndex];
@@ -61,8 +70,7 @@ namespace World.Inventories
         // проверяет, что во всём инвентаре есть хотя бы нужное количество предмета (суммируем по слотам).
         public virtual bool Has(ItemStack stack)
         {
-            if (stack == null || stack.IsEmpty || stack.Item == null || stack.Count <= 0)
-                return false;
+            ValidateStack(stack);
 
             int needed = stack.Count;
             var itemId = stack.Item.Id;
@@ -83,7 +91,9 @@ namespace World.Inventories
         {
             return Has(new ItemStack(item, count));
         }
+        #endregion
 
+        #region ADD OPERATION
         /// <summary>
         /// Попытаться добавить стек: сначала заполняем существующие стеки того же типа, затем пустые слоты.
         /// remainder - количество, которое не удалось разместить (0 если всё поместилось).
@@ -91,11 +101,7 @@ namespace World.Inventories
         /// </summary>
         public virtual bool TryAdd(ItemStack stack, out int remainder)
         {
-            if (stack == null || stack.IsEmpty || stack.Item == null || stack.Count <= 0)
-            {
-                remainder = 0;
-                return true;
-            }
+            ValidateStack(stack);
 
             int toPlace = stack.Count;
             var itemId = stack.Item.Id;
@@ -129,13 +135,14 @@ namespace World.Inventories
             remainder = toPlace;
             return remainder == 0;
         }
-
         public virtual bool TryAdd(ItemInfo item, int count, out int remainder)
         {
             ItemStack stack = new ItemStack(item, count);
             return TryAdd(stack, out remainder);
         }
+        #endregion
 
+        #region REMOVE OPERATION
         /// <summary>
         /// Попытаться удалить amount из слота slotIndex. removed - фактически удалённый стек (или Empty).
         /// Возвращает true если удалено >0.
@@ -166,7 +173,9 @@ namespace World.Inventories
 
             return false;
         }
+        #endregion
 
+        #region MOVE OPERATIONS
         /// <summary>
         /// Переместить amount (или максимум) из fromIndex в toIndex.
         /// Поведение:
@@ -295,7 +304,16 @@ namespace World.Inventories
 
             return changed;
         }
+        public void ReplaceSlot(int index, ItemStack newStack)
+        {
+            ValidateStack(newStack);
+            ValidateIndex(index);
+            _slots[index] = newStack;
+            Events.InvokeSlotChanged(index, _slots[index].Clone());
+        }
+        #endregion
 
+        #region CLEAR/DISPOSE
         public virtual void Clear()
         {
             for (int i = 0; i < _slots.Length; i++)
@@ -304,5 +322,6 @@ namespace World.Inventories
                 Events.InvokeSlotChanged(i, ItemStack.Empty);
             }
         }
+        #endregion
     }
 }
