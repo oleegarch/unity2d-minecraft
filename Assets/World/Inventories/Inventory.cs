@@ -150,6 +150,7 @@ namespace World.Inventories
         public virtual bool TryRemove(int slotIndex, int amount, out ItemStack removed)
         {
             ValidateIndex(slotIndex);
+            
             removed = ItemStack.Empty;
             if (amount <= 0) return false;
 
