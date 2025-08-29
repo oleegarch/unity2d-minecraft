@@ -13,6 +13,7 @@ namespace World.HoveredBlock
         [SerializeField] private WorldManager _worldManager;
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private Material _blockHoveredMaterial;
+        [SerializeField] private float _whenReachedLimitColorAlpha = 0.25f;
 
         private void Awake()
         {
@@ -22,12 +23,14 @@ namespace World.HoveredBlock
         {
             _cameraObserver.OnOrthographicSizeChanged += HandleCameraSizeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged += HandleBlockHoveredChanged;
+            _blockHoveredObserver.OnLimitedChanged += HandleLimitedChanged;
             _blockBreakingProcess.OnBlockBreakAttempt += HandleBlockBreak;
         }
         private void OnDisable()
         {
             _cameraObserver.OnOrthographicSizeChanged -= HandleCameraSizeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged -= HandleBlockHoveredChanged;
+            _blockHoveredObserver.OnLimitedChanged -= HandleLimitedChanged;
             _blockBreakingProcess.OnBlockBreakAttempt -= HandleBlockBreak;
         }
 
@@ -40,15 +43,28 @@ namespace World.HoveredBlock
 
             if (enabled)
             {
-                BlockInfo hoveredInfo = _worldManager.BlockDatabase.Get(hoveredBlock.Id);
                 transform.position = new Vector3(worldPosition.x, worldPosition.y, 0f);
-                _targetSpriteRenderer.color = hoveredInfo.OutlineColor;
+
+                // change only rgb, not alpha
+                BlockInfo hoveredInfo = _worldManager.BlockDatabase.Get(hoveredBlock.Id);
+                Color rgbChanged = _targetSpriteRenderer.color;
+                Color change = hoveredInfo.OutlineColor;
+                rgbChanged.r = change.r;
+                rgbChanged.g = change.g;
+                rgbChanged.b = change.b;
+                _targetSpriteRenderer.color = rgbChanged;
             }
         }
 
         private void HandleBlockHoveredChanged(WorldPosition worldPosition)
         {
             SetOutline(worldPosition);
+        }
+        private void HandleLimitedChanged(bool limited)
+        {
+            Color outlineColor = _targetSpriteRenderer.color;
+            outlineColor.a = limited ? _whenReachedLimitColorAlpha : 1f;
+            _targetSpriteRenderer.color = outlineColor;
         }
         private void HandleBlockBreak(WorldPosition worldPosition)
         {

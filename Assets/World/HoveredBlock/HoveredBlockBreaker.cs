@@ -45,8 +45,9 @@ namespace World.HoveredBlock
             actions.PointerPress.canceled += HandlePointerPress;
             actions.Enable();
             
-            _cameraModeController.OnCameraModeChanged += HandleCameraMoveChanged;
+            _cameraModeController.OnCameraModeChanged += HandleCameraModeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged += HandleBlockHoveredChanged;
+            _blockHoveredObserver.OnLimitedChanged += HandleLimitedChanged;
 
             // подписываемся на изменение позиции камеры только когда режим камеры включён на наблюдателя
             // так как в режиме наблюдателя нам требуется отменять процесс ломания блока при передвижении камеры
@@ -56,6 +57,7 @@ namespace World.HoveredBlock
                 _cameraObserver.OnPositionChanged += HandleCameraPositionChanged;
             }
         }
+
         private void OnDisable()
         {
             var actions = _inputManager.Controls.BlockBreaking;
@@ -63,12 +65,13 @@ namespace World.HoveredBlock
             actions.PointerPress.canceled -= HandlePointerPress;
             actions.Disable();
 
-            _cameraModeController.OnCameraModeChanged -= HandleCameraMoveChanged;
+            _cameraModeController.OnCameraModeChanged -= HandleCameraModeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged -= HandleBlockHoveredChanged;
+            _blockHoveredObserver.OnLimitedChanged -= HandleLimitedChanged;
             _cameraObserver.OnPositionChanged -= HandleCameraPositionChanged;
         }
 
-        private void HandleCameraMoveChanged(CameraMode cameraMode)
+        private void HandleCameraModeChanged(CameraMode cameraMode)
         {
             _cameraObserver.OnPositionChanged -= HandleCameraPositionChanged;
 
@@ -81,29 +84,21 @@ namespace World.HoveredBlock
         {
             _pointerPressing = context.performed;
 
-            if (_pointerPressing)
-            {
-                StartBreaking(_blockHoveredObserver.HoveredPosition);
-            }
-            else
-            {
-                CancelBreaking();
-            }
+            RestartBreaking();
         }
         private void HandleBlockHoveredChanged(WorldPosition worldPosition)
         {
-            CancelBreaking();
-            
-            if (_pointerPressing)
-            {
-                StartBreaking(worldPosition);
-            }
+            RestartBreaking();
+        }
+        private void HandleLimitedChanged(bool limited)
+        {
+            RestartBreaking();
         }
         private void HandleCameraPositionChanged(Vector3 newPosition)
         {
             float distance = Vector3.Distance(newPosition, _startBreakingCameraPosition);
 
-            if(distance > _cameraDistanceChangedForCancelBreaking)
+            if (distance > _cameraDistanceChangedForCancelBreaking)
             {
                 CancelBreaking();
             }
@@ -123,6 +118,17 @@ namespace World.HoveredBlock
             _currentBreakingCoroutine = null;
             _breakingMask.localScale = Vector3.zero;
             _particlesController.StopBlockBreaking();
+        }
+        private void RestartBreaking()
+        {
+            CancelBreaking();
+
+            Debug.Log($"RestartBreaking: {_pointerPressing} {!_blockHoveredObserver.ReachedLimitPosition && _pointerPressing}");
+
+            if (!_blockHoveredObserver.ReachedLimitPosition && _pointerPressing)
+            {
+                StartBreaking(_blockHoveredObserver.HoveredPosition);
+            }
         }
 
         private IEnumerator BreakingProcess(WorldPosition worldPosition)
@@ -161,8 +167,8 @@ namespace World.HoveredBlock
             }
 
             OnBlockBreakAttempt?.Invoke(worldPosition);
-            _breakingMask.localScale = Vector3.zero;
-            _particlesController.StopBlockBreaking();
+
+            CancelBreaking();
         }
     }
 }

@@ -119,7 +119,10 @@ namespace World.Inventories
         }
         private void OpenForeignInventory(InputAction.CallbackContext context)
         {
-            if (_manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out Inventory inventory))
+            if (
+                !_blockObserver.ReachedLimitPosition &&
+                _manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out Inventory inventory)
+            )
             {
                 _foreignSlots.SetUp(inventory);
                 _foreignSlots.Open();
@@ -133,7 +136,7 @@ namespace World.Inventories
                 for (int i = 0; i < removed.Count; i++)
                 {
                     ItemDropped dropped = _itemsSpawner.DropItemAt(_itemOnRightHandTransform.position, removed);
-                    dropped.ThrowItem(_blockObserver.CursorPosition);
+                    dropped.ThrowItem(_blockObserver.CursorPositionInChunks);
                 }
             }
         }

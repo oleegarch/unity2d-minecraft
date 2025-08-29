@@ -46,8 +46,9 @@ namespace World
         public static bool operator ==(WorldPosition a, WorldPosition b) => a.x == b.x && a.y == b.y;
         public static bool operator !=(WorldPosition a, WorldPosition b) => !(a == b);
 
-        // Конвертировать в Vector3Int
+        // Конвертировать в Vector
         public Vector3Int ToVector3Int() => new Vector3Int(x, y, 0);
+        public Vector2Int ToVector2Int() => new Vector2Int(x, y);
 
         // Сложение WorldPosition + Vector2Int
         public static WorldPosition operator +(WorldPosition a, Vector2Int b) => new WorldPosition(a.x + b.x, a.y + b.y);
