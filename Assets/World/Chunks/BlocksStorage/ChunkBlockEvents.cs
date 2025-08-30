@@ -12,7 +12,7 @@ namespace World.Chunks
         public event Action<BlockIndex, Block, BlockLayer> OnBlockBrokenByPlayer;
         public event Action<BlockIndex, Inventory, BlockLayer> OnBlockInventoryDropped;
 
-        public void InvokeBlockSet(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source)
+        internal void InvokeBlockSet(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source)
         {
             if (source == BlockUpdateSource.Player)
                 OnBlockSetByPlayer?.Invoke(index, block, layer);
@@ -20,7 +20,7 @@ namespace World.Chunks
             OnBlockSet?.Invoke(index, block, layer);
         }
 
-        public void InvokeBlockBroken(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source)
+        internal void InvokeBlockBroken(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source)
         {
             if (source == BlockUpdateSource.Player)
                 OnBlockBrokenByPlayer?.Invoke(index, block, layer);
@@ -28,7 +28,7 @@ namespace World.Chunks
             OnBlockBroken?.Invoke(index, block, layer);
         }
 
-        public void InvokeBlockInventoryDropped(BlockIndex index, Inventory inventory, BlockLayer layer)
+        internal void InvokeBlockInventoryDropped(BlockIndex index, Inventory inventory, BlockLayer layer)
         {
             OnBlockInventoryDropped?.Invoke(index, inventory, layer);
         }

@@ -25,7 +25,8 @@ namespace World.Items
         private void HandleWorldBlockBroken(WorldPosition position, Block block, BlockLayer blockLayer)
         {
             ItemInfo info = _manager.ItemDatabase.GetByBlockId(block.Id);
-            ItemStack stack = new ItemStack(info, 1);
+            ItemInstance instance = new ItemInstance(info.Id);
+            ItemStack stack = new ItemStack(instance, info.MaxStack, 1);
             DropItemAt(position, stack);
         }
         private void HandleWorldBlockInventoryDropped(WorldPosition position, Inventory inventory, BlockLayer layer)
@@ -44,7 +45,7 @@ namespace World.Items
 
             GameObject item = Instantiate(_itemDroppedPrefab, position, Quaternion.identity, _itemsDroppedParent);
             ItemDropped dropped = item.GetComponent<ItemDropped>();
-            dropped.SetUp(stack);
+            dropped.SetUp(stack, _manager.ItemDatabase);
 
             return dropped;
         }

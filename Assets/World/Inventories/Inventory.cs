@@ -36,9 +36,7 @@ namespace World.Inventories
             if (
                 stack == null ||
                 stack.IsEmpty ||
-                stack.Item.Sprite == null ||
-                stack.Item.Id == 0 ||
-                stack.Item.BlockId == 0
+                stack.Instance.ItemId == 0
             )
             {
                 throw new InvalidDataException(nameof(stack));
@@ -58,14 +56,10 @@ namespace World.Inventories
             ValidateIndex(slotIndex);
 
             var slot = _slots[slotIndex];
-            if (slot.IsEmpty || slot.Item == null)
+            if (slot.IsEmpty || slot.Instance == null)
                 return false;
 
-            return slot.Item.Id == stack.Item.Id && slot.Count >= stack.Count;
-        }
-        public bool Has(ItemInfo item, int slotIndex, int count = 1)
-        {
-            return Has(new ItemStack(item, count), slotIndex);
+            return slot.Instance.Id == stack.Instance.Id && slot.Count >= stack.Count;
         }
         // проверяет, что во всём инвентаре есть хотя бы нужное количество предмета (суммируем по слотам).
         public virtual bool Has(ItemStack stack)
@@ -73,11 +67,11 @@ namespace World.Inventories
             ValidateStack(stack);
 
             int needed = stack.Count;
-            var itemId = stack.Item.Id;
+            var itemId = stack.Instance.Id;
 
             foreach (var slot in _slots)
             {
-                if (!slot.IsEmpty && slot.Item != null && slot.Item.Id == itemId)
+                if (!slot.IsEmpty && slot.Instance != null && slot.Instance.Id == itemId)
                 {
                     needed -= slot.Count;
                     if (needed <= 0)
@@ -86,10 +80,6 @@ namespace World.Inventories
             }
 
             return false; // не хватило
-        }
-        public bool Has(ItemInfo item, int count = 1)
-        {
-            return Has(new ItemStack(item, count));
         }
         #endregion
 
@@ -104,13 +94,13 @@ namespace World.Inventories
             ValidateStack(stack);
 
             int toPlace = stack.Count;
-            var itemId = stack.Item.Id;
+            var itemId = stack.Instance.Id;
 
             // 1) заполнить существующие стеки
             for (int i = 0; i < _slots.Length && toPlace > 0; i++)
             {
                 var s = _slots[i];
-                if (!s.IsEmpty && s.Item != null && s.Item.Id == itemId)
+                if (!s.IsEmpty && s.Instance != null && s.Instance.Id == itemId)
                 {
                     int added = s.Add(toPlace);
                     if (added > 0)
@@ -125,8 +115,8 @@ namespace World.Inventories
                 var s = _slots[i];
                 if (s.IsEmpty)
                 {
-                    int put = Math.Min(toPlace, stack.Item.MaxStack);
-                    _slots[i] = new ItemStack(stack.Item, put);
+                    int put = Math.Min(toPlace, stack.MaxCount);
+                    _slots[i] = new ItemStack(stack.Instance, stack.MaxCount, put);
                     Events.InvokeSlotChanged(i, _slots[i].Clone());
                     toPlace -= put;
                 }
@@ -134,11 +124,6 @@ namespace World.Inventories
 
             remainder = toPlace;
             return remainder == 0;
-        }
-        public virtual bool TryAdd(ItemInfo item, int count, out int remainder)
-        {
-            ItemStack stack = new ItemStack(item, count);
-            return TryAdd(stack, out remainder);
         }
         #endregion
 
@@ -157,12 +142,12 @@ namespace World.Inventories
             var s = _slots[slotIndex];
             if (s.IsEmpty) return false;
 
-            var item = s.Item; // может быть null если баг, но тогда Count >0 в идеале не бывает
+            var item = s.Instance; // может быть null если баг, но тогда Count >0 в идеале не бывает
             int removedCount = s.Remove(amount);
 
             if (removedCount > 0)
             {
-                removed = new ItemStack(item, removedCount);
+                removed = new ItemStack(item, s.MaxCount, removedCount);
                 // если стек стал пустым — убедимся, что он хранится как Empty
                 if (_slots[slotIndex].IsEmpty)
                     _slots[slotIndex] = ItemStack.Empty;
@@ -202,16 +187,16 @@ namespace World.Inventories
             if (to.IsEmpty)
             {
                 int toMove = Math.Min(amount, from.Count);
-                _slots[toIndex] = new ItemStack(from.Item, toMove);
+                _slots[toIndex] = new ItemStack(from.Instance, from.MaxCount, toMove);
                 from.Remove(toMove);
                 if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
                 changed = true;
             }
             // тот же тип -> слить
-            else if (!to.IsEmpty && !from.IsEmpty && to.Item != null && from.Item != null && to.Item.Id == from.Item.Id)
+            else if (!to.IsEmpty && !from.IsEmpty && to.Instance != null && from.Instance != null && to.Instance.Id == from.Instance.Id)
             {
                 int canMove = Math.Min(amount, from.Count);
-                int added = Math.Min(canMove, to.Item.MaxStack - to.Count);
+                int added = Math.Min(canMove, to.MaxCount - to.Count);
                 if (added > 0)
                 {
                     to.Add(added);
@@ -266,20 +251,20 @@ namespace World.Inventories
             if (to.IsEmpty)
             {
                 int toMove = Math.Min(amount, from.Count);
-                var item = from.Item;
+                var item = from.Instance;
                 if (item != null)
-                    toMove = Math.Min(toMove, item.MaxStack);
+                    toMove = Math.Min(toMove, from.MaxCount);
 
-                target._slots[toIndex] = new ItemStack(from.Item, toMove);
+                target._slots[toIndex] = new ItemStack(from.Instance, from.MaxCount, toMove);
                 from.Remove(toMove);
                 if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
                 changed = true;
             }
             // тот же тип -> слить (до max stack)
-            else if (!to.IsEmpty && !from.IsEmpty && to.Item != null && from.Item != null && to.Item.Id == from.Item.Id)
+            else if (!to.IsEmpty && !from.IsEmpty && to.Instance != null && from.Instance != null && to.Instance.Id == from.Instance.Id)
             {
                 int canMove = Math.Min(amount, from.Count);
-                int space = to.Item.MaxStack - to.Count;
+                int space = to.MaxCount - to.Count;
                 int added = Math.Min(canMove, space);
                 if (added > 0)
                 {

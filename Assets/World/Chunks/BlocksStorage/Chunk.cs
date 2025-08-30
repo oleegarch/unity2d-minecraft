@@ -12,7 +12,7 @@ namespace World.Chunks.BlocksStorage
         public readonly ChunkBlockEvents Events;
         public readonly IChunkBlockModifier Blocks;
         public readonly IChunkRenderService Render;
-        public readonly ChunkBlockInventories Inventories;
+        public readonly IChunkBlockInventories Inventories;
 
         public Chunk(ChunkIndex index, byte size)
         {

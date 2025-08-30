@@ -5,43 +5,44 @@ namespace World.Inventories
 {
     public sealed class ItemStack : IEquatable<ItemStack>
     {
-        public ItemInfo Item { get; private set; }
+        public static ItemStack Empty => new(null, 0, 0);
+
+        public ItemInstance Instance { get; private set; }
         public int Count { get; private set; }
+        public int MaxCount { get; private set; }
 
-        public bool IsEmpty => Item == null || Count <= 0;
-        public int SpaceLeft => Item == null ? 0 : Item.MaxStack - Count;
+        public bool IsEmpty => Instance == null || Count <= 0;
+        public int SpaceLeft => Instance == null ? 0 : MaxCount - Count;
 
-        public ItemStack(ItemInfo item, int count = 1)
+        public ItemStack(ItemInstance instance, int maxCount, int count = 1)
         {
-            if (item == null)
+            if (instance == null)
             {
-                if (count != 0) throw new InvalidOperationException("Can't create non-empty stack with null item.");
-                Item = null;
+                if (count != 0) throw new InvalidOperationException("Can't create non-empty stack with null instance.");
+                Instance = null;
                 Count = 0;
                 return;
             }
 
-            Item = item;
+            Instance = instance;
             Count = Math.Max(0, count);
-            if (Count == 0) Item = null;
+            MaxCount = maxCount;
+            if (Count == 0) Instance = null;
         }
 
-        // Пустой стек-одиночка
-        public static ItemStack Empty => new(null, 0);
-
-        public ItemStack Clone() => new(Item, Count);
+        public ItemStack Clone() => new(Instance?.Clone(), MaxCount, Count);
 
         public bool CanStackWith(ItemStack other)
         {
             if (other == null) return false;
             if (IsEmpty || other.IsEmpty) return true;
-            return Item.Id == other.Item.Id;
+            return Instance.CanStackWith(other.Instance);
         }
 
         public int Add(int amount)
         {
-            if (amount <= 0 || Item == null) return 0;
-            int can = Math.Min(amount, Item.MaxStack - Count);
+            if (amount <= 0 || Instance == null) return 0;
+            int can = Math.Min(amount, MaxCount - Count);
             Count += can;
             return can;
         }
@@ -51,17 +52,20 @@ namespace World.Inventories
             if (amount <= 0 || IsEmpty) return 0;
             int rem = Math.Min(amount, Count);
             Count -= rem;
-            if (Count == 0) Item = null;
+            if (Count == 0) Instance = null;
             return rem;
         }
 
         public bool Equals(ItemStack other)
         {
-            if (other == null) return IsEmpty;
-            if (IsEmpty && other.IsEmpty) return true;
-            return Item?.Id == other.Item?.Id && Count == other.Count;
+            return (
+                Instance != null &&
+                other.Instance != null &&
+                Instance.Equals(other.Instance) &&
+                Count == other.Count
+            );
         }
 
-        public override string ToString() => IsEmpty ? "(empty)" : $"{Item.Id} x{Count}";
+        public override string ToString() => IsEmpty ? "(empty)" : $"{Instance?.ItemId} x{Count}";
     }
 }

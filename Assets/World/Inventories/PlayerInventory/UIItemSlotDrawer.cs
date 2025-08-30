@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using World.Items;
 
 namespace World.Inventories
 {
@@ -16,23 +17,20 @@ namespace World.Inventories
         [NonSerialized] public int SlotIndex;
         [NonSerialized] public bool Active;
         [NonSerialized] public Inventory Inventory;
+        [NonSerialized] public ItemDatabase ItemDatabase;
 
-        public void SetUp(Inventory inventory, int slotIndex)
+        public void SetUp(Inventory inventory, int slotIndex, ItemDatabase itemDatabase)
         {
             Inventory = inventory;
             SlotIndex = slotIndex;
             Stack = inventory.GetSlot(slotIndex);
+            ItemDatabase = itemDatabase;
             Refresh();
         }
 
         public void Refresh(ItemStack stack)
         {
-            if (Stack == null) throw new InvalidOperationException($"SetUp not called for Refresh");
-
-            if (
-                Stack.Item?.Sprite != stack.Item?.Sprite ||
-                Stack.Count != stack.Count
-            )
+            if (!Stack.Equals(stack))
             {
                 Stack = stack;
                 Refresh();
@@ -40,7 +38,7 @@ namespace World.Inventories
         }
         public void Refresh()
         {
-            _stackDrawer.SetUp(Stack);
+            _stackDrawer.SetUp(Stack, ItemDatabase);
             SetActive(Active);
         }
 

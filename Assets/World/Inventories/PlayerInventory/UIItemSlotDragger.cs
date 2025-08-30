@@ -33,7 +33,7 @@ namespace World.Inventories
             _staticStackGO = Instantiate(_staticStackPrefab, _rectTransform.position, Quaternion.identity, _parentCanvas.transform);
             _staticStackRT = _staticStackGO.GetComponent<RectTransform>();
             _staticStackDrawer = _staticStackGO.GetComponent<UIStackSlotDrawer>();
-            _staticStackDrawer.SetUp(_currentDrawer.Stack);
+            _staticStackDrawer.SetUp(_currentDrawer.Stack, _currentDrawer.ItemDatabase);
 
             UpdateDraggedPosition(eventData);
         }

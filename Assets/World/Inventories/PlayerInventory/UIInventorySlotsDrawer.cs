@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using World.Chunks;
 
 namespace World.Inventories
 {
@@ -14,6 +15,7 @@ namespace World.Inventories
     {
         [SerializeField] protected Transform _uiSlotsParent;
         [SerializeField] protected GameObject _uiItemSlotPrefab;
+        [SerializeField] protected WorldManager _manager;
 
         protected Inventory _inventory;
         protected UIItemSlotDrawer[] _uiItemSlots;
@@ -51,7 +53,7 @@ namespace World.Inventories
                 if (uiSlot == null) throw new InvalidOperationException("Prefab must have UIItemSlotDrawer.");
 
                 // передаём стартовое состояние
-                uiSlot.SetUp(_inventory, invIndex);
+                uiSlot.SetUp(_inventory, invIndex, _manager.ItemDatabase);
                 _uiItemSlots[i] = uiSlot;
             }
 

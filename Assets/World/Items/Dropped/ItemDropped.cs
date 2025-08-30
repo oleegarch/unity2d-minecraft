@@ -25,12 +25,12 @@ namespace World.Items
                 _collectCollider.enabled = false;
         }
 
-        public void SetUp(ItemStack stack)
+        public void SetUp(ItemStack stack, ItemDatabase itemDatabase)
         {
             Stack = stack;
 
             // Меняем спрайт предмета
-            _spriteRenderer.sprite = stack.Item.Sprite;
+            _spriteRenderer.sprite = stack.Instance.GetItemInfo(itemDatabase).Sprite;
 
             // Запускаем корутину включения коллайдера через задержку
             StartCoroutine(EnableColliderAfterDelay());

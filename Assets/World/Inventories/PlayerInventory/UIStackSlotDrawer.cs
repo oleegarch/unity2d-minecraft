@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using World.Items;
 
 namespace World.Inventories
 {
@@ -13,13 +14,14 @@ namespace World.Inventories
 
         [NonSerialized] public ItemStack Stack;
 
-        public void SetUp(ItemStack stack)
+        public void SetUp(ItemStack stack, ItemDatabase itemDatabase)
         {
             Stack = stack;
 
-            if (stack?.Item?.Sprite != null)
+            Sprite itemSprite = stack.Instance?.GetItemInfo(itemDatabase).Sprite;
+            if (itemSprite != null)
             {
-                _uiItemImage.sprite = stack.Item.Sprite;
+                _uiItemImage.sprite = itemSprite;
                 _uiItemImage.enabled = true;
             }
             else
