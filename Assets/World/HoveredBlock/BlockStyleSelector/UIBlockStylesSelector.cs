@@ -20,11 +20,13 @@ namespace World.HoveredBlock.BlockStylesSelector
         {
             DestroyUIs();
 
+            Block selectedBlock = _hoveredBlockPicker.SelectedBlock;
+            if (selectedBlock.IsAir) return;
+
             Vector3 screenPos = _cameraObserver.Camera.WorldToScreenPoint(worldPosition.ToVector3Int());
             transform.position = screenPos;
             _startedWorldPosition = worldPosition;
 
-            Block selectedBlock = _hoveredBlockPicker.SelectedBlock;
             BlockInfo selectedInfo = _worldManager.BlockDatabase.Get(selectedBlock.Id);
             int index = 0;
             foreach (BlockPlacementVariant styles in selectedInfo.AvailablePlacements)
