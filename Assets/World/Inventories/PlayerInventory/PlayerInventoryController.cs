@@ -2,6 +2,7 @@ using System;
 using UIGlobal;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using World.Blocks;
 using World.Chunks;
 using World.HoveredBlock;
@@ -70,6 +71,7 @@ namespace World.Inventories
             inventory.Enable();
             var hotbar = _inputManager.Controls.InventoryPlayerHotbar;
             hotbar.MouseScroll.performed += OnMouseScroll;
+            hotbar.Digit.performed += OnDigitPressed;
             hotbar.Enable();
         }
         private void OnDisable()
@@ -81,6 +83,7 @@ namespace World.Inventories
             inventory.Disable();
             var hotbar = _inputManager.Controls.InventoryPlayerHotbar;
             hotbar.MouseScroll.performed -= OnMouseScroll;
+            hotbar.Digit.performed -= OnDigitPressed;
             hotbar.Disable();
         }
         private void HandleBlockPickedUpdate(WorldPosition position, Block block, BlockLayer blockLayer, BlockStyles blockStyles)
@@ -143,6 +146,32 @@ namespace World.Inventories
         private void OnMouseScroll(InputAction.CallbackContext context)
         {
             ActiveHotbarIndex += Math.Sign(context.ReadValue<float>()) * -1; // reverse
+        }
+        private void OnDigitPressed(InputAction.CallbackContext context)
+        {
+            var control = context.control;
+
+            if (control is KeyControl keyControl)
+            {
+                Key key = keyControl.keyCode;
+                int hotbarIndex = -1;
+                switch (key)
+                {
+                    case Key.Digit1: hotbarIndex = 0; break;
+                    case Key.Digit2: hotbarIndex = 1; break;
+                    case Key.Digit3: hotbarIndex = 2; break;
+                    case Key.Digit4: hotbarIndex = 3; break;
+                    case Key.Digit5: hotbarIndex = 4; break;
+                    case Key.Digit6: hotbarIndex = 5; break;
+                    case Key.Digit7: hotbarIndex = 6; break;
+                    case Key.Digit8: hotbarIndex = 7; break;
+                    case Key.Digit9: hotbarIndex = 8; break;
+                    case Key.Digit0: hotbarIndex = 9; break;
+                }
+
+                if (hotbarIndex != -1)
+                    ActiveHotbarIndex = hotbarIndex;
+            }
         }
 
         public bool TryCollect(ItemStack stack)

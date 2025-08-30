@@ -622,6 +622,15 @@ namespace World.InputActions
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Digit"",
+                    ""type"": ""Button"",
+                    ""id"": ""c8d14342-8106-4a23-97c0-5b41d3519dd6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -633,6 +642,116 @@ namespace World.InputActions
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""MouseScroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5469041d-cdd0-4edc-9aaf-d32604d47b02"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Digit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""88c6ce68-7f62-4b91-9368-6515d048b001"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Digit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""014cf17d-e4e7-459f-8a13-df185e890c27"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Digit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4a160be6-bc0a-4be1-9613-c682772707bc"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Digit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9bcf40fd-ea84-4a16-bf50-ce7c98fc0f63"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Digit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""db2d68c9-4b74-4c01-9376-280466a1cf8f"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Digit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""95f6ccb8-982e-4151-83b4-16e5b92ef0eb"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Digit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""af96a7a1-52b0-43a6-bd41-a76d420cc883"",
+                    ""path"": ""<Keyboard>/8"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Digit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""34d295bd-be27-4367-a18b-a88e4f376b72"",
+                    ""path"": ""<Keyboard>/9"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Digit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""756b944c-e694-4cc8-a506-faf53e198ca0"",
+                    ""path"": ""<Keyboard>/0"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Digit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -674,6 +793,7 @@ namespace World.InputActions
             // InventoryPlayerHotbar
             m_InventoryPlayerHotbar = asset.FindActionMap("InventoryPlayerHotbar", throwIfNotFound: true);
             m_InventoryPlayerHotbar_MouseScroll = m_InventoryPlayerHotbar.FindAction("MouseScroll", throwIfNotFound: true);
+            m_InventoryPlayerHotbar_Digit = m_InventoryPlayerHotbar.FindAction("Digit", throwIfNotFound: true);
         }
 
         ~@WorldInputActions()
@@ -1597,6 +1717,7 @@ namespace World.InputActions
         private readonly InputActionMap m_InventoryPlayerHotbar;
         private List<IInventoryPlayerHotbarActions> m_InventoryPlayerHotbarActionsCallbackInterfaces = new List<IInventoryPlayerHotbarActions>();
         private readonly InputAction m_InventoryPlayerHotbar_MouseScroll;
+        private readonly InputAction m_InventoryPlayerHotbar_Digit;
         /// <summary>
         /// Provides access to input actions defined in input action map "InventoryPlayerHotbar".
         /// </summary>
@@ -1612,6 +1733,10 @@ namespace World.InputActions
             /// Provides access to the underlying input action "InventoryPlayerHotbar/MouseScroll".
             /// </summary>
             public InputAction @MouseScroll => m_Wrapper.m_InventoryPlayerHotbar_MouseScroll;
+            /// <summary>
+            /// Provides access to the underlying input action "InventoryPlayerHotbar/Digit".
+            /// </summary>
+            public InputAction @Digit => m_Wrapper.m_InventoryPlayerHotbar_Digit;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -1641,6 +1766,9 @@ namespace World.InputActions
                 @MouseScroll.started += instance.OnMouseScroll;
                 @MouseScroll.performed += instance.OnMouseScroll;
                 @MouseScroll.canceled += instance.OnMouseScroll;
+                @Digit.started += instance.OnDigit;
+                @Digit.performed += instance.OnDigit;
+                @Digit.canceled += instance.OnDigit;
             }
 
             /// <summary>
@@ -1655,6 +1783,9 @@ namespace World.InputActions
                 @MouseScroll.started -= instance.OnMouseScroll;
                 @MouseScroll.performed -= instance.OnMouseScroll;
                 @MouseScroll.canceled -= instance.OnMouseScroll;
+                @Digit.started -= instance.OnDigit;
+                @Digit.performed -= instance.OnDigit;
+                @Digit.canceled -= instance.OnDigit;
             }
 
             /// <summary>
@@ -1864,6 +1995,13 @@ namespace World.InputActions
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnMouseScroll(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Digit" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnDigit(InputAction.CallbackContext context);
         }
     }
 }
