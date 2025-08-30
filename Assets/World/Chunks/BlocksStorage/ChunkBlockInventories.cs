@@ -14,12 +14,12 @@ namespace World.Chunks.BlocksStorage
     public class ChunkBlockInventories : IChunkBlockInventories
     {
         private readonly Dictionary<BlockLayer, Dictionary<BlockIndex, Inventory>> _inventoriesByLayer = new();
-        private readonly IChunkBlockModifier _blocks;
+        private readonly ChunkBlockEvents _events;
 
-        public ChunkBlockInventories(IChunkBlockModifier blocks)
+        public ChunkBlockInventories(ChunkBlockEvents events)
         {
-            _blocks = blocks;
-            _blocks.Events.OnBlockBroken += HandleBlockBroken;
+            _events = events;
+            _events.OnBlockBroken += HandleBlockBroken;
         }
 
         public void OverrideInventory(BlockIndex index, BlockLayer layer, Inventory inventory)
@@ -31,25 +31,21 @@ namespace World.Chunks.BlocksStorage
         }
         public bool TryGetInventory(BlockIndex index, BlockLayer layer, out Inventory inventory)
         {
-            if (!_inventoriesByLayer.TryGetValue(layer, out var _inventories) || !_inventories.ContainsKey(index))
-            {
-                inventory = null;
-                return false;
-            }
-
-            inventory = _inventories[index];
-            return true;
+            if (_inventoriesByLayer.TryGetValue(layer, out var layerDict) && layerDict.TryGetValue(index, out inventory))
+                return true;
+            inventory = null;
+            return false;
         }
 
         private void HandleBlockBroken(BlockIndex index, Block block, BlockLayer layer)
         {
             if (TryGetInventory(index, layer, out Inventory inventory))
-                _blocks.Events.InvokeBlockInventoryDropped(index, inventory, layer);
+                _events.InvokeBlockInventoryDropped(index, inventory, layer);
         }
 
         public void Dispose()
         {
-            _blocks.Events.OnBlockBroken -= HandleBlockBroken;
+            _events.OnBlockBroken -= HandleBlockBroken;
         }
     }
 }

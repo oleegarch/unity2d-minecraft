@@ -12,7 +12,6 @@ namespace World.Chunks
     }
     public interface IWorldBlockModifier
     {
-        public WorldBlockEvents Events { get; }
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main);
         public Block GetSimilar(WorldPosition worldPosition, BlockLayer blockLayer, out BlockLayer currentLayer);
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer);
@@ -27,13 +26,10 @@ namespace World.Chunks
         private readonly IWorldStorage _storage;
         private readonly IChunkGenerator _generator;
 
-        public WorldBlockEvents Events { get; private set; }
-
         public WorldBlockModifier(IWorldStorage storage, IChunkGenerator generator)
         {
             _storage = storage;
             _generator = generator;
-            Events = new WorldBlockEvents();
         }
 
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main)

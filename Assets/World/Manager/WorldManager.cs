@@ -28,6 +28,7 @@ namespace World.Chunks
         public BlockAtlasDatabase BlockAtlasDatabase => _chunkGeneratorConfig.BlockAtlasDatabase;
         public ItemDatabase ItemDatabase => _chunkGeneratorConfig.ItemDatabase;
 
+        public WorldBlockEvents Events { get; private set; }
         public IChunkGenerator Generator { get; private set; }
         public IWorldBlockModifier Blocks { get; private set; }
         public IWorldStorage Storage { get; private set; }
@@ -36,8 +37,9 @@ namespace World.Chunks
 
         private void Awake()
         {
+            Events = new WorldBlockEvents();
             Generator = _chunkGeneratorConfig.GetChunkGenerator(_seed);
-            Storage = new WorldStorage(Generator, _chunkRendererPrefab, _chunksParent, this);
+            Storage = new WorldStorage(this, Generator, _chunkRendererPrefab, _chunksParent);
             Blocks = new WorldBlockModifier(Storage, Generator);
         }
         private void Start()

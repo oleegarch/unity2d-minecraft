@@ -13,13 +13,13 @@ namespace World.Items
 
         private void Start()
         {
-            _manager.Blocks.Events.OnBlockBroken += HandleWorldBlockBroken;
-            _manager.Blocks.Events.OnBlockInventoryDropped += HandleWorldBlockInventoryDropped;
+            _manager.Events.OnBlockBroken += HandleWorldBlockBroken;
+            _manager.Events.OnBlockInventoryDropped += HandleWorldBlockInventoryDropped;
         }
         private void OnDestroy()
         {
-            _manager.Blocks.Events.OnBlockBroken -= HandleWorldBlockBroken;
-            _manager.Blocks.Events.OnBlockInventoryDropped -= HandleWorldBlockInventoryDropped;
+            _manager.Events.OnBlockBroken -= HandleWorldBlockBroken;
+            _manager.Events.OnBlockInventoryDropped -= HandleWorldBlockInventoryDropped;
         }
 
         private void HandleWorldBlockBroken(WorldPosition position, Block block, BlockLayer blockLayer)

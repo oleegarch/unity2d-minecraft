@@ -13,7 +13,6 @@ namespace World.Chunks
     // IChunkBlockModifier — чтение + модификация + события
     public interface IChunkBlockModifier : IChunkBlockAccessor
     {
-        public ChunkBlockEvents Events { get; }
         public void SetSilent(BlockIndex index, Block block, BlockLayer layer);
         public void Set(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player);
         public bool TrySet(BlockIndex index, Block block, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player);
@@ -22,9 +21,13 @@ namespace World.Chunks
     public class ChunkBlockModifier : IChunkBlockModifier
     {
         private readonly IBlockLayerStorage[] _blockLayers;
-        public ChunkBlockEvents Events { get; } = new();
+        private readonly ChunkBlockEvents _events;
 
-        public ChunkBlockModifier(IBlockLayerStorage[] blockLayers) => _blockLayers = blockLayers;
+        public ChunkBlockModifier(ChunkBlockEvents events, IBlockLayerStorage[] blockLayers)
+        {
+            _events = events;
+            _blockLayers = blockLayers;
+        }
         
         public IBlockLayerStorage GetLayer(BlockLayer layer) => _blockLayers[(int)layer];
         public Block Get(BlockIndex index, BlockLayer layer) => _blockLayers[(int)layer].Get(index);
@@ -39,12 +42,12 @@ namespace World.Chunks
             {
                 Block oldBlock = Get(index, layer);
                 _blockLayers[(int)layer].Set(index, block);
-                Events.InvokeBlockBroken(index, oldBlock, layer, source);
+                _events.InvokeBlockBroken(index, oldBlock, layer, source);
             }
             else
             {
                 _blockLayers[(int)layer].Set(index, block);
-                Events.InvokeBlockSet(index, block, layer, source);
+                _events.InvokeBlockSet(index, block, layer, source);
             }
         }
 

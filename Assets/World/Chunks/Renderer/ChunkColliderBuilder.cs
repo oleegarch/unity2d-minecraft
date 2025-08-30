@@ -238,13 +238,13 @@ namespace World.Chunks
         }
         private void SubscribeToChunkChanges()
         {
-            _chunk.Blocks.Events.OnBlockSet += OnChunkBlockSet;
-            _chunk.Blocks.Events.OnBlockBroken += OnChunkBlockBroken;
+            _chunk.Events.OnBlockSet += OnChunkBlockSet;
+            _chunk.Events.OnBlockBroken += OnChunkBlockBroken;
         }
         private void UnsubscribeFromChunkChanges()
         {
-            _chunk.Blocks.Events.OnBlockSet -= OnChunkBlockSet;
-            _chunk.Blocks.Events.OnBlockBroken -= OnChunkBlockBroken;
+            _chunk.Events.OnBlockSet -= OnChunkBlockSet;
+            _chunk.Events.OnBlockBroken -= OnChunkBlockBroken;
         }
 
         public void Dispose()

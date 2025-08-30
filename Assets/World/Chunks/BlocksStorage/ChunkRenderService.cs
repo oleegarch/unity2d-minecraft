@@ -30,11 +30,13 @@ namespace World.Chunks.BlocksStorage
     {
         private readonly Dictionary<BlockLayer, Dictionary<BlockIndex, BlockStyles>> _styleOverrides = new();
         private readonly IChunkBlockModifier _blocks;
+        private readonly ChunkBlockEvents _events;
 
-        public ChunkRenderService(IChunkBlockModifier blocks)
+        public ChunkRenderService(ChunkBlockEvents events, IChunkBlockModifier blocks)
         {
+            _events = events;
+            _events.OnBlockBroken += HandleBlockBroken;
             _blocks = blocks;
-            _blocks.Events.OnBlockBroken += HandleBlockBroken;
         }
 
         public void Set(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer)
@@ -132,7 +134,7 @@ namespace World.Chunks.BlocksStorage
         }
         public void Dispose()
         {
-            _blocks.Events.OnBlockBroken -= HandleBlockBroken;
+            _events.OnBlockBroken -= HandleBlockBroken;
         }
     }
 }

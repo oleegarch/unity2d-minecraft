@@ -9,6 +9,7 @@ namespace World.Chunks.BlocksStorage
         public readonly ChunkIndex Index;
         public readonly byte Size;
 
+        public readonly ChunkBlockEvents Events;
         public readonly IChunkBlockModifier Blocks;
         public readonly IChunkRenderService Render;
         public readonly ChunkBlockInventories Inventories;
@@ -18,14 +19,15 @@ namespace World.Chunks.BlocksStorage
             Index = index;
             Size = size;
 
-            Blocks = new ChunkBlockModifier(new IBlockLayerStorage[]
+            Events = new ChunkBlockEvents();
+            Blocks = new ChunkBlockModifier(Events, new IBlockLayerStorage[]
             {
                 new ArrayBlockStorage(size),  // BlockLayer.Main
                 new ArrayBlockStorage(size),  // BlockLayer.Behind
                 new SparseBlockStorage()      // BlockLayer.Front
             });
-            Render = new ChunkRenderService(Blocks);
-            Inventories = new ChunkBlockInventories(Blocks);
+            Render = new ChunkRenderService(Events, Blocks);
+            Inventories = new ChunkBlockInventories(Events);
         }
 
         public bool TryGetBlockIndex(WorldPosition worldPosition, out BlockIndex blockIndex)

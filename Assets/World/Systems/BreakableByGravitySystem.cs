@@ -115,14 +115,14 @@ namespace World.Systems
         public void RegisterSystem(WorldManager manager)
         {
             _manager = manager;
-            _manager.Blocks.Events.OnBlockBroken += BlockBreakMatcher;
+            _manager.Events.OnBlockBrokenByPlayer += BlockBreakMatcher;
         }
 
         public void Dispose()
         {
             if (_manager != null)
             {
-                _manager.Blocks.Events.OnBlockBroken -= BlockBreakMatcher;
+                _manager.Events.OnBlockBrokenByPlayer -= BlockBreakMatcher;
                 _manager = null;
             }
         }

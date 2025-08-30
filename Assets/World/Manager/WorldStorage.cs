@@ -27,20 +27,20 @@ namespace World.Chunks
 
     public class WorldStorage : IWorldStorage
     {
-        private readonly IChunkGenerator _generator;
         private readonly WorldManager _manager;
+        private readonly IChunkGenerator _generator;
         private readonly GameObject _prefab;
         private readonly Transform _parent;
         private readonly Dictionary<ChunkIndex, Chunk> _chunks = new();
         private readonly Dictionary<ChunkIndex, ChunkRenderer> _renderers = new();
         private readonly HashSet<ChunkIndex> _loadings = new();
 
-        public WorldStorage(IChunkGenerator generator, GameObject prefab, Transform parent, WorldManager manager)
+        public WorldStorage(WorldManager manager, IChunkGenerator generator, GameObject prefab, Transform parent)
         {
+            _manager = manager;
             _generator = generator;
             _prefab = prefab;
             _parent = parent;
-            _manager = manager;
         }
 
         public async Task<bool> GetOrCreateAsync(ChunkIndex index)
@@ -76,7 +76,7 @@ namespace World.Chunks
                 }
 
                 // Подписываемся на события чанка
-                _manager.Blocks.Events.SubscribeToChunkEvents(chunk);
+                _manager.Events.SubscribeToChunkEvents(chunk);
 
                 await renderer.RenderAsync(chunk);
             }
@@ -94,7 +94,7 @@ namespace World.Chunks
             if (_chunks.TryGetValue(index, out var chunk))
             {
                 // Отписываемся от событий чанка
-                _manager.Blocks.Events.UnsubscribeFromChunkEvents(chunk);
+                _manager.Events.UnsubscribeFromChunkEvents(chunk);
 
                 chunk.Dispose();
                 _chunks.Remove(index);

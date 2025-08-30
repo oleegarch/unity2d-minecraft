@@ -29,7 +29,7 @@ namespace World.Chunks
         public void SubscribeToChunkEvents(Chunk chunk)
         {
             if (chunk == null) throw new ArgumentNullException(nameof(chunk));
-            if (chunk.Blocks?.Events == null) throw new ArgumentException("chunk.Blocks.Events is null", nameof(chunk));
+            if (chunk.Events == null) throw new ArgumentException("chunk.Events is null", nameof(chunk));
             if (_subscriptions.ContainsKey(chunk)) return; // уже подписаны
 
             var subs = new Subscriptions();
@@ -65,11 +65,11 @@ namespace World.Chunks
             };
 
             // Подписываемся на события чанка
-            chunk.Blocks.Events.OnBlockSet += subs.BlockSet;
-            chunk.Blocks.Events.OnBlockBroken += subs.BlockBroken;
-            chunk.Blocks.Events.OnBlockSetByPlayer += subs.BlockSetByPlayer;
-            chunk.Blocks.Events.OnBlockBrokenByPlayer += subs.BlockBrokenByPlayer;
-            chunk.Blocks.Events.OnBlockInventoryDropped += subs.BlockInventoryDropped;
+            chunk.Events.OnBlockSet += subs.BlockSet;
+            chunk.Events.OnBlockBroken += subs.BlockBroken;
+            chunk.Events.OnBlockSetByPlayer += subs.BlockSetByPlayer;
+            chunk.Events.OnBlockBrokenByPlayer += subs.BlockBrokenByPlayer;
+            chunk.Events.OnBlockInventoryDropped += subs.BlockInventoryDropped;
 
             _subscriptions.Add(chunk, subs);
         }
@@ -77,14 +77,14 @@ namespace World.Chunks
         public void UnsubscribeFromChunkEvents(Chunk chunk)
         {
             if (chunk == null) throw new ArgumentNullException(nameof(chunk));
-            if (!_subscriptions.TryGetValue(chunk, out var subs)) return; // не подписаны — ничего делать не нужно
-            if (chunk.Blocks?.Events != null)
+            if (!_subscriptions.TryGetValue(chunk, out var subs)) return;
+            if (chunk.Events != null)
             {
-                chunk.Blocks.Events.OnBlockSet -= subs.BlockSet;
-                chunk.Blocks.Events.OnBlockBroken -= subs.BlockBroken;
-                chunk.Blocks.Events.OnBlockSetByPlayer -= subs.BlockSetByPlayer;
-                chunk.Blocks.Events.OnBlockBrokenByPlayer -= subs.BlockBrokenByPlayer;
-                chunk.Blocks.Events.OnBlockInventoryDropped -= subs.BlockInventoryDropped;
+                chunk.Events.OnBlockSet -= subs.BlockSet;
+                chunk.Events.OnBlockBroken -= subs.BlockBroken;
+                chunk.Events.OnBlockSetByPlayer -= subs.BlockSetByPlayer;
+                chunk.Events.OnBlockBrokenByPlayer -= subs.BlockBrokenByPlayer;
+                chunk.Events.OnBlockInventoryDropped -= subs.BlockInventoryDropped;
             }
 
             _subscriptions.Remove(chunk);
