@@ -12,23 +12,16 @@ namespace World.HoveredBlock
         [SerializeField] private HoveredBlockBreaker _blockBreakingProcess;
         [SerializeField] private WorldManager _worldManager;
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
-        [SerializeField] private Material _blockHoveredMaterial;
         [SerializeField] private float _whenReachedLimitColorAlpha = 0.25f;
 
-        private void Awake()
-        {
-            HandleCameraSizeChanged(_cameraObserver.GetOrthographicSize());
-        }
         private void OnEnable()
         {
-            _cameraObserver.OnOrthographicSizeChanged += HandleCameraSizeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged += HandleBlockHoveredChanged;
             _blockHoveredObserver.OnLimitedChanged += HandleLimitedChanged;
             _blockBreakingProcess.OnBlockBreakAttempt += HandleBlockBreak;
         }
         private void OnDisable()
         {
-            _cameraObserver.OnOrthographicSizeChanged -= HandleCameraSizeChanged;
             _blockHoveredObserver.OnBlockHoveredChanged -= HandleBlockHoveredChanged;
             _blockHoveredObserver.OnLimitedChanged -= HandleLimitedChanged;
             _blockBreakingProcess.OnBlockBreakAttempt -= HandleBlockBreak;
@@ -69,10 +62,6 @@ namespace World.HoveredBlock
         private void HandleBlockBreak(WorldPosition worldPosition)
         {
             _targetSpriteRenderer.enabled = false;
-        }
-        private void HandleCameraSizeChanged(float newSize)
-        {
-            _blockHoveredMaterial.SetFloat("_OrthoSize", newSize);
         }
     }
 }
