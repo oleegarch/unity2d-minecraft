@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5801733508506931028}
   - component: {fileID: 9122535670162302401}
   m_Layer: 0
-  m_Name: ItemSlotStatic
+  m_Name: ItemStack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
