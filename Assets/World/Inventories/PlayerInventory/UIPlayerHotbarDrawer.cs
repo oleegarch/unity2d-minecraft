@@ -25,13 +25,6 @@ namespace World.Inventories
             ChangeActiveHotbar(0);
         }
 
-        protected override UIItemSlotDirection DetermineSlotDirection(int uiIndex)
-        {
-            if (uiIndex == 0) return UIItemSlotDirection.OneRow | UIItemSlotDirection.Left;
-            if (uiIndex == PlayerInventory.HotbarSize - 1) return UIItemSlotDirection.OneRow | UIItemSlotDirection.Right;
-            return UIItemSlotDirection.OneRow | UIItemSlotDirection.XCenter;
-        }
-
         /// <summary>
         /// Переключить активный слот (uiIndex внутри хотбара).
         /// Возвращает скорректированный индекс.
