@@ -2,122 +2,124 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using World.Items;
 
 namespace World.Inventories
 {
+    /// <summary>
+    /// Базовая реализация IInventory. Управляет слотами и общими операциями (добавление/удаление/перемещение).
+    /// </summary>
     public abstract class Inventory : IInventory
     {
-        protected readonly ItemStack[] _slots;
-        public int SlotCount => _slots.Length;
+        // внутреннее хранилище слотов. Protected чтобы производные инвентари могли обращаться напрямую при необходимости.
+        protected readonly ItemStack[] slots;
+
+        /// <inheritdoc/>
+        public int Capacity => slots.Length;
+
+        /// <inheritdoc/>
         public InventoryEvents Events { get; }
 
-        protected Inventory(int slotCount)
+        protected Inventory(int capacity)
         {
-            if (slotCount <= 0) throw new ArgumentOutOfRangeException(nameof(slotCount));
-            _slots = Enumerable.Repeat(ItemStack.Empty, slotCount).ToArray();
+            if (capacity <= 0) throw new ArgumentOutOfRangeException(nameof(capacity));
+            slots = Enumerable.Repeat(ItemStack.Empty, capacity).ToArray();
             Events = new InventoryEvents();
         }
 
-        #region VALIDATORS
-        private int ValidateIndex(int index)
+        #region Валидаторы
+        private int EnsureIndexInRange(int index)
         {
-            if (
-                index < 0 ||
-                index >= _slots.Length
-            )
-            {
+            if (index < 0 || index >= slots.Length)
                 throw new ArgumentOutOfRangeException(nameof(index));
-            }
             return index;
         }
-        private void ValidateStack(ItemStack stack)
+
+        private void EnsureValidStack(ItemStack stack)
         {
-            if (
-                stack == null ||
-                stack.IsEmpty ||
-                stack.Instance.ItemId == 0
-            )
-            {
+            if (stack == null || stack.IsEmpty || stack.Item == null || stack.Item.ItemId == 0)
                 throw new InvalidDataException(nameof(stack));
-            }
         }
         #endregion
 
-        #region GET OPERATIONS
-        public IReadOnlyList<ItemStack> GetAllSlots() => _slots.Select(s => s?.Clone() ?? ItemStack.Empty).ToArray();
-        public IReadOnlyList<ItemStack> GetAllNotEmptySlots() => _slots.Where(s => !s.IsEmpty).Select(s => s.Clone()).ToArray();
-        public ItemStack GetSlot(int index) => _slots[ValidateIndex(index)]?.Clone() ?? ItemStack.Empty;
+        #region Операции получения
+        public IReadOnlyList<ItemStack> GetAllSlots() => slots.Select(s => s?.Clone() ?? ItemStack.Empty).ToArray();
 
-        // проверяет, что в указанном слоте лежит именно этот предмет (совпадает Id) и количество там ≥ нужного.
-        public virtual bool Has(ItemStack stack, int slotIndex)
+        public IReadOnlyList<ItemStack> GetNonEmptySlots() => slots.Where(s => !s.IsEmpty).Select(s => s.Clone()).ToArray();
+
+        public ItemStack GetSlot(int index) => slots[EnsureIndexInRange(index)]?.Clone() ?? ItemStack.Empty;
+        #endregion
+
+        #region Проверки наличия
+        /// <summary>
+        /// Проверяет, что конкретный слот содержит тот же предмет и как минимум запрошенное количество.
+        /// </summary>
+        public virtual bool Has(ItemStack requested, int slotIndex)
         {
-            ValidateStack(stack);
-            ValidateIndex(slotIndex);
+            EnsureValidStack(requested);
+            EnsureIndexInRange(slotIndex);
 
-            var slot = _slots[slotIndex];
-            if (slot.IsEmpty || slot.Instance == null)
-                return false;
+            var slot = slots[slotIndex];
+            if (slot.IsEmpty || slot.Item == null) return false;
 
-            return slot.Instance.Id == stack.Instance.Id && slot.Count >= stack.Count;
+            return slot.Item.Id == requested.Item.Id && slot.Quantity >= requested.Quantity;
         }
-        // проверяет, что во всём инвентаре есть хотя бы нужное количество предмета (суммируем по слотам).
-        public virtual bool Has(ItemStack stack)
+
+        /// <summary>
+        /// Проверяет по всему инвентарю, хватает ли общего количества предмета.
+        /// </summary>
+        public virtual bool Has(ItemStack requested)
         {
-            ValidateStack(stack);
+            EnsureValidStack(requested);
 
-            int needed = stack.Count;
-            var itemId = stack.Instance.Id;
+            int needed = requested.Quantity;
+            var itemId = requested.Item.Id;
 
-            foreach (var slot in _slots)
+            foreach (var slot in slots)
             {
-                if (!slot.IsEmpty && slot.Instance != null && slot.Instance.Id == itemId)
+                if (!slot.IsEmpty && slot.Item != null && slot.Item.Id == itemId)
                 {
-                    needed -= slot.Count;
-                    if (needed <= 0)
-                        return true; // уже достаточно
+                    needed -= slot.Quantity;
+                    if (needed <= 0) return true;
                 }
             }
 
-            return false; // не хватило
+            return false;
         }
         #endregion
 
-        #region ADD OPERATION
+        #region Добавление
         /// <summary>
-        /// Попытаться добавить стек: сначала заполняем существующие стеки того же типа, затем пустые слоты.
-        /// remainder - количество, которое не удалось разместить (0 если всё поместилось).
-        /// Возвращаем true если весь стек помещён (remainder == 0).
+        /// Попытаться добавить стек: сначала заполняем существующие стеки того же типа, затем используем пустые слоты.
+        /// remainder — количество, которое не удалось разместить. Возвращает true, если всё поместилось.
         /// </summary>
         public virtual bool TryAdd(ItemStack stack, out int remainder)
         {
-            ValidateStack(stack);
+            EnsureValidStack(stack);
 
-            int toPlace = stack.Count;
-            var itemId = stack.Instance.Id;
+            int toPlace = stack.Quantity;
+            var itemId = stack.Item.Id;
 
-            // 1) заполнить существующие стеки
-            for (int i = 0; i < _slots.Length && toPlace > 0; i++)
+            // Заполняем существующие стеки
+            for (int i = 0; i < slots.Length && toPlace > 0; i++)
             {
-                var s = _slots[i];
-                if (!s.IsEmpty && s.Instance != null && s.Instance.Id == itemId)
+                var s = slots[i];
+                if (!s.IsEmpty && s.Item != null && s.Item.Id == itemId)
                 {
                     int added = s.Add(toPlace);
-                    if (added > 0)
-                        Events.InvokeSlotChanged(i, _slots[i].Clone());
+                    if (added > 0) Events.InvokeSlotChanged(i, slots[i].Clone());
                     toPlace -= added;
                 }
             }
 
-            // 2) использовать пустые слоты
-            for (int i = 0; i < _slots.Length && toPlace > 0; i++)
+            // Используем пустые слоты
+            for (int i = 0; i < slots.Length && toPlace > 0; i++)
             {
-                var s = _slots[i];
+                var s = slots[i];
                 if (s.IsEmpty)
                 {
-                    int put = Math.Min(toPlace, stack.MaxCount);
-                    _slots[i] = new ItemStack(stack.Instance, stack.MaxCount, put);
-                    Events.InvokeSlotChanged(i, _slots[i].Clone());
+                    int put = Math.Min(toPlace, stack.MaxStack);
+                    slots[i] = new ItemStack(stack.Item.Clone(), stack.MaxStack, put);
+                    Events.InvokeSlotChanged(i, slots[i].Clone());
                     toPlace -= put;
                 }
             }
@@ -127,33 +129,28 @@ namespace World.Inventories
         }
         #endregion
 
-        #region REMOVE OPERATION
+        #region Удаление
         /// <summary>
-        /// Попытаться удалить amount из слота slotIndex. removed - фактически удалённый стек (или Empty).
-        /// Возвращает true если удалено >0.
+        /// Попытаться удалить до <paramref name="amount"/> из указанного слота. Возвращает удалённый стек.
         /// </summary>
         public virtual bool TryRemove(int slotIndex, int amount, out ItemStack removed)
         {
-            ValidateIndex(slotIndex);
-            
+            EnsureIndexInRange(slotIndex);
+
             removed = ItemStack.Empty;
             if (amount <= 0) return false;
 
-            var s = _slots[slotIndex];
+            var s = slots[slotIndex];
             if (s.IsEmpty) return false;
 
-            var item = s.Instance; // может быть null если баг, но тогда Count >0 в идеале не бывает
+            var item = s.Item; // может быть null если повреждённый слот
             int removedCount = s.Remove(amount);
 
             if (removedCount > 0)
             {
-                removed = new ItemStack(item, s.MaxCount, removedCount);
-                // если стек стал пустым — убедимся, что он хранится как Empty
-                if (_slots[slotIndex].IsEmpty)
-                    _slots[slotIndex] = ItemStack.Empty;
-
-                // уведомляем о новом состоянии слота
-                Events.InvokeSlotChanged(slotIndex, _slots[slotIndex].Clone());
+                removed = new ItemStack(item?.Clone(), s.MaxStack, removedCount);
+                if (slots[slotIndex].IsEmpty) slots[slotIndex] = ItemStack.Empty;
+                Events.InvokeSlotChanged(slotIndex, slots[slotIndex].Clone());
                 return true;
             }
 
@@ -161,150 +158,146 @@ namespace World.Inventories
         }
         #endregion
 
-        #region MOVE OPERATIONS
+        #region Перемещение
         /// <summary>
-        /// Переместить amount (или максимум) из fromIndex в toIndex.
-        /// Поведение:
-        /// - если to пустой -> перенос части/всего
-        /// - если тот же тип -> попытка слить в стек (up to max stack)
-        /// - если разные предметы -> swap
-        /// Возвращает true если произошли изменения.
+        /// Переместить предметы внутри инвентаря.
+        /// - если целевой слот пуст — перенос
+        /// - если тот же тип — попытка слить в стек (до max stack)
+        /// - если другой тип — swap
         /// </summary>
         public virtual bool Move(int fromIndex, int toIndex, int amount = int.MaxValue)
         {
-            ValidateIndex(fromIndex);
-            ValidateIndex(toIndex);
+            EnsureIndexInRange(fromIndex);
+            EnsureIndexInRange(toIndex);
             if (fromIndex == toIndex) return false;
 
-            var from = _slots[fromIndex];
-            var to = _slots[toIndex];
+            var from = slots[fromIndex];
+            var to = slots[toIndex];
 
             if (from.IsEmpty) return false;
 
             bool changed = false;
 
-            // to пустой -> перенос
+            // Целевой пустой -> перенос
             if (to.IsEmpty)
             {
-                int toMove = Math.Min(amount, from.Count);
-                _slots[toIndex] = new ItemStack(from.Instance, from.MaxCount, toMove);
+                int toMove = Math.Min(amount, from.Quantity);
+                slots[toIndex] = new ItemStack(from.Item.Clone(), from.MaxStack, toMove);
                 from.Remove(toMove);
-                if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
+                if (from.IsEmpty) slots[fromIndex] = ItemStack.Empty;
                 changed = true;
             }
-            // тот же тип -> слить
-            else if (!to.IsEmpty && !from.IsEmpty && to.Instance != null && from.Instance != null && to.Instance.Id == from.Instance.Id)
+            // Тот же тип -> слияние
+            else if (!to.IsEmpty && !from.IsEmpty && to.Item != null && from.Item != null && to.Item.Id == from.Item.Id)
             {
-                int canMove = Math.Min(amount, from.Count);
-                int added = Math.Min(canMove, to.MaxCount - to.Count);
+                int canMove = Math.Min(amount, from.Quantity);
+                int added = Math.Min(canMove, to.MaxStack - to.Quantity);
                 if (added > 0)
                 {
                     to.Add(added);
                     from.Remove(added);
-                    if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
+                    if (from.IsEmpty) slots[fromIndex] = ItemStack.Empty;
                     changed = true;
                 }
             }
-            // разные предметы -> swap
+            // Другой тип -> swap
             else
             {
-                _slots[fromIndex] = to;
-                _slots[toIndex] = from;
+                slots[fromIndex] = to;
+                slots[toIndex] = from;
                 changed = true;
             }
 
             if (changed)
             {
-                Events.InvokeSlotChanged(fromIndex, _slots[fromIndex].Clone());
-                Events.InvokeSlotChanged(toIndex, _slots[toIndex].Clone());
+                Events.InvokeSlotChanged(fromIndex, slots[fromIndex].Clone());
+                Events.InvokeSlotChanged(toIndex, slots[toIndex].Clone());
             }
 
             return changed;
         }
 
         /// <summary>
-        /// Переместить amount (или максимум) из слота fromIndex этого инвентаря в слот toIndex другого инвентаря.
-        /// Поведение:
-        /// - если target == this — делегируется существующему Move.
-        /// - если to пустой -> перенос части/всего (но не больше MaxStack этого предмета).
-        /// - если тот же тип -> попытка слить в стек (up to max stack).
-        /// - если разные предметы -> swap (полный обмен стеков между инвентарями).
-        /// Возвращает true если произошли изменения.
+        /// Переместить предметы из этого инвентаря в целевой инвентарь.
+        /// Поведение аналогично Move, но применяется к другому инвентарю.
         /// </summary>
         public virtual bool MoveTo(Inventory target, int fromIndex, int toIndex, int amount = int.MaxValue)
         {
             if (target == null) throw new ArgumentNullException(nameof(target));
-            ValidateIndex(fromIndex);
-            target.ValidateIndex(toIndex);
+            EnsureIndexInRange(fromIndex);
+            target.EnsureIndexInRange(toIndex);
 
             if (amount <= 0) return false;
             if (target == this) return Move(fromIndex, toIndex, amount);
 
-            var from = _slots[fromIndex];
-            var to = target._slots[toIndex];
+            var from = slots[fromIndex];
+            var to = target.slots[toIndex];
 
             if (from.IsEmpty) return false;
 
             bool changed = false;
 
-            // to пустой -> перенос (но не больше MaxStack)
+            // Целевой пустой -> перенос (но не больше max stack)
             if (to.IsEmpty)
             {
-                int toMove = Math.Min(amount, from.Count);
-                var item = from.Instance;
-                if (item != null)
-                    toMove = Math.Min(toMove, from.MaxCount);
+                int toMove = Math.Min(amount, from.Quantity);
+                var item = from.Item;
+                if (item != null) toMove = Math.Min(toMove, from.MaxStack);
 
-                target._slots[toIndex] = new ItemStack(from.Instance, from.MaxCount, toMove);
+                target.slots[toIndex] = new ItemStack(item.Clone(), from.MaxStack, toMove);
                 from.Remove(toMove);
-                if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
+                if (from.IsEmpty) slots[fromIndex] = ItemStack.Empty;
                 changed = true;
             }
-            // тот же тип -> слить (до max stack)
-            else if (!to.IsEmpty && !from.IsEmpty && to.Instance != null && from.Instance != null && to.Instance.Id == from.Instance.Id)
+            // Тот же тип -> слияние
+            else if (!to.IsEmpty && !from.IsEmpty && to.Item != null && from.Item != null && to.Item.Id == from.Item.Id)
             {
-                int canMove = Math.Min(amount, from.Count);
-                int space = to.MaxCount - to.Count;
+                int canMove = Math.Min(amount, from.Quantity);
+                int space = to.MaxStack - to.Quantity;
                 int added = Math.Min(canMove, space);
                 if (added > 0)
                 {
                     to.Add(added);
                     from.Remove(added);
-                    if (from.IsEmpty) _slots[fromIndex] = ItemStack.Empty;
+                    if (from.IsEmpty) slots[fromIndex] = ItemStack.Empty;
                     changed = true;
                 }
             }
-            // разные предметы -> swap (полный обмен стеков)
+            // Другой тип -> полный обмен стеков между инвентарями
             else
             {
-                _slots[fromIndex] = to;
-                target._slots[toIndex] = from;
+                slots[fromIndex] = to;
+                target.slots[toIndex] = from;
                 changed = true;
             }
 
             if (changed)
             {
-                Events.InvokeSlotChanged(fromIndex, _slots[fromIndex].Clone());
-                target.Events.InvokeSlotChanged(toIndex, target._slots[toIndex].Clone());
+                Events.InvokeSlotChanged(fromIndex, slots[fromIndex].Clone());
+                target.Events.InvokeSlotChanged(toIndex, target.slots[toIndex].Clone());
             }
 
             return changed;
         }
+
+        /// <summary>
+        /// Заменить содержимое слота валидированным стеком и уведомить слушателей.
+        /// </summary>
         public void ReplaceSlot(int index, ItemStack newStack)
         {
-            ValidateStack(newStack);
-            ValidateIndex(index);
-            _slots[index] = newStack;
-            Events.InvokeSlotChanged(index, _slots[index].Clone());
+            EnsureValidStack(newStack);
+            EnsureIndexInRange(index);
+            slots[index] = newStack.Clone();
+            Events.InvokeSlotChanged(index, slots[index].Clone());
         }
         #endregion
 
-        #region CLEAR/DISPOSE
+        #region Очистка
         public virtual void Clear()
         {
-            for (int i = 0; i < _slots.Length; i++)
+            for (int i = 0; i < slots.Length; i++)
             {
-                _slots[i] = ItemStack.Empty;
+                slots[i] = ItemStack.Empty;
                 Events.InvokeSlotChanged(i, ItemStack.Empty);
             }
         }

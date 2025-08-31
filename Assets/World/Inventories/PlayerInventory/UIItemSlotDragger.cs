@@ -57,7 +57,7 @@ namespace World.Inventories
             
             if (fromGO == null || fromDragger == null || fromDrawer == this) return;
 
-            fromDrawer.Inventory.MoveTo(toDrawer.Inventory, fromDrawer.SlotIndex, toDrawer.SlotIndex, fromDragger.StaticStack.Count);
+            fromDrawer.Inventory.MoveTo(toDrawer.Inventory, fromDrawer.SlotIndex, toDrawer.SlotIndex, fromDragger.StaticStack.Quantity);
         }
 
         private void UpdateDraggedPosition(PointerEventData eventData)

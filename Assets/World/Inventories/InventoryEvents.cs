@@ -3,13 +3,27 @@ using System;
 namespace World.Inventories
 {
     /// <summary>
-    /// События инвентаря: уведомление об изменении конкретного слота.
+    /// Аргументы события SlotChanged.
+    /// </summary>
+    public sealed class SlotChangedEventArgs : EventArgs
+    {
+        public int SlotIndex { get; }
+        public ItemStack NewValue { get; }
+
+        public SlotChangedEventArgs(int slotIndex, ItemStack newValue)
+        {
+            SlotIndex = slotIndex;
+            NewValue = newValue;
+        }
+    }
+
+    /// <summary>
+    /// Простой контейнер для событий инвентаря. Экспортирует типизированное событие SlotChanged.
     /// </summary>
     public sealed class InventoryEvents
     {
-        /// <summary> Вызывается, когда содержимое слота изменилось. </summary>
-        public event Action<int, ItemStack> SlotChanged;
+        public event EventHandler<SlotChangedEventArgs> SlotChanged;
 
-        internal void InvokeSlotChanged(int slot, ItemStack newValue) => SlotChanged?.Invoke(slot, newValue);
+        internal void InvokeSlotChanged(int slot, ItemStack newValue) => SlotChanged?.Invoke(this, new SlotChangedEventArgs(slot, newValue));
     }
 }

@@ -31,7 +31,7 @@ namespace World.Items
         }
         private void HandleWorldBlockInventoryDropped(WorldPosition position, Inventory inventory, BlockLayer layer)
         {
-            foreach (var stack in inventory.GetAllNotEmptySlots())
+            foreach (var stack in inventory.GetNonEmptySlots())
                 DropItemAt(position, stack);
         }
         public ItemDropped DropItemAt(WorldPosition worldPosition, ItemStack stack)

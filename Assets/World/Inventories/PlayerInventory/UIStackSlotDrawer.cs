@@ -18,7 +18,7 @@ namespace World.Inventories
         {
             Stack = stack;
 
-            Sprite itemSprite = stack.Instance?.GetItemInfo(itemDatabase).Sprite;
+            Sprite itemSprite = stack.Item?.GetItemInfo(itemDatabase).Sprite;
             if (itemSprite != null)
             {
                 _uiItemImage.sprite = itemSprite;
@@ -29,9 +29,9 @@ namespace World.Inventories
                 _uiItemImage.enabled = false;
             }
 
-            if (stack?.Count > 0)
+            if (stack?.Quantity > 0)
             {
-                _uiTextCount.SetText(stack.Count.ToString());
+                _uiTextCount.SetText(stack.Quantity.ToString());
                 _uiTextCount.enabled = true;
             }
             else

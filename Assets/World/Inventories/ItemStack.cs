@@ -3,69 +3,73 @@ using World.Items;
 
 namespace World.Inventories
 {
+    /// <summary>
+    /// Представляет стек предметов.
+    /// </summary>
     public sealed class ItemStack : IEquatable<ItemStack>
     {
         public static ItemStack Empty => new(null, 0, 0);
 
-        public ItemInstance Instance { get; private set; }
-        public int Count { get; private set; }
-        public int MaxCount { get; private set; }
+        public ItemInstance Item { get; private set; }
+        public int Quantity { get; private set; }
+        public int MaxStack { get; private set; }
 
-        public bool IsEmpty => Instance == null || Count <= 0;
-        public int SpaceLeft => Instance == null ? 0 : MaxCount - Count;
+        public bool IsEmpty => Item == null || Quantity <= 0;
+        public int SpaceRemaining => Item == null ? 0 : MaxStack - Quantity;
 
-        public ItemStack(ItemInstance instance, int maxCount, int count = 1)
+        public ItemStack(ItemInstance item, int maxStack, int quantity = 1)
         {
-            if (instance == null)
+            if (item == null)
             {
-                if (count != 0) throw new InvalidOperationException("Can't create non-empty stack with null instance.");
-                Instance = null;
-                Count = 0;
+                if (quantity != 0) throw new InvalidOperationException("Нельзя создать непустой стек с null item.");
+                Item = null;
+                Quantity = 0;
+                MaxStack = 0;
                 return;
             }
 
-            Instance = instance;
-            Count = Math.Max(0, count);
-            MaxCount = maxCount;
-            if (Count == 0) Instance = null;
+            Item = item;
+            Quantity = Math.Max(0, quantity);
+            MaxStack = maxStack;
+            if (Quantity == 0) Item = null;
         }
 
-        public ItemStack Clone() => new(Instance?.Clone(), MaxCount, Count);
+        public ItemStack Clone() => new(Item?.Clone(), MaxStack, Quantity);
 
         public bool CanStackWith(ItemStack other)
         {
             if (other == null) return false;
             if (IsEmpty || other.IsEmpty) return true;
-            return Instance.CanStackWith(other.Instance);
+            return Item.CanStackWith(other.Item);
         }
 
         public int Add(int amount)
         {
-            if (amount <= 0 || Instance == null) return 0;
-            int can = Math.Min(amount, MaxCount - Count);
-            Count += can;
+            if (amount <= 0 || Item == null) return 0;
+            int can = Math.Min(amount, MaxStack - Quantity);
+            Quantity += can;
             return can;
         }
 
         public int Remove(int amount)
         {
             if (amount <= 0 || IsEmpty) return 0;
-            int rem = Math.Min(amount, Count);
-            Count -= rem;
-            if (Count == 0) Instance = null;
+            int rem = Math.Min(amount, Quantity);
+            Quantity -= rem;
+            if (Quantity == 0) Item = null;
             return rem;
         }
 
         public bool Equals(ItemStack other)
         {
             return (
-                Instance != null &&
-                other.Instance != null &&
-                Instance.Equals(other.Instance) &&
-                Count == other.Count
+                Item != null &&
+                other.Item != null &&
+                Item.Equals(other.Item) &&
+                Quantity == other.Quantity
             );
         }
 
-        public override string ToString() => IsEmpty ? "(empty)" : $"{Instance?.ItemId} x{Count}";
+        public override string ToString() => IsEmpty ? "(пусто)" : $"{Item?.ItemId} x{Quantity}";
     }
 }

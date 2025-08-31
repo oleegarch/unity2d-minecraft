@@ -30,7 +30,7 @@ namespace World.Items
             Stack = stack;
 
             // Меняем спрайт предмета
-            _spriteRenderer.sprite = stack.Instance.GetItemInfo(itemDatabase).Sprite;
+            _spriteRenderer.sprite = stack.Item.GetItemInfo(itemDatabase).Sprite;
 
             // Запускаем корутину включения коллайдера через задержку
             StartCoroutine(EnableColliderAfterDelay());

@@ -25,7 +25,7 @@ namespace World.Inventories
 
         public virtual void SetUp(Inventory inventory, bool alwaysUpdate = false)
         {
-            var indices = Enumerable.Range(0, inventory.SlotCount);
+            var indices = Enumerable.Range(0, inventory.Capacity);
             SetUp(inventory, indices, alwaysUpdate: false);
         }
         public virtual void SetUp(Inventory inventory, IEnumerable<int> inventorySlotIndices, bool alwaysUpdate = false)
@@ -113,9 +113,9 @@ namespace World.Inventories
             if (_inventory == null) return;
             _inventory.Events.SlotChanged -= OnInventorySlotChanged;
         }
-        private void OnInventorySlotChanged(int inventoryIndex, ItemStack newStack)
+        private void OnInventorySlotChanged(object sender, SlotChangedEventArgs args)
         {
-            RefreshSlotByInventoryIndex(inventoryIndex, newStack);
+            RefreshSlotByInventoryIndex(args.SlotIndex, args.NewValue);
         }
         #endregion
 

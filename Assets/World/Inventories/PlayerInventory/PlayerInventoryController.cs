@@ -41,7 +41,7 @@ namespace World.Inventories
             }
         }
         public ItemStack ActiveItemStack => _inventory.GetSlot(ActiveHotbarIndex);
-        public ItemInfo ActiveItemInfo => ActiveItemStack.Instance?.GetItemInfo(_manager.ItemDatabase);
+        public ItemInfo ActiveItemInfo => ActiveItemStack.Item?.GetItemInfo(_manager.ItemDatabase);
         public PlayerInventory Inventory => _inventory;
 
         private void Awake()
@@ -90,12 +90,12 @@ namespace World.Inventories
         {
             ItemInfo newItemInfo = _manager.ItemDatabase.GetByBlockId(block.Id);
             ItemInstance newItemInstance = new ItemInstance(newItemInfo.Id);
-            ItemStack newItemStack = new ItemStack(newItemInstance, newItemInfo.MaxStack, count: newItemInfo.MaxStack);
+            ItemStack newItemStack = new ItemStack(newItemInstance, newItemInfo.MaxStack, newItemInfo.MaxStack);
             _inventory.ReplaceSlot(ActiveHotbarIndex, newItemStack);
         }
-        private void HandleInventorySlotChanged(int slotIndex, ItemStack newStack)
+        private void HandleInventorySlotChanged(object sender, SlotChangedEventArgs args)
         {
-            if (slotIndex == ActiveHotbarIndex)
+            if (args.SlotIndex == ActiveHotbarIndex)
                 ChangeActiveItemInfoOnRightHand();
         }
         private void ChangeActiveItemInfoOnRightHand()
@@ -137,7 +137,7 @@ namespace World.Inventories
         {
             if (_inventory.TryRemove(ActiveHotbarIndex, 1, out ItemStack removed) && !removed.IsEmpty)
             {
-                for (int i = 0; i < removed.Count; i++)
+                for (int i = 0; i < removed.Quantity; i++)
                 {
                     ItemDropped dropped = _itemsSpawner.DropItemAt(_itemOnRightHandTransform.position, removed);
                     dropped.ThrowItem(_blockObserver.CursorPositionInChunks);
