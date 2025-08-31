@@ -53,9 +53,15 @@ namespace World.Chunks.BlocksStorage
         {
             if (_blocks.Get(index, layer).IsAir)
             {
-                // Нельзя ставить Main блок на Behind блок с IsBehind==false
-                if (layer == BlockLayer.Main && GetBlockStyles(index, BlockLayer.Behind).IsBehind == false)
+                // Нельзя ставить Behind блок с IsBehind==false на Main блок
+                if (
+                    layer == BlockLayer.Behind &&
+                    overrided.IsBehind == false &&
+                    !_blocks.Get(index, BlockLayer.Main).IsAir
+                )
+                {
                     return false;
+                }
 
                 OverrideBlockStyles(index, overrided, layer);
                 _blocks.Set(index, block, layer);
@@ -97,9 +103,8 @@ namespace World.Chunks.BlocksStorage
         }
         public void OverrideBlockStyles(BlockIndex index, BlockStyles styles, BlockLayer layer)
         {
-            // устанавливаем такие же стили как у этого слоя они стоят по умолчанию
-            // поэтому попытаемся удалить их вовсе
-            // ведь, они итак возвращаются по умолчанию при отсутствии перезаписанных стилей
+            // если в аргументе стилей такие же стили как дефолтные этого слоя — попытаемся удалить их вовсе
+            // потому что они итак возвращаются по умолчанию при отсутствии перезаписанных стилей
             if (styles == BlockStyles.ByLayer[(int)layer])
             {
                 RemoveOverrideBlockStyles(index, layer);
