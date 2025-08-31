@@ -39,13 +39,28 @@ namespace World.Chunks.BlocksStorage
             _blocks = blocks;
         }
 
+        public bool EnsureValidStylesOverrideAttempt(BlockIndex index, BlockStyles overrided, BlockLayer layer)
+        {
+            // Нельзя ставить Behind блок с IsBehind==false на Main блок
+            return !(
+                layer == BlockLayer.Behind &&
+                overrided.IsBehind == false &&
+                !_blocks.Get(index, BlockLayer.Main).IsAir
+            );
+        }
         public void Set(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer)
         {
+            if (!EnsureValidStylesOverrideAttempt(index, overrided, layer))
+                throw new InvalidOperationException("Can't set Layer=Behind+IsBehind=false blocks if the Main block exists.");
+    
             OverrideBlockStyles(index, overrided, layer);
             _blocks.Set(index, block, layer);
         }
         public void SetSilent(BlockIndex index, Block block, BlockStyles overrided, BlockLayer layer)
         {
+            if (!EnsureValidStylesOverrideAttempt(index, overrided, layer))
+                throw new InvalidOperationException("Can't set Layer=Behind+IsBehind=false blocks if the Main block exists.");
+                
             OverrideBlockStyles(index, overrided, layer);
             _blocks.SetSilent(index, block, layer);
         }
@@ -53,18 +68,12 @@ namespace World.Chunks.BlocksStorage
         {
             if (_blocks.Get(index, layer).IsAir)
             {
-                // Нельзя ставить Behind блок с IsBehind==false на Main блок
-                if (
-                    layer == BlockLayer.Behind &&
-                    overrided.IsBehind == false &&
-                    !_blocks.Get(index, BlockLayer.Main).IsAir
-                )
-                {
+                if (!EnsureValidStylesOverrideAttempt(index, overrided, layer))
                     return false;
-                }
 
                 OverrideBlockStyles(index, overrided, layer);
                 _blocks.Set(index, block, layer);
+                
                 return true;
             }
             return false;
