@@ -5,22 +5,21 @@ namespace World.Items
     [Serializable]
     public class ItemInstance : IEquatable<ItemInstance>
     {
-        public ushort ItemId;
-        public ushort Id => ItemId;
+        public ushort Id;
 
         public ItemInstance(ushort id)
         {
-            ItemId = id;
+            Id = id;
         }
 
         public ItemInfo GetItemInfo(ItemDatabase itemDatabase)
         {
-            return itemDatabase.Get(ItemId);
+            return itemDatabase.Get(Id);
         }
 
         public ItemInstance Clone()
         {
-            return new ItemInstance(ItemId);
+            return new ItemInstance(Id);
         }
 
         // Правило, можно ли стэковать два экземпляра. По умолчанию: только если состояния равны.
@@ -31,7 +30,7 @@ namespace World.Items
 
         public bool Equals(ItemInstance other)
         {
-            return other != null && ItemId == other.ItemId;
+            return other != null && Id == other.Id;
         }
     }
 }

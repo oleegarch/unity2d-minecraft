@@ -33,6 +33,7 @@ namespace World.Items
             foreach (var stack in inventory.GetNonEmptySlots())
                 DropItemAt(position, stack);
         }
+        
         public ItemDropped DropItemAt(WorldPosition worldPosition, ItemStack stack)
         {
             Vector3 position = worldPosition.ToVector3Int();

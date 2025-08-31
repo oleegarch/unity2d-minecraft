@@ -71,6 +71,6 @@ namespace World.Inventories
             );
         }
 
-        public override string ToString() => IsEmpty ? "(пусто)" : $"{Item?.ItemId} x{Quantity}";
+        public override string ToString() => IsEmpty ? "(пусто)" : $"{Item?.Id} x{Quantity}";
     }
 }

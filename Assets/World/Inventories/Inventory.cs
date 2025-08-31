@@ -36,7 +36,7 @@ namespace World.Inventories
 
         private void EnsureValidStack(ItemStack stack)
         {
-            if (stack == null || stack.IsEmpty || stack.Item == null || stack.Item.ItemId == 0)
+            if (stack == null || stack.IsEmpty || stack.Item == null || stack.Item.Id == 0)
                 throw new InvalidDataException(nameof(stack));
         }
         #endregion
