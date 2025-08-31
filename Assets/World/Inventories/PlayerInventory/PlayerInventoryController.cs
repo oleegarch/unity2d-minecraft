@@ -89,8 +89,7 @@ namespace World.Inventories
         private void HandleBlockPickedUpdate(WorldPosition position, Block block, BlockLayer blockLayer, BlockStyles blockStyles)
         {
             ItemInfo newItemInfo = _manager.ItemDatabase.GetByBlockId(block.Id);
-            ItemInstance newItemInstance = new ItemInstance(newItemInfo.Id);
-            ItemStack newItemStack = new ItemStack(newItemInstance, newItemInfo.MaxStack, newItemInfo.MaxStack);
+            ItemStack newItemStack = new ItemStack(newItemInfo, quantity: newItemInfo.MaxStack);
             _inventory.ReplaceSlot(ActiveHotbarIndex, newItemStack);
         }
         private void HandleInventorySlotChanged(object sender, SlotChangedEventArgs args)

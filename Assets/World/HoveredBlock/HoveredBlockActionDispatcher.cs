@@ -32,9 +32,8 @@ namespace World.HoveredBlock
             if (!_observer.ReachedLimitPosition && !_picker.SelectedBlock.IsAir)
             {
                 ItemInfo itemInfo = _worldManager.ItemDatabase.GetByBlockId(_picker.SelectedBlock.Id);
-                ItemInstance itemInstance = new ItemInstance(itemInfo.Id);
                 if (
-                    _inventoryController.Inventory.Has(new ItemStack(itemInstance, itemInfo.MaxStack, 1), _inventoryController.ActiveHotbarIndex) &&
+                    _inventoryController.Inventory.Has(new ItemStack(itemInfo), _inventoryController.ActiveHotbarIndex) &&
                     _worldManager.Blocks.Set(wc, _picker.SelectedBlock, _picker.SelectedLayer, _picker.SelectedStyles)
                 )
                 {

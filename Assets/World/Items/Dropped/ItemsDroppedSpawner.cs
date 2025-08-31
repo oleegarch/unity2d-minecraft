@@ -25,8 +25,7 @@ namespace World.Items
         private void HandleWorldBlockBroken(WorldPosition position, Block block, BlockLayer blockLayer)
         {
             ItemInfo info = _manager.ItemDatabase.GetByBlockId(block.Id);
-            ItemInstance instance = new ItemInstance(info.Id);
-            ItemStack stack = new ItemStack(instance, info.MaxStack, 1);
+            ItemStack stack = new ItemStack(info);
             DropItemAt(position, stack);
         }
         private void HandleWorldBlockInventoryDropped(WorldPosition position, Inventory inventory, BlockLayer layer)
