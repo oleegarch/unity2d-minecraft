@@ -34,7 +34,7 @@ namespace World.Chunks
             _blockAtlasDatabase = blockAtlasDatabase;
         }
 
-        public void Refresh() => _refresher.Refresh();
+        public void Refresh() => _refresher.Refresh(_blockDatabase);
 
         public ChunkMeshBuilder BuildMesh(Chunk chunk)
         {

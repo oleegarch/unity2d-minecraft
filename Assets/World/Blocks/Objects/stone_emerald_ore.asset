@@ -17,6 +17,12 @@ MonoBehaviour:
   Hardness: 2
   OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   Sprite: {fileID: 21300000, guid: c5d0980aa8ab6e747a3807fc0033b438, type: 3}
+  VisibleSpriteRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
   AtlasCategory:
     name: Ores
   AvailablePlacements:
@@ -31,4 +37,4 @@ MonoBehaviour:
   HasTransparentPixels: 0
   HasCustomCollider: 0
   BreakableByGravity: 0
-  ParticleTexture: {fileID: 2800000, guid: d6487444e5dc0fe4fbe9a075af1bc8ac, type: 2}
+  InventorySlotCount: 0

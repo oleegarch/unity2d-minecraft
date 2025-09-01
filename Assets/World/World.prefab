@@ -7786,6 +7786,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiSlotsParent: {fileID: 4130793007996828799}
   _uiItemSlotPrefab: {fileID: 1274409073444489641, guid: fa13e6df0e4bdba40b7743f20c677e0d, type: 3}
+  _manager: {fileID: 5868988553912566916}
 --- !u!224 &5814650672766611915 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8106087057249905455, guid: 1a37d16ecc5693d42a5f924f6aa4edd2, type: 3}
@@ -7967,6 +7968,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiSlotsParent: {fileID: 4440398298713875608}
   _uiItemSlotPrefab: {fileID: 1274409073444489641, guid: fa13e6df0e4bdba40b7743f20c677e0d, type: 3}
+  _manager: {fileID: 5868988553912566916}
 --- !u!224 &6088085054594672940 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8106087057249905455, guid: 1a37d16ecc5693d42a5f924f6aa4edd2, type: 3}
@@ -8125,6 +8127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiSlotsParent: {fileID: 7948773288241737363}
   _uiItemSlotPrefab: {fileID: 1274409073444489641, guid: fa13e6df0e4bdba40b7743f20c677e0d, type: 3}
+  _manager: {fileID: 5868988553912566916}
 --- !u!224 &7948773288241737363 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1845583709846742683, guid: 1a37d16ecc5693d42a5f924f6aa4edd2, type: 3}

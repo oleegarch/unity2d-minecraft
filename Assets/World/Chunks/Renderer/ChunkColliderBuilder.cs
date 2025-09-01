@@ -67,8 +67,7 @@ namespace World.Chunks
                     var info = _blockDatabase.Get(block.Id);
                     if (info.HasCustomCollider)
                     {
-                        var atlasInfo = _blockAtlasDatabase.Get(info.AtlasCategory);
-                        spriteRects[xi, yi] = atlasInfo.GetSpriteSize(block.Id);
+                        spriteRects[xi, yi] = info.VisibleSpriteRect;
                         hasCustom[xi, yi] = true;
                     }
                 }

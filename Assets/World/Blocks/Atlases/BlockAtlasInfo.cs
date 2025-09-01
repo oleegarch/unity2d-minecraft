@@ -10,15 +10,13 @@ namespace World.Blocks.Atlases
     {
         public ushort Id;
         public Rect Rect;
-        public Rect SpriteSizeUnits;
     }
 
     [CreateAssetMenu(menuName = "Blocks/New BlockAtlasInfo")]
     public class BlockAtlasInfo : ScriptableObject
     {
         public BlockAtlasCategory Category;
-        public Texture2D Texture;
-        public Material Material;
+        public Material MaterialTemplate;
         public List<BlockTextureUV> TextureUVs;
         public bool IsTransparent;
 
@@ -31,13 +29,17 @@ namespace World.Blocks.Atlases
             return _cachedUVsDict[id];
         }
 
-        private Dictionary<ushort, Rect> _cachedSpriteSizes;
-        public Rect GetSpriteSize(ushort id)
+        private Material _cachedMaterial;
+        public Material GetMaterial(BlockDatabase blockDatabase)
         {
-            if (_cachedSpriteSizes == null)
-                _cachedSpriteSizes = TextureUVs.ToDictionary(u => u.Id, u => u.SpriteSizeUnits);
+            if (_cachedMaterial != null) return _cachedMaterial;
 
-            return _cachedSpriteSizes[id];
+            var firstBlockId = TextureUVs[0].Id; // любой BlockId
+            var firstBlock = blockDatabase.Get(firstBlockId);
+            var texture = firstBlock.Sprite.texture;
+            _cachedMaterial = new Material(MaterialTemplate);
+            _cachedMaterial.mainTexture = texture;
+            return _cachedMaterial;
         }
     }
 }

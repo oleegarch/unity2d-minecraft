@@ -17,6 +17,12 @@ MonoBehaviour:
   Hardness: 1
   OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   Sprite: {fileID: 21300000, guid: badc726a30b3160408e1c88df302c8be, type: 3}
+  VisibleSpriteRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
   AtlasCategory:
     name: Workbench
   AvailablePlacements:
@@ -31,3 +37,4 @@ MonoBehaviour:
   HasTransparentPixels: 0
   HasCustomCollider: 0
   BreakableByGravity: 0
+  InventorySlotCount: 0

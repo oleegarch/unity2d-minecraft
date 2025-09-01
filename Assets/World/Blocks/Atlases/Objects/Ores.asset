@@ -14,215 +14,118 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Category:
     name: Ores
-  Texture: {fileID: 2800000, guid: 1c276e43b914dab408ec128ec860b8de, type: 2}
-  Material: {fileID: 2100000, guid: bee586c4a93045741bf82018fa4e558c, type: 2}
+  MaterialTemplate: {fileID: 2100000, guid: 63f725852bfef0044b3cbe8f6c7c1ea1, type: 2}
   TextureUVs:
   - Id: 3
     Rect:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
+      x: 0.1328125
+      y: 0.53125
+      width: 0.125
+      height: 0.25
   - Id: 4
     Rect:
       serializedVersion: 2
-      x: 0.3125
+      x: 0.6640625
       y: 0
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
+      width: 0.125
+      height: 0.25
   - Id: 5
     Rect:
       serializedVersion: 2
-      x: 0.625
-      y: 0
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
       x: 0
-      y: 0
-      width: 1
-      height: 1
+      y: 0.265625
+      width: 0.125
+      height: 0.25
   - Id: 6
     Rect:
       serializedVersion: 2
-      x: 0
-      y: 0.15625
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
+      x: 0.3984375
       y: 0
-      width: 1
-      height: 1
+      width: 0.125
+      height: 0.25
   - Id: 7
     Rect:
       serializedVersion: 2
-      x: 0.3125
-      y: 0.15625
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
+      x: 0.53125
       y: 0
-      width: 1
-      height: 1
+      width: 0.125
+      height: 0.25
   - Id: 8
     Rect:
       serializedVersion: 2
-      x: 0.625
-      y: 0.15625
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
+      x: 0.1328125
       y: 0
-      width: 1
-      height: 1
+      width: 0.125
+      height: 0.25
   - Id: 9
     Rect:
       serializedVersion: 2
-      x: 0
-      y: 0.3125
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
+      x: 0.265625
       y: 0
-      width: 1
-      height: 1
+      width: 0.125
+      height: 0.25
   - Id: 10
     Rect:
       serializedVersion: 2
-      x: 0.3125
-      y: 0.3125
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
+      x: 0.265625
+      y: 0.265625
+      width: 0.125
+      height: 0.25
   - Id: 19
     Rect:
       serializedVersion: 2
-      x: 0.625
-      y: 0.3125
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
+      x: 0.265625
+      y: 0.53125
+      width: 0.125
+      height: 0.25
   - Id: 20
     Rect:
       serializedVersion: 2
-      x: 0
-      y: 0.46875
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
+      x: 0.53125
+      y: 0.265625
+      width: 0.125
+      height: 0.25
   - Id: 21
     Rect:
       serializedVersion: 2
-      x: 0.3125
-      y: 0.46875
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
       x: 0
       y: 0
-      width: 1
-      height: 1
+      width: 0.125
+      height: 0.25
   - Id: 22
     Rect:
       serializedVersion: 2
-      x: 0.625
-      y: 0.46875
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
+      x: 0.3984375
+      y: 0.53125
+      width: 0.125
+      height: 0.25
   - Id: 23
     Rect:
       serializedVersion: 2
-      x: 0
-      y: 0.625
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
+      x: 0.53125
+      y: 0.53125
+      width: 0.125
+      height: 0.25
   - Id: 24
     Rect:
       serializedVersion: 2
       x: 0
-      y: 0.78125
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
+      y: 0.53125
+      width: 0.125
+      height: 0.25
   - Id: 25
     Rect:
       serializedVersion: 2
-      x: 0.3125
-      y: 0.625
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
+      x: 0.3984375
+      y: 0.265625
+      width: 0.125
+      height: 0.25
   - Id: 26
     Rect:
       serializedVersion: 2
-      x: 0.625
-      y: 0.625
-      width: 0.25
-      height: 0.125
-    SpriteSizeUnits:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
+      x: 0.1328125
+      y: 0.265625
+      width: 0.125
+      height: 0.25
   IsTransparent: 0

@@ -17,6 +17,12 @@ MonoBehaviour:
   Hardness: 2
   OutlineColor: {r: 1, g: 1, b: 1, a: 1}
   Sprite: {fileID: 21300000, guid: c0a92b7a6c40f764e978953cfd1f5085, type: 3}
+  VisibleSpriteRect:
+    serializedVersion: 2
+    x: 0.0625
+    y: 0
+    width: 0.875
+    height: 0.875
   AtlasCategory:
     name: WorkbenchTransparent
   AvailablePlacements:

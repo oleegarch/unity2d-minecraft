@@ -14,17 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Category:
     name: Workbench
-  Texture: {fileID: 2800000, guid: adad080947ac10f4b9449935751ff71a, type: 2}
-  Material: {fileID: 2100000, guid: 5520e5e37fb89bb4fb95a25c82e5a1c2, type: 2}
+  MaterialTemplate: {fileID: 2100000, guid: 63f725852bfef0044b3cbe8f6c7c1ea1, type: 2}
   TextureUVs:
   - Id: 30
     Rect:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
-    SpriteSizeUnits:
       serializedVersion: 2
       x: 0
       y: 0

@@ -11,6 +11,7 @@ namespace World.Blocks
         public float Hardness = 1f;
         public Color OutlineColor = new Color(0f, 0f, 0f, 1f);
         public Sprite Sprite;
+        public Rect VisibleSpriteRect;
         public BlockAtlasCategory AtlasCategory;
         public BlockPlacementVariant[] AvailablePlacements =
         {

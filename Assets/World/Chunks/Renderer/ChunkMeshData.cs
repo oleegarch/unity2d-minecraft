@@ -183,15 +183,20 @@ namespace World.Chunks
                 _meshFilter = _parentGO.AddComponent<MeshFilter>();
                 _meshRenderer = _parentGO.AddComponent<MeshRenderer>();
                 _meshFilter.mesh = _mesh;
-                _meshRenderer.sharedMaterial = BlockAtlas.Material;
             }
 
             return _parentGO;
         }
-
-        public void RefreshMesh()
+        public void ApplyTexture(BlockDatabase blockDatabase)
         {
-            if (!_isDirty || _mesh == null) return;
+            // Используем sharedMaterial — материал, который не будет записан в сцену ассетами (material может быть клоном)
+            _meshRenderer.sharedMaterial = BlockAtlas.GetMaterial(blockDatabase);
+        }
+
+        public void RefreshMesh(BlockDatabase blockDatabase)
+        {
+            if (!_isDirty || _mesh == null || _meshRenderer == null) return;
+            if (_meshRenderer.sharedMaterial == null) ApplyTexture(blockDatabase);
             _mesh.Clear();
             _mesh.SetVertices(_vertices);
             _mesh.SetTriangles(_triangles, 0);

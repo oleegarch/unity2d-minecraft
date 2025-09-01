@@ -1,6 +1,8 @@
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.U2D;
 using UnityEngine;
+using UnityEngine.U2D;
 using System.Linq;
 using System.IO;
 
@@ -10,109 +12,23 @@ namespace World.Blocks.Atlases
     {
         // Путь для сохранения атласов
         private const string OBJECTS_FOLDER = "Assets/World/Blocks/Atlases/Objects";
-        private const string OUTPUT_FOLDER = "Assets/World/Blocks/Atlases/Textures";
+        private const string OUTPUT_FOLDER = "Assets/World/Blocks/Atlases/Textures"; // теперь сюда будем сохранять .spriteatlas
         private const string MATERIALS_FOLDER = "Assets/World/Blocks/Atlases/Materials";
-
-        private static Rect GetTightPixelRectForSprite(Sprite sprite)
-        {
-            float ppu = Mathf.Max(1f, sprite.pixelsPerUnit);
-
-            Rect spritePixelRect = sprite.rect;
-            Rect textureSpriteRect = sprite.textureRect;
-
-            var tex = sprite.texture;
-            Rect texRect = sprite.textureRect;
-
-            int sx = Mathf.FloorToInt(texRect.x);
-            int sy = Mathf.FloorToInt(texRect.y);
-            int sw = Mathf.FloorToInt(texRect.width);
-            int sh = Mathf.FloorToInt(texRect.height);
-
-            Color32[] pixels;
-            try
-            {
-                pixels = tex.GetPixels32();
-            }
-            catch
-            {
-                Debug.LogWarning($"Texture '{tex.name}' is not readable. Enable Read/Write in importer for accurate trimming. Falling back to full sprite rect.");
-                return texRect;
-            }
-
-            int texW = tex.width;
-
-            int left = sw, right = -1, bottom = sh, top = -1;
-            const byte alphaThreshold = 1;
-
-            for (int y = 0; y < sh; y++)
-            {
-                int ty = sy + y;
-                int rowBase = ty * texW;
-                for (int x = 0; x < sw; x++)
-                {
-                    int tx = sx + x;
-                    Color32 c = pixels[rowBase + tx];
-                    if (c.a > alphaThreshold)
-                    {
-                        if (x < left) left = x;
-                        if (x > right) right = x;
-                        if (y < bottom) bottom = y;
-                        if (y > top) top = y;
-                    }
-                }
-            }
-
-            if (right < left || top < bottom)
-            {
-                return texRect;
-            }
-
-            int trimmedX = sx + left;
-            int trimmedY = sy + bottom;
-            int trimmedW = right - left + 1;
-            int trimmedH = top - bottom + 1;
-
-            Rect tightPixelRect = new Rect(trimmedX, trimmedY, trimmedW, trimmedH);
-
-            float relativeTrimX = tightPixelRect.x - textureSpriteRect.x;
-            float relativeTrimY = tightPixelRect.y - textureSpriteRect.y;
-
-            float spriteFullUnitsW = spritePixelRect.width / ppu;
-            float spriteFullUnitsH = spritePixelRect.height / ppu;
-
-            float centerOffsetX = (1f - spriteFullUnitsW) * 0.5f;
-            float centerOffsetY = (1f - spriteFullUnitsH) * 0.5f;
-
-            float trimOffsetUnitsX = relativeTrimX / ppu;
-            float trimOffsetUnitsY = relativeTrimY / ppu;
-
-            float trimmedUnitsW = tightPixelRect.width / ppu;
-            float trimmedUnitsH = tightPixelRect.height / ppu;
-
-            return new Rect(
-                centerOffsetX + trimOffsetUnitsX,
-                centerOffsetY + trimOffsetUnitsY,
-                trimmedUnitsW,
-                trimmedUnitsH
-            );
-        }
 
         [MenuItem("Tools/Blocks/Pack All Atlases")]
         public static void PackAllAtlases()
         {
-            // Убедимся, что папка вывода текстур существует
+            // Проверки папок
             if (!AssetDatabase.IsValidFolder(OUTPUT_FOLDER))
             {
                 Debug.LogError($"Output folder not found at {OUTPUT_FOLDER}");
                 return;
             }
-            // Убедимся, что папка объектов атласов существует
             if (!AssetDatabase.IsValidFolder(OBJECTS_FOLDER))
             {
                 Debug.LogError($"Atlas objects folder not found at {OBJECTS_FOLDER}");
                 return;
             }
-            // Убедимся, что папка материалов существует
             if (!AssetDatabase.IsValidFolder(MATERIALS_FOLDER))
             {
                 Debug.LogError($"Materials folder not found at {MATERIALS_FOLDER}");
@@ -134,62 +50,96 @@ namespace World.Blocks.Atlases
                 var category = group.Key;
                 var infos = group.ToList();
 
-                // Определяем пути к ScriptableObject, материалу и атласу
+                // Путь к ScriptableObject и материалу и атласу
                 string assetPath = $"{OBJECTS_FOLDER}/{category}.asset";
-                string materialPath = $"{MATERIALS_FOLDER}/{category}.mat";
-                string atlasAssetPath = $"{OUTPUT_FOLDER}/{category}.asset";
+                string atlasAssetPath = $"{OUTPUT_FOLDER}/{category}.spriteatlas"; // создаём SpriteAtlas
 
                 // Найти BlockAtlasInfo (ScriptableObject)
                 BlockAtlasInfo blockAtlas = AssetDatabase.LoadAssetAtPath<BlockAtlasInfo>(assetPath);
                 if (blockAtlas == null)
                 {
-                    // Атлас блоков должен быть создан вручную
                     Debug.LogError($"BlockAtlasInfo not found at {assetPath}");
                     continue;
                 }
 
-                // Собрать все текстуры блоков (оригинальные textures у спрайтов)
-                var textures = infos.Select(b => b.Sprite.texture).ToArray();
+                // Удаляем только генерируемые ассеты для этой категории (без трогания .asset в Objects)
+                RemoveGeneratedAssetsForCategory(category);
 
-                // PackTextures (собираем все текстуры блоков в один атлас)
-                Texture2D textureAtlas = new Texture2D(2048, 2048, TextureFormat.RGBA32, false);
-                Rect[] textureRects = textureAtlas.PackTextures(textures, 8, 2048);
+                // Создаём SpriteAtlas и добавляем туда все спрайты из группы
+                var atlas = new SpriteAtlas();
 
-                textureAtlas.filterMode = FilterMode.Point;
-                textureAtlas.wrapMode = TextureWrapMode.Clamp;
-
-                // Сохраняем атлас как asset (текстура)
-                textureAtlas.name = Path.GetFileNameWithoutExtension(atlasAssetPath);
-                AssetUtils.OverwriteAsset(textureAtlas, atlasAssetPath);
-
-                // Создать или обновить материал (материал для атласа)
-                var reloadedTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(atlasAssetPath);
-                var shader = Shader.Find(blockAtlas.IsTransparent ? "Custom/BlockTransparent" : "Custom/BlockOpaque");
-                var material = new Material(shader)
+                // Настройки упаковки (можно подправить при необходимости)
+                var packingSettings = new SpriteAtlasPackingSettings
                 {
-                    name = Path.GetFileNameWithoutExtension(materialPath),
-                    mainTexture = reloadedTexture
+                    blockOffset = 1,
+                    padding = 2,
+                    enableRotation = false,
+                    enableTightPacking = false
                 };
+                atlas.SetPackingSettings(packingSettings);
 
-                // Перезаписать материал в файл
-                AssetUtils.OverwriteAsset(material, materialPath);
+                // Текстурные настройки
+                var texSettings = new SpriteAtlasTextureSettings
+                {
+                    readable = false,
+                    generateMipMaps = false,
+                    sRGB = true
+                };
+                atlas.SetTextureSettings(texSettings);
 
-                // Обновить BlockAtlasInfo (ScriptableObject)
-                var reloadedMaterial = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+                // Добавляем все спрайты как packables
+                UnityEngine.Object[] packables = infos.Select(i => (UnityEngine.Object)i.Sprite).ToArray();
+                atlas.Add(packables);
+
+                // Сохраняем SpriteAtlas как asset (перезапись возможна, потому удаляли файл раньше)
+                AssetDatabase.CreateAsset(atlas, atlasAssetPath);
+
+                // Сохраняем/применяем изменения и гарантируем импорт
+                AssetDatabase.SaveAssets();
+                AssetDatabase.ImportAsset(atlasAssetPath);
+                AssetDatabase.Refresh();
+
+                // Принудительно упакуем атласы для текущей платформы, чтобы получить итоговую текстуру
+                SpriteAtlasUtility.PackAtlases(new[] { atlas }, EditorUserBuildSettings.activeBuildTarget);
+
+                // После упаковки — убедимся, что ассеты импортированы и доступны
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+
+                // --- Обновляем BlockAtlasInfo ---
                 blockAtlas.Category = category;
-                blockAtlas.Texture = reloadedTexture;
-                blockAtlas.Material = reloadedMaterial;
+                blockAtlas.MaterialTemplate = GetMaterialTemplateByAtlas(blockAtlas);
                 blockAtlas.TextureUVs.Clear();
 
+                // Пройдёмся по каждому спрайту и запишем нормализованные UV относительно texture, в которой лежит этот спрайт
                 for (int i = 0; i < infos.Count; i++)
                 {
-                    Sprite sprite = infos[i].Sprite;
+                    BlockInfo info = infos[i];
+                    Sprite sprite = info.Sprite;
+
+                    info.VisibleSpriteRect = sprite.GetTightPixelRectForSprite();
+                    EditorUtility.SetDirty(info);
+                    
+                    Texture2D spriteTex = sprite.texture;
+                    if (spriteTex == null)
+                    {
+                        Debug.LogError($"Sprite {sprite.name} has no texture after packing. Make sure pack succeeded for category {category}.");
+                        continue;
+                    }
+
+                    Rect pixelRect = sprite.textureRect; // пиксели внутри своей texture
+
+                    Rect normalized = new Rect(
+                        pixelRect.x / (float)spriteTex.width,
+                        pixelRect.y / (float)spriteTex.height,
+                        pixelRect.width / (float)spriteTex.width,
+                        pixelRect.height / (float)spriteTex.height
+                    );
 
                     blockAtlas.TextureUVs.Add(new BlockTextureUV
                     {
                         Id = infos[i].Id,
-                        Rect = textureRects[i],
-                        SpriteSizeUnits = GetTightPixelRectForSprite(sprite)
+                        Rect = normalized
                     });
                 }
 
@@ -198,7 +148,25 @@ namespace World.Blocks.Atlases
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log("✅ All atlases packed to " + OUTPUT_FOLDER);
+            Debug.Log("✅ All SpriteAtlases packed to " + OUTPUT_FOLDER);
+        }
+
+        private static Material GetMaterialTemplateByAtlas(BlockAtlasInfo atlas)
+        {
+            string materialName = atlas.IsTransparent ? "BlockOpaque" : "BlockTransparent";
+            string materialPath = $"{MATERIALS_FOLDER}/{materialName}.mat";
+            return AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+        }
+
+        private static void RemoveGeneratedAssetsForCategory(string category)
+        {
+            string atlasPath = $"{OUTPUT_FOLDER}/{category}.spriteatlas";
+
+            if (AssetDatabase.LoadAssetAtPath<Object>(atlasPath) != null)
+            {
+                AssetDatabase.DeleteAsset(atlasPath);
+                Debug.Log($"Deleted old atlas: {atlasPath}");
+            }
         }
     }
 }

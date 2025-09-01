@@ -17,6 +17,12 @@ MonoBehaviour:
   Hardness: 1
   OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   Sprite: {fileID: 21300000, guid: 4f55e2037fdce5042b4b54297ad571ba, type: 3}
+  VisibleSpriteRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
   AtlasCategory:
     name: Surface
   AvailablePlacements:
@@ -35,4 +41,4 @@ MonoBehaviour:
   HasTransparentPixels: 1
   HasCustomCollider: 0
   BreakableByGravity: 1
-  ParticleTexture: {fileID: 2800000, guid: 3241899a1fd152345b425f7bfc7e40a0, type: 2}
+  InventorySlotCount: 0
