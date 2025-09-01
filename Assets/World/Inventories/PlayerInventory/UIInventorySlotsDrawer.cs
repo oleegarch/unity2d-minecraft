@@ -23,6 +23,11 @@ namespace World.Inventories
         protected Dictionary<int, int> _invIndexToUiIndex; // mapping: inventoryIndex -> uiIndex
         protected bool _alwaysUpdate;
 
+        public virtual void SetUp(WorldManager manager, Inventory inventory, bool alwaysUpdate = false)
+        {
+            _manager = manager;
+            SetUp(inventory, alwaysUpdate);
+        }
         public virtual void SetUp(Inventory inventory, bool alwaysUpdate = false)
         {
             var indices = Enumerable.Range(0, inventory.Capacity);
@@ -136,6 +141,8 @@ namespace World.Inventories
         {
             UnsubscribeFromInventoryEvents();
             Clear();
+            if (gameObject != null)
+                Destroy(gameObject);
         }
     }
 }

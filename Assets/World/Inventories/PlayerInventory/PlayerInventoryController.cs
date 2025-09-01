@@ -15,7 +15,8 @@ namespace World.Inventories
     {
         [SerializeField] private UIPlayerHotbarDrawer _hotbar;
         [SerializeField] private UIPlayerMainSlotsDrawer _mainSlots;
-        [SerializeField] private UIInventorySlotsDrawer _foreignSlots;
+        [SerializeField] private GameObject _slotsInventoryPrefab;
+        [SerializeField] private Transform _inventoryAlignmentTransform;
         [SerializeField] private Transform _itemOnRightHandTransform;
         [SerializeField] private ItemsDroppedSpawner _itemsSpawner;
         [SerializeField] private HoveredBlockObserver _blockObserver;
@@ -26,6 +27,7 @@ namespace World.Inventories
         [SerializeField] private UIMask _uiMask;
         
         private PlayerInventory _inventory;
+        private UIInventorySlotsDrawer _foreignDrawer;
         private int _hotbarActiveIndex;
 
         public int ActiveHotbarIndex
@@ -113,7 +115,8 @@ namespace World.Inventories
                 _uiMask.Appear();
             else
             {
-                _foreignSlots.Close();
+                _foreignDrawer?.Dispose();
+                _foreignDrawer = null;
                 _uiMask.Disappear();
             }
         }
@@ -129,8 +132,12 @@ namespace World.Inventories
                 _manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out Inventory inventory)
             )
             {
-                _foreignSlots.SetUp(inventory);
-                _foreignSlots.Open();
+                _foreignDrawer?.Dispose();
+                _foreignDrawer = null;
+                _foreignDrawer = Instantiate(_slotsInventoryPrefab, _inventoryAlignmentTransform).GetComponent<UIInventorySlotsDrawer>();
+                _foreignDrawer.SetUp(_manager, inventory);
+                _foreignDrawer.Open();
+
                 OpenInventory();
             }
         }
