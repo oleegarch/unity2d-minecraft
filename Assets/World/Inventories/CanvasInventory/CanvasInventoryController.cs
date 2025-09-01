@@ -13,8 +13,10 @@ namespace World.Inventories
 {
     public class CanvasInventoryController : MonoBehaviour
     {
+        [SerializeField] private WorldModeController _worldMode;
         [SerializeField] private UIPlayerHotbarDrawer _hotbar;
         [SerializeField] private UIPlayerMainSlotsDrawer _mainSlots;
+        [SerializeField] private GameObject _creativeInventoryPrefab;
         [SerializeField] private GameObject _slotsInventoryPrefab;
         [SerializeField] private Transform _inventoryAlignmentTransform;
         [SerializeField] private Transform _itemOnRightHandTransform;
@@ -28,6 +30,7 @@ namespace World.Inventories
         
         private PlayerInventory _inventory;
         private UIInventorySlotsDrawer _foreignDrawer;
+        private UICreativeInventory _currentCreativeInventory;
         private int _hotbarActiveIndex;
 
         public int ActiveHotbarIndex
@@ -112,18 +115,37 @@ namespace World.Inventories
         private void ToggleInventory(InputAction.CallbackContext context)
         {
             if (_mainSlots.Toggle())
+            {
                 _uiMask.Appear();
+
+                if (_worldMode.WorldMode == WorldMode.Creative)
+                    OpenCreativeInventory();
+            }
             else
             {
                 _foreignDrawer?.Dispose();
                 _foreignDrawer = null;
                 _uiMask.Disappear();
+
+                if (_currentCreativeInventory != null)
+                    _currentCreativeInventory.Hide();
             }
         }
         private void OpenInventory()
         {
             _mainSlots.Open();
             _uiMask.Appear();
+        }
+        private void OpenCreativeInventory()
+        {
+            if (_currentCreativeInventory == null)
+            {
+                GameObject go = Instantiate(_creativeInventoryPrefab, _inventoryAlignmentTransform);
+                _currentCreativeInventory = go.GetComponent<UICreativeInventory>();
+                _currentCreativeInventory.SetUp(_manager.ItemDatabase, _manager.ItemCategoryDatabase);
+            }
+
+            _currentCreativeInventory.Show();
         }
         private void OpenForeignInventory(InputAction.CallbackContext context)
         {

@@ -691,7 +691,6 @@ MonoBehaviour:
   _chunksParent: {fileID: 4278272002193004716}
   _chunkGeneratorConfig: {fileID: 11400000, guid: b37f629017ec25541a3290004e9b275f, type: 2}
   _visibility: {fileID: 2519934639846788326}
-  _uiCreativeInventory: {fileID: 0}
   _seed: 0
 --- !u!1 &1945966528918650676
 GameObject:
@@ -6781,8 +6780,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 874ef734f9e01e148aca22544d9af70f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _worldMode: {fileID: 1743995927618707106}
   _hotbar: {fileID: 422506386193263239}
   _mainSlots: {fileID: 4808870248483430547}
+  _creativeInventoryPrefab: {fileID: 2814172520557933218, guid: 7a2b5c7dd293fdb4cb3f81d0b0392746, type: 3}
   _slotsInventoryPrefab: {fileID: 2200148905349489711, guid: efdc7a1b1d70cae4fac805ea0780720c, type: 3}
   _inventoryAlignmentTransform: {fileID: 3536417539301902218}
   _itemOnRightHandTransform: {fileID: 5480467092549927400}
@@ -7108,6 +7109,7 @@ GameObject:
   - component: {fileID: 9144659093550293114}
   - component: {fileID: 75138438775379441}
   - component: {fileID: 5996241260152180551}
+  - component: {fileID: 1743995927618707106}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -7192,6 +7194,19 @@ MonoBehaviour:
   _cameraModeController: {fileID: 8674153355091370118}
   _worldTime: {fileID: 9144659093550293114}
   _blockPicker: {fileID: 6203515626348112953}
+--- !u!114 &1743995927618707106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371231742770794637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66667b1596d695458409383dac0707d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _worldMode: 1
 --- !u!1 &7486189307446116851
 GameObject:
   m_ObjectHideFlags: 0
@@ -7584,6 +7599,10 @@ PrefabInstance:
     - target: {fileID: 1475235049037279557, guid: 1a37d16ecc5693d42a5f924f6aa4edd2, type: 3}
       propertyPath: m_text
       value: "\u0418\u043D\u0432\u0435\u043D\u0442\u0430\u0440\u044C"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1475235049037279557, guid: 1a37d16ecc5693d42a5f924f6aa4edd2, type: 3}
+      propertyPath: m_overflowMode
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1845583709846742683, guid: 1a37d16ecc5693d42a5f924f6aa4edd2, type: 3}
       propertyPath: m_SizeDelta.y

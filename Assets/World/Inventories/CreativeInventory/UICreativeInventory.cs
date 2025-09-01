@@ -22,6 +22,12 @@ namespace World.Inventories
         private List<GameObject> _instantiatedCategories = new();
         private ItemCategory _activeCategory;
 
+        private void OnDestroy()
+        {
+            DestroyCategorySlots();
+            DestroyCategoriesButtons();
+        }
+
         public void SetUp(ItemDatabase itemDatabase, ItemCategoryDatabase itemCategoryDatabase)
         {
             _itemDatabase = itemDatabase;
@@ -30,6 +36,15 @@ namespace World.Inventories
 
             RecreateCategoriesButtons();
             SetActiveCategory();
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+        public void Show()
+        {
+            gameObject.SetActive(true);
         }
 
         public void SetActiveCategory(ItemCategory newCategory)
@@ -102,6 +117,12 @@ namespace World.Inventories
                 Destroy(go);
             }
             _instantiatedCategories.Clear();
+        }
+        public void Dispose()
+        {
+            DestroyCategorySlots();
+            DestroyCategoriesButtons();
+            Destroy(gameObject);
         }
     }
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-namespace World.Cameras
+namespace World
 {
     public enum WorldMode
     {
