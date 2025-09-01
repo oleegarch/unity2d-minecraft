@@ -54,6 +54,8 @@ namespace World.Inventories
         }
         private void Start()
         {
+            _inventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(31), 100), out int remainder1);
+            _inventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(33), 100), out int remainder2);
             ActiveHotbarIndex = 0;
         }
         private void OnDestroy()

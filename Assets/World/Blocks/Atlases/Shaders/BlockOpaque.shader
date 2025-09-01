@@ -19,7 +19,7 @@ Shader "Custom/BlockOpaque"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
-            float4 _MainTex_TexelSize; // x=1/width, y=1/height
+            float4 _MainTex_TexelSize;
 
             struct appdata
             {
@@ -49,20 +49,12 @@ Shader "Custom/BlockOpaque"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                // половина текселя атласа (в UV)
                 float2 halfTexel = 0.5 * _MainTex_TexelSize.xy;
-
-                // зажимаем выборку внутрь прямоугольника тайла с отступом на пол-пикселя
                 float2 uvMin = i.uvRect.xy + halfTexel;
                 float2 uvMax = i.uvRect.zw - halfTexel;
                 float2 uv    = clamp(i.uv, uvMin, uvMax);
 
-                fixed4 col = tex2D(_MainTex, uv);
-
-                // обрезаем "прозрачные пиксели" — превращаем их в пустоту (альфа-тест)
-                clip(col.a - 0.5);
-
-                return col * i.color;
+                return tex2D(_MainTex, uv) * i.color;
             }
             ENDCG
         }

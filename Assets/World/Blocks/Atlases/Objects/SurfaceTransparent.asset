@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Category:
     name: SurfaceTransparent
-  MaterialTemplate: {fileID: 2100000, guid: a7c93014fda392b48a4041dc8e91f06d, type: 2}
+  MaterialTemplate: {fileID: 2100000, guid: 3c9f40a5f8ad6d34aab31f8a8c5ea773, type: 2}
   TextureUVs:
   - Id: 1
     Rect:
@@ -23,4 +23,4 @@ MonoBehaviour:
       y: 0
       width: 1
       height: 1
-  IsTransparent: 1
+  RenderMode: 1

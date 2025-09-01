@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07d9a1f7a0721184a9b4c66e2a81fc6e, type: 3}
+  m_Name: glass_gray
+  m_EditorClassIdentifier: 
+  Id: 36
+  Name: glass_gray
+  BlockId: 36
+  Sprite: {fileID: 21300000, guid: 3fe58c444b64b4c43b399fa7fc76b877, type: 3}
+  MaxStack: 100

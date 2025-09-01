@@ -12,13 +12,21 @@ namespace World.Blocks.Atlases
         public Rect Rect;
     }
 
+    [Serializable]
+    public enum RenderMode
+    {
+        Opaque,
+        Cutout,
+        Transparent
+    }
+
     [CreateAssetMenu(menuName = "Blocks/New BlockAtlasInfo")]
     public class BlockAtlasInfo : ScriptableObject
     {
         public BlockAtlasCategory Category;
         public Material MaterialTemplate;
         public List<BlockTextureUV> TextureUVs;
-        public bool IsTransparent;
+        public RenderMode RenderMode;
 
         private Dictionary<ushort, Rect> _cachedUVsDict;
         public Rect GetRect(ushort id)

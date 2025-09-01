@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Category:
     name: Ores
-  MaterialTemplate: {fileID: 2100000, guid: 63f725852bfef0044b3cbe8f6c7c1ea1, type: 2}
+  MaterialTemplate: {fileID: 2100000, guid: a7c93014fda392b48a4041dc8e91f06d, type: 2}
   TextureUVs:
   - Id: 3
     Rect:
@@ -128,4 +128,4 @@ MonoBehaviour:
       y: 0.265625
       width: 0.125
       height: 0.25
-  IsTransparent: 0
+  RenderMode: 0

@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17eafd19ac997ec45a19fe595171cdef, type: 3}
+  m_Name: Glasses
+  m_EditorClassIdentifier: 
+  Category:
+    name: Glasses
+  MaterialTemplate: {fileID: 2100000, guid: 63f725852bfef0044b3cbe8f6c7c1ea1, type: 2}
+  TextureUVs:
+  - Id: 31
+    Rect:
+      serializedVersion: 2
+      x: 0.53125
+      y: 0.53125
+      width: 0.125
+      height: 0.25
+  - Id: 32
+    Rect:
+      serializedVersion: 2
+      x: 0.1328125
+      y: 0
+      width: 0.125
+      height: 0.25
+  - Id: 33
+    Rect:
+      serializedVersion: 2
+      x: 0.3984375
+      y: 0.265625
+      width: 0.125
+      height: 0.25
+  - Id: 34
+    Rect:
+      serializedVersion: 2
+      x: 0.53125
+      y: 0.265625
+      width: 0.125
+      height: 0.25
+  - Id: 35
+    Rect:
+      serializedVersion: 2
+      x: 0.1328125
+      y: 0.53125
+      width: 0.125
+      height: 0.25
+  - Id: 36
+    Rect:
+      serializedVersion: 2
+      x: 0.265625
+      y: 0
+      width: 0.125
+      height: 0.25
+  - Id: 37
+    Rect:
+      serializedVersion: 2
+      x: 0.53125
+      y: 0
+      width: 0.125
+      height: 0.25
+  - Id: 38
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0.125
+      height: 0.25
+  - Id: 39
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.265625
+      width: 0.125
+      height: 0.25
+  - Id: 40
+    Rect:
+      serializedVersion: 2
+      x: 0.1328125
+      y: 0.265625
+      width: 0.125
+      height: 0.25
+  - Id: 41
+    Rect:
+      serializedVersion: 2
+      x: 0.3984375
+      y: 0.53125
+      width: 0.125
+      height: 0.25
+  - Id: 42
+    Rect:
+      serializedVersion: 2
+      x: 0.265625
+      y: 0.53125
+      width: 0.125
+      height: 0.25
+  - Id: 43
+    Rect:
+      serializedVersion: 2
+      x: 0.3984375
+      y: 0
+      width: 0.125
+      height: 0.25
+  - Id: 44
+    Rect:
+      serializedVersion: 2
+      x: 0.265625
+      y: 0.265625
+      width: 0.125
+      height: 0.25
+  - Id: 45
+    Rect:
+      serializedVersion: 2
+      x: 0
+      y: 0.53125
+      width: 0.125
+      height: 0.25
+  - Id: 46
+    Rect:
+      serializedVersion: 2
+      x: 0.6640625
+      y: 0
+      width: 0.125
+      height: 0.25
+  RenderMode: 2

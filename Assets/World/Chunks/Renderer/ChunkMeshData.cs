@@ -43,10 +43,11 @@ namespace World.Chunks
             float y0 = index.y;
             float x1 = x0 + 1f;
             float y1 = y0 + 1f;
-            _vertices.Add(new Vector3(x0, y0, 0f));
-            _vertices.Add(new Vector3(x1, y0, 0f));
-            _vertices.Add(new Vector3(x1, y1, 0f));
-            _vertices.Add(new Vector3(x0, y1, 0f));
+            float z = darkness ? 1f : 0f;
+            _vertices.Add(new Vector3(x0, y0, z));
+            _vertices.Add(new Vector3(x1, y0, z));
+            _vertices.Add(new Vector3(x1, y1, z));
+            _vertices.Add(new Vector3(x0, y1, z));
 
             // Треугольники
             _triangles.Add(baseVertex);
@@ -114,10 +115,11 @@ namespace World.Chunks
             float y0 = index.y;
             float x1 = x0 + 1f;
             float y1 = y0 + 1f;
-            _vertices[start + 0] = new Vector3(x0, y0, 0f);
-            _vertices[start + 1] = new Vector3(x1, y0, 0f);
-            _vertices[start + 2] = new Vector3(x1, y1, 0f);
-            _vertices[start + 3] = new Vector3(x0, y1, 0f);
+            float z = darkness ? 1f : 0f;
+            _vertices[start + 0] = new Vector3(x0, y0, z);
+            _vertices[start + 1] = new Vector3(x1, y0, z);
+            _vertices[start + 2] = new Vector3(x1, y1, z);
+            _vertices[start + 3] = new Vector3(x0, y1, z);
 
             _isDirty = true;
         }

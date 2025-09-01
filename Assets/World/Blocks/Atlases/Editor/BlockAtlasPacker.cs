@@ -153,7 +153,7 @@ namespace World.Blocks.Atlases
 
         private static Material GetMaterialTemplateByAtlas(BlockAtlasInfo atlas)
         {
-            string materialName = atlas.IsTransparent ? "BlockOpaque" : "BlockTransparent";
+            string materialName = $"Block{atlas.RenderMode.ToString()}";
             string materialPath = $"{MATERIALS_FOLDER}/{materialName}.mat";
             return AssetDatabase.LoadAssetAtPath<Material>(materialPath);
         }
