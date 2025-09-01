@@ -31,6 +31,9 @@ namespace World.Inventories
         /// <summary>Пытается удалить до <paramref name="amount"/> из указанного слота. Возвращает true, если что-то было удалено и отдаёт удалённый стек.</summary>
         public bool TryRemove(int slotIndex, int amount, out ItemStack removed);
 
+        /// <summary>Пытается удалить указанный слот. Возвращает true, если что-то было удалено и отдаёт удалённый стек.</summary>
+        public bool Remove(int slotIndex, out ItemStack removed);
+
         /// <summary>Переместить предметы внутри этого инвентаря из одного слота в другой.</summary>
         public bool Move(int fromIndex, int toIndex, int amount = int.MaxValue);
 
@@ -38,7 +41,7 @@ namespace World.Inventories
         public bool MoveTo(Inventory target, int fromIndex, int toIndex, int amount = int.MaxValue);
 
         /// <summary>Заменить содержимое слота валидированным стеком.</summary>
-        public void ReplaceSlot(int index, ItemStack newStack);
+        public void Replace(int index, ItemStack newStack, out ItemStack old);
 
         /// <summary>Очистить инвентарь (установить все слоты в Empty) и уведомить слушателей.</summary>
         public void Clear();

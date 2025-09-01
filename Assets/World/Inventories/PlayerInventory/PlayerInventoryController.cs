@@ -94,7 +94,7 @@ namespace World.Inventories
         {
             ItemInfo newItemInfo = _manager.ItemDatabase.GetByBlockId(block.Id);
             ItemStack newItemStack = new ItemStack(newItemInfo, quantity: newItemInfo.MaxStack);
-            _inventory.ReplaceSlot(ActiveHotbarIndex, newItemStack);
+            _inventory.Replace(ActiveHotbarIndex, newItemStack, out ItemStack old);
         }
         private void HandleInventorySlotChanged(object sender, SlotChangedEventArgs args)
         {

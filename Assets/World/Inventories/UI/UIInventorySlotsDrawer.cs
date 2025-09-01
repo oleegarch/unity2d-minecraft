@@ -52,14 +52,19 @@ namespace World.Inventories
                 int invIndex = _inventoryIndices[i];
                 _invIndexToUiIndex[invIndex] = i;
 
+                // Создаём префаб слота
                 GameObject go = Instantiate(_uiItemSlotPrefab, _uiSlotsParent);
                 go.name = $"{name}_Slot_{i}";
-                var uiSlot = go.GetComponent<UIItemSlotDrawer>();
-                if (uiSlot == null) throw new InvalidOperationException("Prefab must have UIItemSlotDrawer.");
+                
+                // Визуализируем текущий слот
+                var drawer = go.GetComponent<UIItemSlotDrawer>();
+                drawer.SetUp(_inventory.GetSlot(invIndex), _manager.ItemDatabase);
+                
+                // В компоненте для draggable логики записываем контекст текущего слота и подписываемся на OnDrop событие
+                var dragger = go.GetComponent<UIItemSlotDragger>();
+                dragger.SetSlotContext(new SlotContext(_inventory, invIndex));
 
-                // передаём стартовое состояние
-                uiSlot.SetUp(_inventory, invIndex, _manager.ItemDatabase);
-                _uiItemSlots[i] = uiSlot;
+                _uiItemSlots[i] = drawer;
             }
 
             if (_alwaysUpdate) SubscribeToInventoryEvents();
@@ -128,7 +133,8 @@ namespace World.Inventories
         {
             if (_uiItemSlots != null)
             {
-                foreach (var s in _uiItemSlots) s?.Dispose();
+                foreach (var s in _uiItemSlots)
+                    s.Dispose();
                 _uiItemSlots = null;
             }
 

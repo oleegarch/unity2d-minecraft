@@ -14,19 +14,9 @@ namespace World.Inventories
         [SerializeField] private UIStackSlotDrawer _stackDrawer;
 
         [NonSerialized] public ItemStack Stack;
-        [NonSerialized] public int SlotIndex;
-        [NonSerialized] public bool Active;
-        [NonSerialized] public Inventory Inventory;
         [NonSerialized] public ItemDatabase ItemDatabase;
+        [NonSerialized] public bool Active;
 
-        public void SetUp(Inventory inventory, int slotIndex, ItemDatabase itemDatabase)
-        {
-            Inventory = inventory;
-            SlotIndex = slotIndex;
-            Stack = inventory.GetSlot(slotIndex);
-            ItemDatabase = itemDatabase;
-            Refresh();
-        }
         public void SetUp(ItemStack stack, ItemDatabase itemDatabase)
         {
             Stack = stack;

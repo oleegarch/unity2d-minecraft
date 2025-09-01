@@ -41,7 +41,7 @@ namespace World.Inventories
         }
         #endregion
 
-        #region Операции получения
+        #region Получение
         public IReadOnlyList<ItemStack> GetAllSlots() => slots.Select(s => s?.Clone() ?? ItemStack.Empty).ToArray();
 
         public IReadOnlyList<ItemStack> GetNonEmptySlots() => slots.Where(s => !s.IsEmpty).Select(s => s.Clone()).ToArray();
@@ -155,6 +155,33 @@ namespace World.Inventories
             }
 
             return false;
+        }
+        public virtual bool Remove(int slotIndex, out ItemStack removed)
+        {
+            EnsureIndexInRange(slotIndex);
+            removed = slots[slotIndex];
+
+            var slot = slots[slotIndex];
+            if (slot.IsEmpty) return false;
+
+            slots[slotIndex] = ItemStack.Empty;
+            Events.InvokeSlotChanged(slotIndex, slots[slotIndex].Clone());
+
+            return true;
+        }
+        #endregion
+
+        #region Замена
+        /// <summary>
+        /// Заменить содержимое слота валидированным стеком и уведомить слушателей.
+        /// </summary>
+        public void Replace(int index, ItemStack newStack, out ItemStack old)
+        {
+            EnsureValidStack(newStack);
+            EnsureIndexInRange(index);
+            old = slots[index];
+            slots[index] = newStack.Clone();
+            Events.InvokeSlotChanged(index, slots[index].Clone());
         }
         #endregion
 
@@ -278,17 +305,6 @@ namespace World.Inventories
             }
 
             return changed;
-        }
-
-        /// <summary>
-        /// Заменить содержимое слота валидированным стеком и уведомить слушателей.
-        /// </summary>
-        public void ReplaceSlot(int index, ItemStack newStack)
-        {
-            EnsureValidStack(newStack);
-            EnsureIndexInRange(index);
-            slots[index] = newStack.Clone();
-            Events.InvokeSlotChanged(index, slots[index].Clone());
         }
         #endregion
 

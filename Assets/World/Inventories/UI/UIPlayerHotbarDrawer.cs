@@ -17,7 +17,7 @@ namespace World.Inventories
         {
             _playerInventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
 
-            // собираем абсолютные индексы хотбара: HotbarStart .. HotbarStart+HotbarSize-1
+            // собираем абсолютные индексы хотбара
             var indices = Enumerable.Range(inventory.HotbarStart, PlayerInventory.HotbarSize);
             // alwaysUpdate = true — хотбар должен обновляться постоянно
             base.SetUp(inventory, indices, alwaysUpdate: true);

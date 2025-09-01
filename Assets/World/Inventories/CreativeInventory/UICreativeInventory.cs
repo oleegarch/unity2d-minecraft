@@ -72,9 +72,15 @@ namespace World.Inventories
                 if (info.Category == category)
                 {
                     GameObject go = Instantiate(_slotPrefab, _slotsParent);
-                    UIItemSlotDrawer drawer = go.GetComponent<UIItemSlotDrawer>();
 
-                    drawer.SetUp(new ItemStack(info), _itemDatabase);
+                    // Визуализируем слот
+                    var drawer = go.GetComponent<UIItemSlotDrawer>();
+                    var stack = new ItemStack(info, info.MaxStack);
+                    drawer.SetUp(stack, _itemDatabase);
+
+                    // Подписываемся на событие перетаскивания с креативного инвентаря
+                    var dragger = go.GetComponent<UIItemSlotDragger>();
+                    dragger.SetSlotContext(new SlotContext(stack));
 
                     _instantiatedSlots.Add(go);
                 }
@@ -83,12 +89,18 @@ namespace World.Inventories
 
         public void DestroyCategorySlots()
         {
-            foreach (var go in _instantiatedSlots) Destroy(go);
+            foreach (var go in _instantiatedSlots)
+                Destroy(go);
             _instantiatedSlots.Clear();
         }
         public void DestroyCategoriesButtons()
         {
-            foreach (var go in _instantiatedCategories) Destroy(go);
+            foreach (var go in _instantiatedCategories)
+            {
+                var inventoryCategory = go.GetComponent<UICreativeInventoryCategory>();
+                inventoryCategory.OnActiveSetAttempt -= SetActiveCategory;
+                Destroy(go);
+            }
             _instantiatedCategories.Clear();
         }
     }
