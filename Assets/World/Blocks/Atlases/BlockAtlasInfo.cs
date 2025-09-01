@@ -25,8 +25,9 @@ namespace World.Blocks.Atlases
     {
         public BlockAtlasCategory Category;
         public Material MaterialTemplate;
-        public List<BlockTextureUV> TextureUVs;
         public RenderMode RenderMode;
+        public Texture2D Texture;
+        public List<BlockTextureUV> TextureUVs;
 
         private Dictionary<ushort, Rect> _cachedUVsDict;
         public Rect GetRect(ushort id)
@@ -38,15 +39,11 @@ namespace World.Blocks.Atlases
         }
 
         private Material _cachedMaterial;
-        public Material GetMaterial(BlockDatabase blockDatabase)
+        public Material GetMaterial()
         {
             if (_cachedMaterial != null) return _cachedMaterial;
-
-            var firstBlockId = TextureUVs[0].Id; // любой BlockId
-            var firstBlock = blockDatabase.Get(firstBlockId);
-            var texture = firstBlock.Sprite.texture;
             _cachedMaterial = new Material(MaterialTemplate);
-            _cachedMaterial.mainTexture = texture;
+            _cachedMaterial.mainTexture = Texture;
             return _cachedMaterial;
         }
     }

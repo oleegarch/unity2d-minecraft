@@ -15,117 +15,118 @@ MonoBehaviour:
   Category:
     name: Glasses
   MaterialTemplate: {fileID: 2100000, guid: 63f725852bfef0044b3cbe8f6c7c1ea1, type: 2}
+  RenderMode: 2
+  Texture: {fileID: 2800000, guid: 2c06aea96fb71da4f8aac81d86401790, type: 2}
   TextureUVs:
   - Id: 31
     Rect:
       serializedVersion: 2
-      x: 0.53125
-      y: 0.53125
-      width: 0.125
-      height: 0.25
+      x: 0
+      y: 0
+      width: 0.25
+      height: 0.125
   - Id: 32
     Rect:
       serializedVersion: 2
-      x: 0.1328125
+      x: 0.3125
       y: 0
-      width: 0.125
-      height: 0.25
+      width: 0.25
+      height: 0.125
   - Id: 33
     Rect:
       serializedVersion: 2
-      x: 0.3984375
-      y: 0.265625
-      width: 0.125
-      height: 0.25
+      x: 0.625
+      y: 0
+      width: 0.25
+      height: 0.125
   - Id: 34
     Rect:
       serializedVersion: 2
-      x: 0.53125
-      y: 0.265625
-      width: 0.125
-      height: 0.25
+      x: 0
+      y: 0.15625
+      width: 0.25
+      height: 0.125
   - Id: 35
     Rect:
       serializedVersion: 2
-      x: 0.1328125
-      y: 0.53125
-      width: 0.125
-      height: 0.25
+      x: 0.3125
+      y: 0.15625
+      width: 0.25
+      height: 0.125
   - Id: 36
     Rect:
       serializedVersion: 2
-      x: 0.265625
-      y: 0
-      width: 0.125
-      height: 0.25
+      x: 0.625
+      y: 0.15625
+      width: 0.25
+      height: 0.125
   - Id: 37
     Rect:
       serializedVersion: 2
-      x: 0.53125
-      y: 0
-      width: 0.125
-      height: 0.25
+      x: 0
+      y: 0.3125
+      width: 0.25
+      height: 0.125
   - Id: 38
     Rect:
       serializedVersion: 2
-      x: 0
-      y: 0
-      width: 0.125
-      height: 0.25
+      x: 0.3125
+      y: 0.3125
+      width: 0.25
+      height: 0.125
   - Id: 39
     Rect:
       serializedVersion: 2
-      x: 0
-      y: 0.265625
-      width: 0.125
-      height: 0.25
+      x: 0.625
+      y: 0.3125
+      width: 0.25
+      height: 0.125
   - Id: 40
     Rect:
       serializedVersion: 2
-      x: 0.1328125
-      y: 0.265625
-      width: 0.125
-      height: 0.25
+      x: 0
+      y: 0.46875
+      width: 0.25
+      height: 0.125
   - Id: 41
     Rect:
       serializedVersion: 2
-      x: 0.3984375
-      y: 0.53125
-      width: 0.125
-      height: 0.25
+      x: 0.3125
+      y: 0.46875
+      width: 0.25
+      height: 0.125
   - Id: 42
     Rect:
       serializedVersion: 2
-      x: 0.265625
-      y: 0.53125
-      width: 0.125
-      height: 0.25
+      x: 0.625
+      y: 0.46875
+      width: 0.25
+      height: 0.125
   - Id: 43
     Rect:
       serializedVersion: 2
-      x: 0.3984375
-      y: 0
-      width: 0.125
-      height: 0.25
+      x: 0
+      y: 0.625
+      width: 0.25
+      height: 0.125
   - Id: 44
     Rect:
       serializedVersion: 2
-      x: 0.265625
-      y: 0.265625
-      width: 0.125
-      height: 0.25
+      x: 0
+      y: 0.78125
+      width: 0.25
+      height: 0.125
   - Id: 45
     Rect:
       serializedVersion: 2
-      x: 0
-      y: 0.53125
-      width: 0.125
-      height: 0.25
+      x: 0.3125
+      y: 0.625
+      width: 0.25
+      height: 0.125
   - Id: 46
     Rect:
       serializedVersion: 2
-      x: 0.6640625
-      y: 0
-      width: 0.125
-      height: 0.25
-  RenderMode: 2
+      x: 0.625
+      y: 0.625
+      width: 0.25
+      height: 0.125

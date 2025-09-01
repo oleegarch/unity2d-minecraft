@@ -189,16 +189,16 @@ namespace World.Chunks
 
             return _parentGO;
         }
-        public void ApplyTexture(BlockDatabase blockDatabase)
+        public void ApplyTexture()
         {
             // Используем sharedMaterial — материал, который не будет записан в сцену ассетами (material может быть клоном)
-            _meshRenderer.sharedMaterial = BlockAtlas.GetMaterial(blockDatabase);
+            _meshRenderer.sharedMaterial = BlockAtlas.GetMaterial();
         }
 
-        public void RefreshMesh(BlockDatabase blockDatabase)
+        public void RefreshMesh()
         {
             if (!_isDirty || _mesh == null || _meshRenderer == null) return;
-            if (_meshRenderer.sharedMaterial == null) ApplyTexture(blockDatabase);
+            if (_meshRenderer.sharedMaterial == null) ApplyTexture();
             _mesh.Clear();
             _mesh.SetVertices(_vertices);
             _mesh.SetTriangles(_triangles, 0);

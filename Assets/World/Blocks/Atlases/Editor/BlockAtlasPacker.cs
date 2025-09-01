@@ -1,18 +1,15 @@
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.U2D;
 using UnityEngine;
-using UnityEngine.U2D;
 using System.Linq;
-using System.IO;
+using System.Collections.Generic;
 
 namespace World.Blocks.Atlases
 {
     public class BlockAtlasPacker
     {
-        // Путь для сохранения атласов
         private const string OBJECTS_FOLDER = "Assets/World/Blocks/Atlases/Objects";
-        private const string OUTPUT_FOLDER = "Assets/World/Blocks/Atlases/Textures"; // теперь сюда будем сохранять .spriteatlas
+        private const string OUTPUT_FOLDER = "Assets/World/Blocks/Atlases/Textures";
         private const string MATERIALS_FOLDER = "Assets/World/Blocks/Atlases/Materials";
 
         [MenuItem("Tools/Blocks/Pack All Atlases")]
@@ -35,14 +32,15 @@ namespace World.Blocks.Atlases
                 return;
             }
 
-            // Найти все BlockInfo
+            // Удаляем только генерируемые ассеты
+            RemoveGeneratedAssets();
+
             string[] guids = AssetDatabase.FindAssets("t:BlockInfo");
             var allInfos = guids
                 .Select(g => AssetDatabase.LoadAssetAtPath<BlockInfo>(AssetDatabase.GUIDToAssetPath(g)))
                 .Where(b => b != null && b.Sprite != null)
                 .ToList();
 
-            // Группировать по категории
             var groups = allInfos.GroupBy(b => b.AtlasCategory);
 
             foreach (var group in groups)
@@ -50,11 +48,9 @@ namespace World.Blocks.Atlases
                 var category = group.Key;
                 var infos = group.ToList();
 
-                // Путь к ScriptableObject и материалу и атласу
                 string assetPath = $"{OBJECTS_FOLDER}/{category}.asset";
-                string atlasAssetPath = $"{OUTPUT_FOLDER}/{category}.spriteatlas"; // создаём SpriteAtlas
+                string atlasTexturePath = $"{OUTPUT_FOLDER}/{category}.asset";
 
-                // Найти BlockAtlasInfo (ScriptableObject)
                 BlockAtlasInfo blockAtlas = AssetDatabase.LoadAssetAtPath<BlockAtlasInfo>(assetPath);
                 if (blockAtlas == null)
                 {
@@ -62,110 +58,75 @@ namespace World.Blocks.Atlases
                     continue;
                 }
 
-                // Удаляем только генерируемые ассеты для этой категории (без трогания .asset в Objects)
-                RemoveGeneratedAssetsForCategory(category);
-
-                // Создаём SpriteAtlas и добавляем туда все спрайты из группы
-                var atlas = new SpriteAtlas();
-
-                // Настройки упаковки (можно подправить при необходимости)
-                var packingSettings = new SpriteAtlasPackingSettings
-                {
-                    blockOffset = 1,
-                    padding = 2,
-                    enableRotation = false,
-                    enableTightPacking = false
-                };
-                atlas.SetPackingSettings(packingSettings);
-
-                // Текстурные настройки
-                var texSettings = new SpriteAtlasTextureSettings
-                {
-                    readable = false,
-                    generateMipMaps = false,
-                    sRGB = true
-                };
-                atlas.SetTextureSettings(texSettings);
-
-                // Добавляем все спрайты как packables
-                UnityEngine.Object[] packables = infos.Select(i => (UnityEngine.Object)i.Sprite).ToArray();
-                atlas.Add(packables);
-
-                // Сохраняем SpriteAtlas как asset (перезапись возможна, потому удаляли файл раньше)
-                AssetDatabase.CreateAsset(atlas, atlasAssetPath);
-
-                // Сохраняем/применяем изменения и гарантируем импорт
-                AssetDatabase.SaveAssets();
-                AssetDatabase.ImportAsset(atlasAssetPath);
-                AssetDatabase.Refresh();
-
-                // Принудительно упакуем атласы для текущей платформы, чтобы получить итоговую текстуру
-                SpriteAtlasUtility.PackAtlases(new[] { atlas }, EditorUserBuildSettings.activeBuildTarget);
-
-                // После упаковки — убедимся, что ассеты импортированы и доступны
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
-
-                // --- Обновляем BlockAtlasInfo ---
-                blockAtlas.Category = category;
-                blockAtlas.MaterialTemplate = GetMaterialTemplateByAtlas(blockAtlas);
+                // Обновляем BlockAtlasInfo
                 blockAtlas.TextureUVs.Clear();
+                blockAtlas.MaterialTemplate = GetMaterialTemplateByAtlas(blockAtlas);
 
-                // Пройдёмся по каждому спрайту и запишем нормализованные UV относительно texture, в которой лежит этот спрайт
-                for (int i = 0; i < infos.Count; i++)
-                {
-                    BlockInfo info = infos[i];
-                    Sprite sprite = info.Sprite;
+                // Генерируем атлас текстур
+                Texture2D atlasTexture = PackSpritesToTexture(infos, blockAtlas);
+                atlasTexture.name = category;
+                AssetDatabase.CreateAsset(atlasTexture, atlasTexturePath);
 
-                    info.VisibleSpriteRect = sprite.GetTightPixelRectForSprite();
-                    EditorUtility.SetDirty(info);
-                    
-                    Texture2D spriteTex = sprite.texture;
-                    if (spriteTex == null)
-                    {
-                        Debug.LogError($"Sprite {sprite.name} has no texture after packing. Make sure pack succeeded for category {category}.");
-                        continue;
-                    }
-
-                    Rect pixelRect = sprite.textureRect; // пиксели внутри своей texture
-
-                    Rect normalized = new Rect(
-                        pixelRect.x / (float)spriteTex.width,
-                        pixelRect.y / (float)spriteTex.height,
-                        pixelRect.width / (float)spriteTex.width,
-                        pixelRect.height / (float)spriteTex.height
-                    );
-
-                    blockAtlas.TextureUVs.Add(new BlockTextureUV
-                    {
-                        Id = infos[i].Id,
-                        Rect = normalized
-                    });
-                }
-
+                // Помечаем всё изменённым для сохранения
+                foreach (var info in infos) EditorUtility.SetDirty(info);
                 EditorUtility.SetDirty(blockAtlas);
             }
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log("✅ All SpriteAtlases packed to " + OUTPUT_FOLDER);
+            Debug.Log("✅ All Block Atlases generated as Texture2D");
+        }
+
+        private static Texture2D PackSpritesToTexture(List<BlockInfo> infos, BlockAtlasInfo atlas)
+        {
+            // Собрать все текстуры блоков (оригинальные textures у спрайтов)
+            var textures = infos.Select(b => b.Sprite.texture).ToArray();
+
+            // PackTextures (собираем все текстуры блоков в один атлас)
+            Texture2D textureAtlas = new Texture2D(2048, 2048, TextureFormat.RGBA32, false);
+            Rect[] textureRects = textureAtlas.PackTextures(textures, 8, 2048);
+
+            for (int i = 0; i < infos.Count; i++)
+            {
+                BlockInfo info = infos[i];
+                info.VisibleSpriteRect = info.Sprite.GetTightPixelRectForSprite();
+                atlas.TextureUVs.Add(new BlockTextureUV
+                {
+                    Id = info.Id,
+                    Rect = textureRects[i]
+                });
+            }
+
+            textureAtlas.filterMode = FilterMode.Point;
+            textureAtlas.wrapMode = TextureWrapMode.Clamp;
+
+            atlas.Texture = textureAtlas;
+
+            return textureAtlas;
         }
 
         private static Material GetMaterialTemplateByAtlas(BlockAtlasInfo atlas)
         {
-            string materialName = $"Block{atlas.RenderMode.ToString()}";
+            string materialName = $"Block{atlas.RenderMode}";
             string materialPath = $"{MATERIALS_FOLDER}/{materialName}.mat";
             return AssetDatabase.LoadAssetAtPath<Material>(materialPath);
         }
 
-        private static void RemoveGeneratedAssetsForCategory(string category)
+        private static void RemoveGeneratedAssets()
         {
-            string atlasPath = $"{OUTPUT_FOLDER}/{category}.spriteatlas";
+            if (!AssetDatabase.IsValidFolder(OUTPUT_FOLDER))
+                return;
 
-            if (AssetDatabase.LoadAssetAtPath<Object>(atlasPath) != null)
+            // Получаем все файлы и папки внутри OUTPUT_FOLDER
+            string[] guids = AssetDatabase.FindAssets("", new[] { OUTPUT_FOLDER });
+            foreach (string guid in guids)
             {
-                AssetDatabase.DeleteAsset(atlasPath);
-                Debug.Log($"Deleted old atlas: {atlasPath}");
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (!string.IsNullOrEmpty(path))
+                {
+                    AssetDatabase.DeleteAsset(path);
+                    Debug.Log($"Deleted: {path}");
+                }
             }
         }
     }

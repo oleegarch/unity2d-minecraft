@@ -26,7 +26,7 @@ namespace World.Chunks
         }
 
         // Выполняется в конце фазы update — объединяет все запросы и делает один Refresh на каждый meshData
-        public void Refresh(BlockDatabase blockDatabase)
+        public void Refresh()
         {
             if (_pending.Count == 0) return;
 
@@ -39,7 +39,7 @@ namespace World.Chunks
             {
                 var md = toProcess[i];
                 if (md == null) continue;
-                md.RefreshMesh(blockDatabase);
+                md.RefreshMesh();
             }
         }
     }

@@ -15,12 +15,13 @@ MonoBehaviour:
   Category:
     name: WorkbenchTransparent
   MaterialTemplate: {fileID: 2100000, guid: 3c9f40a5f8ad6d34aab31f8a8c5ea773, type: 2}
+  RenderMode: 1
+  Texture: {fileID: 2800000, guid: 74f5c88e47daa7c4ea7112128bbb6788, type: 2}
   TextureUVs:
   - Id: 29
     Rect:
       serializedVersion: 2
-      x: 0.0023787655
+      x: 0
       y: 0
-      width: 0.9952425
-      height: 0.93512124
-  RenderMode: 1
+      width: 1
+      height: 1
