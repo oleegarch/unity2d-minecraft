@@ -7107,9 +7107,9 @@ GameObject:
   - component: {fileID: 6752283934456956255}
   - component: {fileID: 3319511144438469435}
   - component: {fileID: 9144659093550293114}
+  - component: {fileID: 1743995927618707106}
   - component: {fileID: 75138438775379441}
   - component: {fileID: 5996241260152180551}
-  - component: {fileID: 1743995927618707106}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -7166,6 +7166,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _oneDayDuration: 900
+--- !u!114 &1743995927618707106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371231742770794637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e66667b1596d695458409383dac0707d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _worldMode: 1
 --- !u!114 &75138438775379441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7191,22 +7204,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldManager: {fileID: 5868988553912566916}
+  _worldModeController: {fileID: 1743995927618707106}
   _cameraModeController: {fileID: 8674153355091370118}
   _worldTime: {fileID: 9144659093550293114}
   _blockPicker: {fileID: 6203515626348112953}
---- !u!114 &1743995927618707106
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7371231742770794637}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e66667b1596d695458409383dac0707d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _worldMode: 1
 --- !u!1 &7486189307446116851
 GameObject:
   m_ObjectHideFlags: 0

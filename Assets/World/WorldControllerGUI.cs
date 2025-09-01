@@ -9,18 +9,21 @@ namespace World
     public class WorldControllerGUI : MonoBehaviour
     {
         [SerializeField] private WorldManager _worldManager;
+        [SerializeField] private WorldModeController _worldModeController;
         [SerializeField] private CameraModeController _cameraModeController;
         [SerializeField] private WorldTime _worldTime;
         [SerializeField] private HoveredBlockPicker _blockPicker;
 
-        private int _popupIndex;
+        private int _cameraModePopupIndex;
+        private int _worldModePopupIndex;
         private float _dayDurationSlider = 60f;
         private const float MinDayDuration = 1f;
         private const float MaxDayDuration = 900f;
 
         private void Start()
         {
-            _popupIndex = (int)_cameraModeController.CameraMode;
+            _cameraModePopupIndex = (int)_cameraModeController.CameraMode;
+            _worldModePopupIndex = (int)_worldModeController.WorldMode;
             _dayDurationSlider = _worldTime.DayDuration;
         }
 
@@ -38,18 +41,32 @@ namespace World
 
             GUILayout.Space(10);
 
-            // Game Mode Changing
-            GUILayout.Label("Game Mode", GUI.skin.label);
+            // Camera Mode Changing
+            GUILayout.Label("Camera Mode", GUI.skin.label);
 
-            string[] modeNames = System.Enum.GetNames(typeof(CameraMode));
-            Rect popupRect = GUILayoutUtility.GetRect(200, 20);
-            int newIndex = GUI.SelectionGrid(popupRect, _popupIndex, modeNames, modeNames.Length);
+            string[] cameraModeNames = System.Enum.GetNames(typeof(CameraMode));
+            Rect cameraModePopupRect = GUILayoutUtility.GetRect(200, 20);
+            int cameraModeNewIndex = GUI.SelectionGrid(cameraModePopupRect, _cameraModePopupIndex, cameraModeNames, cameraModeNames.Length);
 
-            if (newIndex != _popupIndex)
+            if (cameraModeNewIndex != _cameraModePopupIndex)
             {
-                _popupIndex = newIndex;
-                CameraMode selectedMode = (CameraMode)_popupIndex;
-                _cameraModeController.SetGameMode(selectedMode);
+                _cameraModePopupIndex = cameraModeNewIndex;
+                _cameraModeController.SetCameraMode((CameraMode)_cameraModePopupIndex);
+            }
+
+            GUILayout.Space(10);
+
+            // World Mode Changing
+            GUILayout.Label("World Mode", GUI.skin.label);
+
+            string[] worldModeNames = System.Enum.GetNames(typeof(WorldMode));
+            Rect worldModePopupRect = GUILayoutUtility.GetRect(200, 20);
+            int worldModeNewIndex = GUI.SelectionGrid(worldModePopupRect, _worldModePopupIndex, worldModeNames, worldModeNames.Length);
+
+            if (worldModeNewIndex != _worldModePopupIndex)
+            {
+                _worldModePopupIndex = worldModeNewIndex;
+                _worldModeController.SetWorldMode((WorldMode)_worldModePopupIndex);
             }
 
             GUILayout.Space(10);

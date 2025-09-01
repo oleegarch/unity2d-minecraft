@@ -24,12 +24,12 @@ namespace World.Cameras
         public CameraMode CameraMode
         {
             get => _currentCameraMode;
-            private set => SetGameMode(value);
+            private set => SetCameraMode(value);
         }
 
         private void Awake()
         {
-            ApplyInitialGameMode();
+            ApplyInitialCameraMode();
         }
 
 #if UNITY_EDITOR
@@ -39,16 +39,16 @@ namespace World.Cameras
                 return;
 
             if (_cameraMode != _currentCameraMode)
-                SetGameMode(_cameraMode);
+                SetCameraMode(_cameraMode);
         }
 #endif
 
-        private void ApplyInitialGameMode()
+        private void ApplyInitialCameraMode()
         {
             _currentCameraMode = _cameraMode;
-            ChangeGameMode();
+            ChangeCameraMode();
         }
-        private void ChangeGameMode()
+        private void ChangeCameraMode()
         {
             switch (_currentCameraMode)
             {
@@ -67,14 +67,14 @@ namespace World.Cameras
             OnCameraModeChanged?.Invoke(_currentCameraMode);
         }
 
-        public void SetGameMode(CameraMode gameMode)
+        public void SetCameraMode(CameraMode gameMode)
         {
             if (_currentCameraMode == gameMode)
                 return;
 
             _currentCameraMode = gameMode;
             _cameraMode = gameMode;
-            ChangeGameMode();
+            ChangeCameraMode();
         }
     }
 }

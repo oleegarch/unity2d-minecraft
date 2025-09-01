@@ -20,12 +20,12 @@ namespace World
         public WorldMode WorldMode
         {
             get => _currentWorldMode;
-            private set => SetGameMode(value);
+            private set => SetWorldMode(value);
         }
 
         private void Awake()
         {
-            ApplyInitialGameMode();
+            ApplyInitialWorldMode();
         }
 
 #if UNITY_EDITOR
@@ -35,16 +35,16 @@ namespace World
                 return;
 
             if (_worldMode != _currentWorldMode)
-                SetGameMode(_worldMode);
+                SetWorldMode(_worldMode);
         }
 #endif
 
-        private void ApplyInitialGameMode()
+        private void ApplyInitialWorldMode()
         {
             _currentWorldMode = _worldMode;
-            ChangeGameMode();
+            ChangeWorldMode();
         }
-        private void ChangeGameMode()
+        private void ChangeWorldMode()
         {
             switch (_currentWorldMode)
             {
@@ -57,14 +57,14 @@ namespace World
             OnWorldModeChanged?.Invoke(_currentWorldMode);
         }
 
-        public void SetGameMode(WorldMode gameMode)
+        public void SetWorldMode(WorldMode gameMode)
         {
             if (_currentWorldMode == gameMode)
                 return;
 
             _currentWorldMode = gameMode;
             _worldMode = gameMode;
-            ChangeGameMode();
+            ChangeWorldMode();
         }
     }
 }
