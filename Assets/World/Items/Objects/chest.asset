@@ -16,3 +16,5 @@ MonoBehaviour:
   Name: chest
   BlockId: 29
   Sprite: {fileID: 21300000, guid: c0a92b7a6c40f764e978953cfd1f5085, type: 3}
+  Category: 2
+  MaxStack: 100

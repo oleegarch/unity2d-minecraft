@@ -27,6 +27,12 @@ namespace World.Inventories
             ItemDatabase = itemDatabase;
             Refresh();
         }
+        public void SetUp(ItemStack stack, ItemDatabase itemDatabase)
+        {
+            Stack = stack;
+            ItemDatabase = itemDatabase;
+            Refresh();
+        }
 
         public void Refresh(ItemStack stack)
         {

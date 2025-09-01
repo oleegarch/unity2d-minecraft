@@ -7,6 +7,7 @@ using World.Blocks;
 using World.Blocks.Atlases;
 using World.Chunks.Generator;
 using World.Items;
+using World.Inventories;
 
 namespace World.Chunks
 {
@@ -16,6 +17,7 @@ namespace World.Chunks
         [SerializeField] private Transform _chunksParent;
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
         [SerializeField] private WorldVisibleService _visibility;
+        [SerializeField] private UICreativeInventory _uiCreativeInventory;
         [SerializeField] private int _seed;
 
         private int _version;
@@ -27,6 +29,7 @@ namespace World.Chunks
         public BlockDatabase BlockDatabase => _chunkGeneratorConfig.BlockDatabase;
         public BlockAtlasDatabase BlockAtlasDatabase => _chunkGeneratorConfig.BlockAtlasDatabase;
         public ItemDatabase ItemDatabase => _chunkGeneratorConfig.ItemDatabase;
+        public ItemCategoryDatabase ItemCategoryDatabase => _chunkGeneratorConfig.ItemCategoryDatabase;
 
         public WorldBlockEvents Events { get; private set; }
         public IChunkGenerator Generator { get; private set; }
@@ -45,6 +48,7 @@ namespace World.Chunks
         private void Start()
         {
             Generator.RegisterWorldSystems(this);
+            _uiCreativeInventory.SetUp(ItemDatabase, ItemCategoryDatabase);
         }
 
         private void OnEnable()

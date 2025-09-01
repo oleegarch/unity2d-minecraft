@@ -16,3 +16,5 @@ MonoBehaviour:
   Name: trunk_oak
   BlockId: 28
   Sprite: {fileID: 21300000, guid: aba23e207dfc54a4097473b1e8487cdd, type: 3}
+  Category: 1
+  MaxStack: 100
