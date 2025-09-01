@@ -23,6 +23,10 @@ namespace World.Inventories
             ItemDatabase = itemDatabase;
             Refresh();
         }
+        public void DisableCount()
+        {
+            _stackDrawer.DisableCount();
+        }
 
         public void Refresh(ItemStack stack)
         {

@@ -40,6 +40,11 @@ namespace World.Inventories
             }
         }
 
+        public void DisableCount()
+        {
+            _uiTextCount.gameObject.SetActive(false);
+        }
+
         public void Dispose()
         {
             Stack = null;

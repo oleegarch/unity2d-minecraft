@@ -92,6 +92,7 @@ namespace World.Inventories
                     var drawer = go.GetComponent<UIItemSlotDrawer>();
                     var stack = new ItemStack(info, info.MaxStack);
                     drawer.SetUp(stack, _itemDatabase);
+                    drawer.DisableCount();
 
                     // Подписываемся на событие перетаскивания с креативного инвентаря
                     var dragger = go.GetComponent<UIItemSlotDragger>();
