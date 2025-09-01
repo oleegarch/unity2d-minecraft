@@ -6,7 +6,7 @@ namespace World.Entities.Player
 {
     public class PlayerItemsCollector : MonoBehaviour
     {
-        [SerializeField] private PlayerInventoryController _inventoryController;
+        [SerializeField] private CanvasInventoryController _inventoryController;
 
         private void OnTriggerEnter2D(Collider2D collision)
         {

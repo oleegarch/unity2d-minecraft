@@ -127,14 +127,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4946356783365293671, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: m_ChildAlignment
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 5868988553912566916, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: _uiCreativeInventory
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 6752283934456956255, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -12,7 +12,7 @@ namespace World.HoveredBlock
     {
         [SerializeField] private WorldInputManager _inputManager;
         [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
-        [SerializeField] private PlayerInventoryController _inventoryController;
+        [SerializeField] private CanvasInventoryController _inventoryController;
         [SerializeField] private WorldManager _worldManager;
 
         public event Action<WorldPosition, Block, BlockLayer, BlockStyles> OnBlockPickedChanged;

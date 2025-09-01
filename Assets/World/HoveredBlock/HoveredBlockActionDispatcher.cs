@@ -7,7 +7,7 @@ namespace World.HoveredBlock
 {
     public class HoveredBlockActionDispatcher : MonoBehaviour
     {
-        [SerializeField] private PlayerInventoryController _inventoryController;
+        [SerializeField] private CanvasInventoryController _inventoryController;
         [SerializeField] private HoveredBlockObserver _observer;
         [SerializeField] private HoveredBlockBreaker _breaker;
         [SerializeField] private HoveredBlockPicker _picker;

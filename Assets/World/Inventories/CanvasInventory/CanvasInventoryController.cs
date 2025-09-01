@@ -11,7 +11,7 @@ using World.Items;
 
 namespace World.Inventories
 {
-    public class PlayerInventoryController : MonoBehaviour
+    public class CanvasInventoryController : MonoBehaviour
     {
         [SerializeField] private UIPlayerHotbarDrawer _hotbar;
         [SerializeField] private UIPlayerMainSlotsDrawer _mainSlots;
