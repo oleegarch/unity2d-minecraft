@@ -153,15 +153,24 @@ namespace World.Inventories
         {
             if (!_blockObserver.ReachedLimitPosition)
             {
-                if (_manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out Inventory inventory))
-                    ChangeForeignInventory(CreateForeignInventory(inventory));
-
                 Block clickedBlock = _manager.Blocks.GetBreakable(_blockObserver.HoveredPosition, out BlockLayer blockLayer);
                 if (!clickedBlock.IsAir)
                 {
                     BlockInfo clickedBlockInfo = _manager.BlockDatabase.Get(clickedBlock.Id);
-                    if (clickedBlockInfo.HasCraftingInventory)
+                        
+                    if (clickedBlockInfo.Inventory.Type == InventoryType.Inventory)
+                    {
+                        if (_manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out Inventory inventory))
+                        {
+                            ChangeForeignInventory(CreateForeignInventory(inventory));
+                            return;
+                        }
+                    }
+                    else if (clickedBlockInfo.Inventory.Type == InventoryType.CraftingTable)
+                    {
                         ChangeForeignInventory(CreateCraftingInventory());
+                        return;
+                    }
                 }
             }
         }

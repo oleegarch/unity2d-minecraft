@@ -1,5 +1,6 @@
 using UnityEngine;
 using World.Blocks.Atlases;
+using World.Inventories;
 
 namespace World.Blocks
 {
@@ -28,10 +29,7 @@ namespace World.Blocks
         [Tooltip("Ломается ли блок если у него нет опоры")]
         public bool BreakableByGravity;
 
-        [Tooltip("Имеется ли у этого блока инвентарь (для сундуков)")]
-        public int InventorySlotCount;
-
-        [Tooltip("Можно ли открыть верстак по этому блоку")]
-        public bool HasCraftingInventory;
+        [Tooltip("Определение инвентаря для этого блока")]
+        public InventoryIdentifier Inventory;
     }
 }

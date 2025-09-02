@@ -41,4 +41,6 @@ MonoBehaviour:
   HasTransparentPixels: 1
   HasCustomCollider: 1
   BreakableByGravity: 0
-  InventorySlotCount: 30
+  Inventory:
+    Type: 0
+    SlotCount: 30

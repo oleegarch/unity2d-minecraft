@@ -20,10 +20,12 @@ namespace World.Inventories
         public ItemStack GetSlot(int index);
 
         /// <summary>Проверяет, содержит ли указанный слот как минимум запрошенное количество того же предмета.</summary>
-        bool Has(ItemStack requested, int slotIndex);
+        public bool Has(ushort itemId, int needed, int slotIndex);
+        public bool Has(ItemStack requested, int slotIndex);
 
         /// <summary>Проверяет, содержит ли инвентарь как минимум запрошенное количество предмета по всем слотам.</summary>
-        bool Has(ItemStack requested);
+        public bool Has(ushort itemId, int needed);
+        public bool Has(ItemStack requested);
 
         /// <summary>Пытается добавить стек в инвентарь. Возвращает true, если весь стек помещён. remainder — количество, которое не удалось поместить.</summary>
         public bool TryAdd(ItemStack stack, out int remainder);

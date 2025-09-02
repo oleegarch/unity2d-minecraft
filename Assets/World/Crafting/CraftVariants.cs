@@ -1,0 +1,57 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using World.Inventories;
+
+namespace World.Crafting
+{
+    [Serializable]
+    public enum CraftIngredientType : byte
+    {
+        ExactlyItem,
+        TypeItem
+    }
+
+    [Serializable]
+    public class CraftIngredient
+    {
+        [Tooltip("Имя предмета для идентификации — Name в ItemInfo")]
+        public string ItemName;
+        [Tooltip("Тип предмета для крафта")]
+        public string ItemType;
+
+        [Tooltip("Количество предметов для крафта")]
+        public int Quantity;
+        [Tooltip("Как долго в секундах происходит крафт этого предмета (для печки и т.п.)")]
+        public float Duration;
+
+        [Tooltip("ExactlyItem — определённый предмет, TypeItem — любой предмет определённого типа")]
+        public CraftIngredientType Type = CraftIngredientType.ExactlyItem;
+    }
+
+    [Serializable]
+    public class CraftVariant
+    {
+        [Tooltip("Тип инвентаря в котором будут происходить данные крафты.")]
+        public InventoryType InventoryType;
+
+        [Tooltip("Какие ингредие́нты нужны для крафта предмета")]
+        public List<CraftIngredient> Ingredients;
+    }
+
+    [Serializable]
+    public class CraftVariants : IEnumerable<CraftVariant>
+    {
+        [Tooltip("Тип этого предмета. Для возможности крафта одного и того же предмета из предметов у которых такой же тип.")]
+        public string ItemType;
+
+        [Tooltip("Список возможных крафтов для этого предмета")]
+        public List<CraftVariant> Variants;
+
+        public IEnumerator<CraftVariant> GetEnumerator() => Variants.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public CraftVariant this[int index] => Variants[index];
+        public int Count => Variants.Count;
+    }
+}

@@ -18,17 +18,31 @@ MonoBehaviour:
   RenderMode: 0
   Texture: {fileID: 2800000, guid: bcace04f7a7f56e40903d00dfc6901c0, type: 2}
   TextureUVs:
-  - Id: 27
+  - Id: 47
     Rect:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 0.5
+      width: 0.25
+      height: 0.25
+  - Id: 48
+    Rect:
+      serializedVersion: 2
+      x: 0.3125
+      y: 0
+      width: 0.25
+      height: 0.25
+  - Id: 27
+    Rect:
+      serializedVersion: 2
+      x: 0.625
+      y: 0
+      width: 0.25
       height: 0.25
   - Id: 28
     Rect:
       serializedVersion: 2
       x: 0
       y: 0.3125
-      width: 0.5
+      width: 0.25
       height: 0.25

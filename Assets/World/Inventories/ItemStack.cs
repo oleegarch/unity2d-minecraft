@@ -17,6 +17,7 @@ namespace World.Inventories
         public bool IsEmpty => Item == null || Quantity <= 0;
         public int SpaceRemaining => Item == null ? 0 : MaxStack - Quantity;
 
+        public ItemStack(ushort ItemId, int maxStack, int quantity = 1) : this(new ItemInstance(ItemId), maxStack, quantity) { }
         public ItemStack(ItemInfo info, int quantity = 1) : this(new ItemInstance(info.Id), info.MaxStack, quantity) { }
         public ItemStack(ItemInstance item, int maxStack, int quantity = 1)
         {

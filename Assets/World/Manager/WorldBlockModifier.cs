@@ -102,11 +102,11 @@ namespace World.Chunks
                     return false;
 
                 BlockInfo currentBlockInfo = _generator.Config.BlockDatabase.Get(currentBlock.Id);
-                if (currentBlockInfo.InventorySlotCount > 0)
+                if (currentBlockInfo.Inventory.SlotCount > 0)
                 {
                     if (!chunk.Inventories.TryGetInventory(blockIndex, currentLayer, out inventory))
                     {
-                        inventory = new ChestInventory(currentBlockInfo.InventorySlotCount);
+                        inventory = new ChestInventory(currentBlockInfo.Inventory.SlotCount);
                         chunk.Inventories.OverrideInventory(blockIndex, currentLayer, inventory);
                     }
                     return true;

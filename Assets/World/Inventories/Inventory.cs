@@ -53,27 +53,27 @@ namespace World.Inventories
         /// <summary>
         /// Проверяет, что конкретный слот содержит тот же предмет и как минимум запрошенное количество.
         /// </summary>
-        public virtual bool Has(ItemStack requested, int slotIndex)
+        public virtual bool Has(ushort itemId, int needed, int slotIndex)
         {
-            EnsureValidStack(requested);
             EnsureIndexInRange(slotIndex);
-
+            
             var slot = slots[slotIndex];
             if (slot.IsEmpty || slot.Item == null) return false;
 
-            return slot.Item.Id == requested.Item.Id && slot.Quantity >= requested.Quantity;
+            return slot.Item.Id == itemId && slot.Quantity >= needed;
+        }
+        public virtual bool Has(ItemStack requested, int slotIndex)
+        {
+            EnsureValidStack(requested);
+
+            return Has(requested.Item.Id, requested.Quantity, slotIndex);
         }
 
         /// <summary>
         /// Проверяет по всему инвентарю, хватает ли общего количества предмета.
         /// </summary>
-        public virtual bool Has(ItemStack requested)
+        public virtual bool Has(ushort itemId, int needed)
         {
-            EnsureValidStack(requested);
-
-            int needed = requested.Quantity;
-            var itemId = requested.Item.Id;
-
             foreach (var slot in slots)
             {
                 if (!slot.IsEmpty && slot.Item != null && slot.Item.Id == itemId)
@@ -84,6 +84,15 @@ namespace World.Inventories
             }
 
             return false;
+        }
+        public virtual bool Has(ItemStack requested)
+        {
+            EnsureValidStack(requested);
+
+            int needed = requested.Quantity;
+            var itemId = requested.Item.Id;
+
+            return Has(itemId, needed);
         }
         #endregion
 
