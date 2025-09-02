@@ -24,7 +24,7 @@ MonoBehaviour:
     width: 0.875
     height: 0.875
   AtlasCategory:
-    name: WorkbenchTransparent
+    name: WorkbenchCutout
   AvailablePlacements:
   - Layer: 0
     StylesOverrides:

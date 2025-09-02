@@ -1,6 +1,6 @@
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 namespace World.Inventories
 {
@@ -9,6 +9,7 @@ namespace World.Inventories
         Creative,
         Default
     }
+
     public class SlotContext
     {
         public Inventory Inventory { get; private set; }
@@ -28,21 +29,25 @@ namespace World.Inventories
             SlotType = SlotType.Creative;
         }
     }
-    public class UIItemSlotDragger : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+
+    public class UIItemSlotDragger : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
     {
+        private static UIItemSlotDragger _draggingStartedByClickFromSlotDragger;
+        private static GameObject _draggingStackGO;
+        private static RectTransform _draggingStackRT;
+        private static UIStackSlotDrawer _draggingStackDrawer;
+        public static bool DraggingByClick => _draggingStartedByClickFromSlotDragger != null;
+        public static ItemStack DraggingStack => _draggingStackDrawer?.Stack;
+
         [SerializeField] private GameObject _staticStackPrefab;
         [SerializeField] private GameObject _currentStackGO;
 
         private UIItemSlotDrawer _currentDrawer;
-        private UIStackSlotDrawer _staticStackDrawer;
         private Canvas _parentCanvas;
         private RectTransform _parentCanvasRT => _parentCanvas.transform as RectTransform;
-        private GameObject _staticStackGO;
-        private RectTransform _staticStackRT;
         private RectTransform _rectTransform;
         private SlotContext _currentSlotContext;
 
-        public ItemStack StaticStack => _staticStackDrawer.Stack;
         public SlotContext CurrentSlotContext => _currentSlotContext;
 
         private void Awake()
@@ -52,43 +57,92 @@ namespace World.Inventories
             _currentDrawer = GetComponent<UIItemSlotDrawer>();
         }
 
-        public void SetSlotContext(SlotContext context)
+        private void Update()
         {
-            _currentSlotContext = context;
+            if (DraggingByClick && _draggingStartedByClickFromSlotDragger == this)
+            {
+                ContinueDrag(Mouse.current.position.ReadValue());
+            }
         }
 
+        #region Drag handlers
         public void OnBeginDrag(PointerEventData eventData)
         {
-            DestroyStatic();
-            ToggleCurrentStackDrawer(false);
-
-            _staticStackGO = Instantiate(_staticStackPrefab, _rectTransform.position, Quaternion.identity, _parentCanvas.transform);
-            _staticStackRT = _staticStackGO.GetComponent<RectTransform>();
-            _staticStackDrawer = _staticStackGO.GetComponent<UIStackSlotDrawer>();
-            _staticStackDrawer.SetUp(_currentDrawer.Stack, _currentDrawer.ItemDatabase);
-
-            UpdateDraggedPosition(eventData);
+            if (DraggingByClick) return;
+            StartDrag(eventData.position);
         }
+
         public void OnDrag(PointerEventData eventData)
         {
-            UpdateDraggedPosition(eventData);
+            if (DraggingByClick) return;
+            ContinueDrag(eventData.position);
         }
+
         public void OnEndDrag(PointerEventData eventData)
         {
-            DestroyStatic();
-            ToggleCurrentStackDrawer(true);
+            if (DraggingByClick) return;
+            FinishDrag();
         }
+
         public void OnDrop(PointerEventData eventData)
         {
-            var fromGO = eventData.pointerDrag;
+            if (DraggingByClick) return;
+            ProcessDrop(eventData.pointerDrag?.GetComponent<UIItemSlotDragger>());
+        }
+        #endregion
 
-            var fromDragger = fromGO?.GetComponent<UIItemSlotDragger>();
+        #region Pointer handlers
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (!DraggingByClick)
+            {
+                _draggingStartedByClickFromSlotDragger = this;
+                StartDrag(eventData.position);
+            }
+            else
+            {
+                ProcessDrop(_draggingStartedByClickFromSlotDragger);
+                _draggingStartedByClickFromSlotDragger.FinishDrag();
+                _draggingStartedByClickFromSlotDragger = null;
+            }
+        }
+        #endregion
+
+        #region Drag'n Drop
+        /// <summary>Начать перетаскивание (создаёт статический визуал и скрывает оригинал).</summary>
+        public void StartDrag(Vector3 position)
+        {
+            DestroyDraggingStack();
+            ToggleCurrentStackDrawer(false);
+
+            _draggingStackGO = Instantiate(_staticStackPrefab, _rectTransform.position, Quaternion.identity, _parentCanvas.transform);
+            _draggingStackRT = _draggingStackGO.GetComponent<RectTransform>();
+            _draggingStackDrawer = _draggingStackGO.GetComponent<UIStackSlotDrawer>();
+            _draggingStackDrawer.SetUp(_currentDrawer.Stack, _currentDrawer.ItemDatabase);
+
+            UpdateDraggedPosition(position);
+        }
+
+        /// <summary>Обновить позицию перетаскиваемого визуала.</summary>
+        public void ContinueDrag(Vector3 position)
+        {
+            UpdateDraggedPosition(position);
+        }
+
+        /// <summary>Завершить перетаскивание (удаляет статик и показывает оригинал).</summary>
+        public void FinishDrag()
+        {
+            DestroyDraggingStack();
+            ToggleCurrentStackDrawer(true);
+        }
+
+        /// <summary>Обработать Drop: логика перемещения/клонирования/удаления стака.</summary>
+        public void ProcessDrop(UIItemSlotDragger fromDragger)
+        {
             var fromContext = fromDragger.CurrentSlotContext;
-            var toDragger = this;
-            var toContext = toDragger.CurrentSlotContext;
+            var toContext = this.CurrentSlotContext;
 
-            if (fromGO == null || fromDragger == null || fromContext == null || toContext == null)
-                throw new ArgumentNullException(nameof(fromGO));
+            if (fromContext == null || toContext == null) return;
 
             // При перемещении из обычного слота в креативный слот — УДАЛЕНИЕ
             if (fromContext.SlotType == SlotType.Default && toContext.SlotType == SlotType.Creative)
@@ -103,38 +157,47 @@ namespace World.Inventories
             // При перемещении из обычного слота в обычный слот — ПЕРЕМЕЩЕНИЕ
             else if (fromContext.SlotType == SlotType.Default && toContext.SlotType == SlotType.Default)
             {
-                fromContext.Inventory.MoveTo(toContext.Inventory, fromContext.SlotIndex, toContext.SlotIndex, fromDragger.StaticStack.Quantity);
+                fromContext.Inventory.MoveTo(toContext.Inventory, fromContext.SlotIndex, toContext.SlotIndex, DraggingStack.Quantity);
             }
         }
+        #endregion
 
-        private void UpdateDraggedPosition(PointerEventData eventData)
+        #region Хелперы
+        public void SetSlotContext(SlotContext context)
         {
-            if (_staticStackRT == null) return;
+            _currentSlotContext = context;
+        }
+
+        private void UpdateDraggedPosition(Vector3 position)
+        {
+            if (_draggingStackRT == null) return;
 
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 _parentCanvasRT,
-                eventData.position,
+                position,
                 _parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _parentCanvas.worldCamera,
                 out var localPos))
             {
-                _staticStackRT.localPosition = localPos;
+                _draggingStackRT.localPosition = localPos;
             }
         }
 
         private void ToggleCurrentStackDrawer(bool active)
         {
-            _currentStackGO.SetActive(active);
+            if (_currentStackGO != null)
+                _currentStackGO.SetActive(active);
         }
 
-        private void DestroyStatic()
+        private void DestroyDraggingStack()
         {
-            if (_staticStackGO != null)
+            if (_draggingStackGO != null)
             {
-                Destroy(_staticStackGO);
-                _staticStackRT = null;
-                _staticStackGO = null;
-                _staticStackDrawer = null;
+                Destroy(_draggingStackGO);
+                _draggingStackRT = null;
+                _draggingStackGO = null;
+                _draggingStackDrawer = null;
             }
         }
+        #endregion
     }
 }

@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17eafd19ac997ec45a19fe595171cdef, type: 3}
-  m_Name: SurfaceTransparent
+  m_Name: WorkbenchCutout
   m_EditorClassIdentifier: 
   Category:
-    name: SurfaceTransparent
+    name: WorkbenchCutout
   MaterialTemplate: {fileID: 2100000, guid: 3c9f40a5f8ad6d34aab31f8a8c5ea773, type: 2}
   RenderMode: 1
-  Texture: {fileID: 2800000, guid: 73864b243af83744b80dca3e303fb05c, type: 2}
+  Texture: {fileID: 2800000, guid: 4362645ee80b70b4ba596faa23c0085c, type: 2}
   TextureUVs:
-  - Id: 1
+  - Id: 29
     Rect:
       serializedVersion: 2
       x: 0

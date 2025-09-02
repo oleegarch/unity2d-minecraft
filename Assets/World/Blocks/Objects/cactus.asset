@@ -24,7 +24,7 @@ MonoBehaviour:
     width: 1
     height: 1
   AtlasCategory:
-    name: SurfaceTransparent
+    name: SurfaceCutout
   AvailablePlacements:
   - Layer: 0
     StylesOverrides:
