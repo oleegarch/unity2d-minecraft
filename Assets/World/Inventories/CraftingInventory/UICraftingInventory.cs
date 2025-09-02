@@ -5,16 +5,15 @@ namespace World.Inventories
 {
     public class UICraftingInventory : MonoBehaviour, IUIInventoryAccessor
     {
-        [SerializeField] private Transform _slotsParent;
-        [SerializeField] private GameObject _slotPrefab;
-        [SerializeField] private Transform _categoriesParent;
-        [SerializeField] private GameObject _categoryPrefab;
+        [SerializeField] private UIItemCategoriesDrawer _categoriesDrawer;
+        [SerializeField] private UIItemCategorSlotsDrawer _categorySlotsDrawer;
         [SerializeField] private Transform _requiredItemsParent;
         [SerializeField] private GameObject _requiredItemPrefab;
 
         public void SetUp(ItemDatabase itemDatabase, ItemCategoryDatabase itemCategoryDatabase)
         {
-
+            _categorySlotsDrawer.SetUp(itemDatabase);
+            _categoriesDrawer.SetUp(itemCategoryDatabase);
         }
 
         public void Open()
@@ -34,6 +33,8 @@ namespace World.Inventories
 
         public void Dispose()
         {
+            _categoriesDrawer.Dispose();
+            _categorySlotsDrawer.Dispose();
             Destroy(gameObject);
         }
     }

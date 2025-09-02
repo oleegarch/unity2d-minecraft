@@ -6784,6 +6784,7 @@ MonoBehaviour:
   _hotbar: {fileID: 422506386193263239}
   _mainSlots: {fileID: 4808870248483430547}
   _creativeInventoryPrefab: {fileID: 2814172520557933218, guid: 7a2b5c7dd293fdb4cb3f81d0b0392746, type: 3}
+  _craftingInventoryPrefab: {fileID: 7369907127966628971, guid: 13834b46687fee349ab54cf837992dfd, type: 3}
   _slotsInventoryPrefab: {fileID: 2200148905349489711, guid: efdc7a1b1d70cae4fac805ea0780720c, type: 3}
   _inventoryAlignmentTransform: {fileID: 3536417539301902218}
   _itemOnRightHandTransform: {fileID: 5480467092549927400}
@@ -7007,7 +7008,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 210}
-  m_SizeDelta: {x: 400, y: 400}
+  m_SizeDelta: {x: 450, y: 400}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!1 &6886553189378999560
 GameObject:

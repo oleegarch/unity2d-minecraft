@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 4615734766160171815}
   - component: {fileID: 101410167626487619}
   m_Layer: 0
-  m_Name: CategoriesSelector
+  m_Name: CategoriesBlocksSelector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -740,6 +740,68 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &6941798014387509185
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5380893786369227330}
+  - component: {fileID: 7451027692576683847}
+  m_Layer: 0
+  m_Name: CategoriesItemsSelector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &5380893786369227330
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6941798014387509185}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4956609756088395886}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 50, y: 0}
+  m_Pivot: {x: 1, y: 0.5}
+--- !u!114 &7451027692576683847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6941798014387509185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 10
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 1
+  m_ChildScaleHeight: 1
+  m_ReverseArrangement: 0
 --- !u!1 &7369907127966628971
 GameObject:
   m_ObjectHideFlags: 0
@@ -749,6 +811,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4956609756088395886}
+  - component: {fileID: 8907260299693699703}
+  - component: {fileID: 3350898070790412476}
   - component: {fileID: 4581236958515736074}
   m_Layer: 0
   m_Name: CraftingInventory
@@ -770,6 +834,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4615734766160171815}
+  - {fileID: 5380893786369227330}
   - {fileID: 5575959724929964147}
   - {fileID: 1800490707452421929}
   m_Father: {fileID: 0}
@@ -777,8 +842,39 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 356, y: 200}
+  m_SizeDelta: {x: 406, y: 200}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &8907260299693699703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7369907127966628971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d2e0a8a44663042a828e2f8c6a6a7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _categoryPrefab: {fileID: 7909585288883630002, guid: 4112b63b4b7a9544c8c0e7d0e23c9f1c, type: 3}
+  _categoriesBlocksParent: {fileID: 4615734766160171815}
+  _categoriesItemsParent: {fileID: 5380893786369227330}
+  _title: {fileID: 627424206507843844}
+--- !u!114 &3350898070790412476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7369907127966628971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d10c8a3c0a6337748b14eb1428ff107f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _categoriesDrawer: {fileID: 8907260299693699703}
+  _slotPrefab: {fileID: 1274409073444489641, guid: fa13e6df0e4bdba40b7743f20c677e0d, type: 3}
+  _slotsParent: {fileID: 4434599740879494626}
 --- !u!114 &4581236958515736074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -791,10 +887,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbabca9863143d144b71080763afb8b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _slotsParent: {fileID: 4434599740879494626}
-  _slotPrefab: {fileID: 1274409073444489641, guid: fa13e6df0e4bdba40b7743f20c677e0d, type: 3}
-  _categoriesParent: {fileID: 4615734766160171815}
-  _categoryPrefab: {fileID: 7909585288883630002, guid: 4112b63b4b7a9544c8c0e7d0e23c9f1c, type: 3}
+  _categoriesDrawer: {fileID: 8907260299693699703}
+  _categorySlotsDrawer: {fileID: 3350898070790412476}
   _requiredItemsParent: {fileID: 3219905493139155553}
   _requiredItemPrefab: {fileID: 4919559043105066205, guid: a3336a54112be1641a2bb567bdf85c31, type: 3}
 --- !u!1 &8189700829125364385
@@ -836,7 +930,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -50, y: 0}
   m_SizeDelta: {x: 106, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &229882562692124284
@@ -1194,6 +1288,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ecbaff7664ed8044f8a7b24f6410f70e, type: 3}
+--- !u!114 &627424206507843844 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1548091223969215517, guid: ecbaff7664ed8044f8a7b24f6410f70e, type: 3}
+  m_PrefabInstance: {fileID: 2147902810047649049}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &2650594195093188818 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4109023770508387787, guid: ecbaff7664ed8044f8a7b24f6410f70e, type: 3}

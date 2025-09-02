@@ -127,10 +127,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 352028823478520568, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
-      propertyPath: _craftingInventoryPrefab
-      value: 
-      objectReference: {fileID: 7369907127966628971, guid: 13834b46687fee349ab54cf837992dfd, type: 3}
     - target: {fileID: 6752283934456956255, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -344,6 +344,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1126037669531710799}
+  - component: {fileID: 3514407109096257159}
+  - component: {fileID: 441380121501406533}
   - component: {fileID: 8081832553903786665}
   m_Layer: 0
   m_Name: CreativeInventory
@@ -374,6 +376,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 375, y: 250}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &3514407109096257159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2814172520557933218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d2e0a8a44663042a828e2f8c6a6a7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _categoryPrefab: {fileID: 7909585288883630002, guid: 4112b63b4b7a9544c8c0e7d0e23c9f1c, type: 3}
+  _categoriesBlocksParent: {fileID: 6871080698290004692}
+  _categoriesItemsParent: {fileID: 4351222828571163521}
+  _title: {fileID: 2509822118696143121}
+--- !u!114 &441380121501406533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2814172520557933218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d10c8a3c0a6337748b14eb1428ff107f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _categoriesDrawer: {fileID: 3514407109096257159}
+  _slotPrefab: {fileID: 1274409073444489641, guid: fa13e6df0e4bdba40b7743f20c677e0d, type: 3}
+  _slotsParent: {fileID: 7403200055203538998}
 --- !u!114 &8081832553903786665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,12 +419,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c25e2fd144b25304c91d7ef16440b8f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _categoryPrefab: {fileID: 7909585288883630002, guid: 4112b63b4b7a9544c8c0e7d0e23c9f1c, type: 3}
-  _categoriesBlocksParent: {fileID: 6871080698290004692}
-  _categoriesItemsParent: {fileID: 4351222828571163521}
-  _title: {fileID: 2509822118696143121}
-  _slotPrefab: {fileID: 1274409073444489641, guid: fa13e6df0e4bdba40b7743f20c677e0d, type: 3}
-  _slotsParent: {fileID: 7403200055203538998}
+  _categoriesDrawer: {fileID: 3514407109096257159}
+  _categorySlotsDrawer: {fileID: 441380121501406533}
 --- !u!1 &2916056289540607600
 GameObject:
   m_ObjectHideFlags: 0
@@ -595,7 +624,7 @@ GameObject:
   - component: {fileID: 8366332294160430531}
   - component: {fileID: 2262539880127167818}
   m_Layer: 0
-  m_Name: Content
+  m_Name: Slots
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
