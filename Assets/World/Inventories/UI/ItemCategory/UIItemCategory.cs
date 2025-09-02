@@ -6,7 +6,7 @@ using World.Items;
 
 namespace World.Inventories
 {
-    public class UICreativeInventoryCategory : MonoBehaviour, IPointerClickHandler
+    public class UIItemCategory : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField] private Image _categoryImage;
         [SerializeField] private Image _itemImage;

@@ -64,7 +64,7 @@ namespace World.Inventories
 
             foreach (var instantiatedCategoryGO in _instantiatedCategories)
             {
-                var instantiatedCategory = instantiatedCategoryGO.GetComponent<UICreativeInventoryCategory>();
+                var instantiatedCategory = instantiatedCategoryGO.GetComponent<UIItemCategory>();
                 instantiatedCategory.SetActive(_activeCategory);
             }
 
@@ -79,7 +79,7 @@ namespace World.Inventories
                 var go = Instantiate(_categoryPrefab, categoryInfo.IsCategoryForBlocks ? _categoriesBlocksParent : _categoriesItemsParent);
                 _instantiatedCategories.Add(go);
 
-                var inventoryCategory = go.GetComponent<UICreativeInventoryCategory>();
+                var inventoryCategory = go.GetComponent<UIItemCategory>();
                 inventoryCategory.SetUp(categoryInfo);
                 inventoryCategory.OnActiveSetAttempt += SetActiveCategory;
             }
@@ -120,7 +120,7 @@ namespace World.Inventories
         {
             foreach (var go in _instantiatedCategories)
             {
-                var inventoryCategory = go.GetComponent<UICreativeInventoryCategory>();
+                var inventoryCategory = go.GetComponent<UIItemCategory>();
                 inventoryCategory.OnActiveSetAttempt -= SetActiveCategory;
                 Destroy(go);
             }
