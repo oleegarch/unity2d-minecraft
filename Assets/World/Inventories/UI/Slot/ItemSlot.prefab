@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 519539971674998154}
   - component: {fileID: 8472040117813428673}
   - component: {fileID: 5163084416421387742}
+  - component: {fileID: 7322177146485096974}
   - component: {fileID: 3412032628099889868}
   m_Layer: 0
   m_Name: ItemSlot
@@ -106,8 +107,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05925224af2509d449591c14cff3c15e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _staticStackPrefab: {fileID: 1274409073444489641, guid: a94b23cd4919d3d4eba94655f5eabd53, type: 3}
+  _dragHandlers: {fileID: 7322177146485096974}
+  _draggingStackPrefab: {fileID: 1274409073444489641, guid: a94b23cd4919d3d4eba94655f5eabd53, type: 3}
   _currentStackGO: {fileID: 8366144920409051005}
+--- !u!114 &7322177146485096974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1274409073444489641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0710cefb50f6b424b83432d466e2aeaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3412032628099889868
 MonoBehaviour:
   m_ObjectHideFlags: 0

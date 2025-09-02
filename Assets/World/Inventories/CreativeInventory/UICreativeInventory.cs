@@ -97,6 +97,7 @@ namespace World.Inventories
                     // Подписываемся на событие перетаскивания с креативного инвентаря
                     var dragger = go.GetComponent<UIItemSlotDragger>();
                     dragger.SetSlotContext(new SlotContext(stack));
+                    dragger.DisableDragHandlers();
 
                     _instantiatedSlots.Add(go);
                 }

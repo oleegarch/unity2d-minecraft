@@ -30,7 +30,7 @@ namespace World.Inventories
         }
     }
 
-    public class UIItemSlotDragger : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
+    public class UIItemSlotDragger : MonoBehaviour, IPointerClickHandler, IDropHandler
     {
         private static UIItemSlotDragger _draggingStartedByClickFromSlotDragger;
         private static GameObject _draggingStackGO;
@@ -39,7 +39,8 @@ namespace World.Inventories
         public static bool DraggingByClick => _draggingStartedByClickFromSlotDragger != null;
         public static ItemStack DraggingStack => _draggingStackDrawer?.Stack;
 
-        [SerializeField] private GameObject _staticStackPrefab;
+        [SerializeField] private UIItemSlotDragHandlers _dragHandlers;
+        [SerializeField] private GameObject _draggingStackPrefab;
         [SerializeField] private GameObject _currentStackGO;
 
         private UIItemSlotDrawer _currentDrawer;
@@ -47,6 +48,7 @@ namespace World.Inventories
         private RectTransform _parentCanvasRT => _parentCanvas.transform as RectTransform;
         private RectTransform _rectTransform;
         private SlotContext _currentSlotContext;
+        private bool _dragHandlersEnabled = true;
 
         public SlotContext CurrentSlotContext => _currentSlotContext;
 
@@ -56,7 +58,6 @@ namespace World.Inventories
             _parentCanvas = GetComponentInParent<Canvas>();
             _currentDrawer = GetComponent<UIItemSlotDrawer>();
         }
-
         private void Update()
         {
             if (DraggingByClick && _draggingStartedByClickFromSlotDragger == this)
@@ -64,38 +65,30 @@ namespace World.Inventories
                 ContinueDrag(Mouse.current.position.ReadValue());
             }
         }
-
-        #region Drag handlers
-        public void OnBeginDrag(PointerEventData eventData)
+        private void OnEnable()
         {
-            if (DraggingByClick) return;
-            StartDrag(eventData.position);
+            _dragHandlers.StartDrag += StartDrag;
+            _dragHandlers.ContinueDrag += ContinueDrag;
+            _dragHandlers.FinishDrag += FinishDrag;
+        }
+        private void OnDisable()
+        {
+            _dragHandlers.StartDrag -= StartDrag;
+            _dragHandlers.ContinueDrag -= ContinueDrag;
+            _dragHandlers.FinishDrag -= FinishDrag;
         }
 
-        public void OnDrag(PointerEventData eventData)
-        {
-            if (DraggingByClick) return;
-            ContinueDrag(eventData.position);
-        }
-
-        public void OnEndDrag(PointerEventData eventData)
-        {
-            if (DraggingByClick) return;
-            FinishDrag();
-        }
-
+        #region Pointer handlers
         public void OnDrop(PointerEventData eventData)
         {
             if (DraggingByClick) return;
             ProcessDrop(eventData.pointerDrag?.GetComponent<UIItemSlotDragger>());
         }
-        #endregion
-
-        #region Pointer handlers
         public void OnPointerClick(PointerEventData eventData)
         {
             if (!DraggingByClick)
             {
+                _dragHandlers.enabled = false;
                 _draggingStartedByClickFromSlotDragger = this;
                 StartDrag(eventData.position);
             }
@@ -104,6 +97,7 @@ namespace World.Inventories
                 ProcessDrop(_draggingStartedByClickFromSlotDragger);
                 _draggingStartedByClickFromSlotDragger.FinishDrag();
                 _draggingStartedByClickFromSlotDragger = null;
+                _dragHandlers.enabled = _dragHandlersEnabled;
             }
         }
         #endregion
@@ -115,7 +109,7 @@ namespace World.Inventories
             DestroyDraggingStack();
             ToggleCurrentStackDrawer(false);
 
-            _draggingStackGO = Instantiate(_staticStackPrefab, _rectTransform.position, Quaternion.identity, _parentCanvas.transform);
+            _draggingStackGO = Instantiate(_draggingStackPrefab, _rectTransform.position, Quaternion.identity, _parentCanvas.transform);
             _draggingStackRT = _draggingStackGO.GetComponent<RectTransform>();
             _draggingStackDrawer = _draggingStackGO.GetComponent<UIStackSlotDrawer>();
             _draggingStackDrawer.SetUp(_currentDrawer.Stack, _currentDrawer.ItemDatabase);
@@ -166,6 +160,11 @@ namespace World.Inventories
         public void SetSlotContext(SlotContext context)
         {
             _currentSlotContext = context;
+        }
+        public void DisableDragHandlers()
+        {
+            _dragHandlers.enabled = false;
+            _dragHandlersEnabled = false;
         }
 
         private void UpdateDraggedPosition(Vector3 position)
