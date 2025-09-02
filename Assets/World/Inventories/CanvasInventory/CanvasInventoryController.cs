@@ -17,6 +17,7 @@ namespace World.Inventories
         [SerializeField] private UIPlayerHotbarDrawer _hotbar;
         [SerializeField] private UIPlayerMainSlotsDrawer _mainSlots;
         [SerializeField] private GameObject _creativeInventoryPrefab;
+        [SerializeField] private GameObject _craftingInventoryPrefab;
         [SerializeField] private GameObject _slotsInventoryPrefab;
         [SerializeField] private Transform _inventoryAlignmentTransform;
         [SerializeField] private Transform _itemOnRightHandTransform;
@@ -27,10 +28,9 @@ namespace World.Inventories
         [SerializeField] private WorldInputManager _inputManager;
         [SerializeField] private SpriteRenderer _itemOnRightHand;
         [SerializeField] private UIMask _uiMask;
-        
+
         private PlayerInventory _inventory;
-        private UIInventorySlotsDrawer _foreignDrawer;
-        private UICreativeInventory _currentCreativeInventory;
+        private IUIInventoryAccessor _foreignInventoryAccessor;
         private int _hotbarActiveIndex;
 
         public int ActiveHotbarIndex
@@ -119,48 +119,62 @@ namespace World.Inventories
                 _uiMask.Appear();
 
                 if (_worldMode.WorldMode == WorldMode.Creative)
-                    OpenCreativeInventory();
+                    ChangeForeignInventory(CreateCreativeInventory());
             }
             else
             {
-                _foreignDrawer?.Dispose();
-                _foreignDrawer = null;
+                _foreignInventoryAccessor?.Dispose();
+                _foreignInventoryAccessor = null;
                 _uiMask.Disappear();
-
-                if (_currentCreativeInventory != null)
-                    _currentCreativeInventory.Hide();
             }
         }
-        private void OpenInventory()
+        private UIInventorySlotsDrawer CreateForeignInventory(Inventory inventory)
         {
-            _mainSlots.Open();
-            _uiMask.Appear();
+            GameObject go = Instantiate(_slotsInventoryPrefab, _inventoryAlignmentTransform);
+            UIInventorySlotsDrawer component = go.GetComponent<UIInventorySlotsDrawer>();
+            component.SetUp(_manager, inventory);
+            return component;
         }
-        private void OpenCreativeInventory()
+        private UICreativeInventory CreateCreativeInventory()
         {
-            if (_currentCreativeInventory == null)
-            {
-                GameObject go = Instantiate(_creativeInventoryPrefab, _inventoryAlignmentTransform);
-                _currentCreativeInventory = go.GetComponent<UICreativeInventory>();
-                _currentCreativeInventory.SetUp(_manager.ItemDatabase, _manager.ItemCategoryDatabase);
-            }
-
-            _currentCreativeInventory.Show();
+            GameObject go = Instantiate(_creativeInventoryPrefab, _inventoryAlignmentTransform);
+            UICreativeInventory component = go.GetComponent<UICreativeInventory>();
+            component.SetUp(_manager.ItemDatabase, _manager.ItemCategoryDatabase);
+            return component;
+        }
+        private UICraftingInventory CreateCraftingInventory()
+        {
+            GameObject go = Instantiate(_craftingInventoryPrefab, _inventoryAlignmentTransform);
+            UICraftingInventory component = go.GetComponent<UICraftingInventory>();
+            component.SetUp(_manager.ItemDatabase, _manager.ItemCategoryDatabase);
+            return component;
         }
         private void OpenForeignInventory(InputAction.CallbackContext context)
         {
-            if (
-                !_blockObserver.ReachedLimitPosition &&
-                _manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out Inventory inventory)
-            )
+            if (!_blockObserver.ReachedLimitPosition)
             {
-                _foreignDrawer?.Dispose();
-                _foreignDrawer = null;
-                _foreignDrawer = Instantiate(_slotsInventoryPrefab, _inventoryAlignmentTransform).GetComponent<UIInventorySlotsDrawer>();
-                _foreignDrawer.SetUp(_manager, inventory);
-                _foreignDrawer.Open();
+                if (_manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out Inventory inventory))
+                    ChangeForeignInventory(CreateForeignInventory(inventory));
 
-                OpenInventory();
+                Block clickedBlock = _manager.Blocks.GetBreakable(_blockObserver.HoveredPosition, out BlockLayer blockLayer);
+                if (!clickedBlock.IsAir)
+                {
+                    BlockInfo clickedBlockInfo = _manager.BlockDatabase.Get(clickedBlock.Id);
+                    if (clickedBlockInfo.HasCraftingInventory)
+                        ChangeForeignInventory(CreateCraftingInventory());
+                }
+            }
+        }
+        private void ChangeForeignInventory(IUIInventoryAccessor newForeignInventory)
+        {
+            _foreignInventoryAccessor?.Dispose();
+            _foreignInventoryAccessor = newForeignInventory;
+
+            if (_foreignInventoryAccessor != null)
+            {
+                _foreignInventoryAccessor.Open();
+                _mainSlots.Open();
+                _uiMask.Appear();
             }
         }
         private void DropCurrentItem(InputAction.CallbackContext context)

@@ -7617,6 +7617,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SlotsMain
       objectReference: {fileID: 0}
+    - target: {fileID: 1942653692476533346, guid: 1a37d16ecc5693d42a5f924f6aa4edd2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4279956923900968747, guid: 1a37d16ecc5693d42a5f924f6aa4edd2, type: 3}
       propertyPath: m_ChildAlignment
       value: 1

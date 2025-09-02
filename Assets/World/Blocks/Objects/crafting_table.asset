@@ -38,3 +38,4 @@ MonoBehaviour:
   HasCustomCollider: 0
   BreakableByGravity: 0
   InventorySlotCount: 0
+  HasCraftingInventory: 1

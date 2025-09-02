@@ -5,7 +5,7 @@ using World.Items;
 
 namespace World.Inventories
 {
-    public class UICreativeInventory : MonoBehaviour
+    public class UICreativeInventory : MonoBehaviour, IUIInventoryAccessor
     {
         [SerializeField] private GameObject _categoryPrefab;
         [SerializeField] private Transform _categoriesBlocksParent;
@@ -38,13 +38,19 @@ namespace World.Inventories
             SetActiveCategory();
         }
 
-        public void Hide()
+        public void Open()
+        {
+            gameObject.SetActive(true);
+        }
+        public void Close()
         {
             gameObject.SetActive(false);
         }
-        public void Show()
+        public bool Toggle()
         {
-            gameObject.SetActive(true);
+            bool newActive = !gameObject.activeSelf;
+            gameObject.SetActive(newActive);
+            return newActive;
         }
 
         public void SetActiveCategory(ItemCategory newCategory)

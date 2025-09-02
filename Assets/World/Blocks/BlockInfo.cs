@@ -30,5 +30,8 @@ namespace World.Blocks
 
         [Tooltip("Имеется ли у этого блока инвентарь (для сундуков)")]
         public int InventorySlotCount;
+
+        [Tooltip("Можно ли открыть верстак по этому блоку")]
+        public bool HasCraftingInventory;
     }
 }

@@ -6,12 +6,19 @@ using World.Chunks;
 
 namespace World.Inventories
 {
+    public interface IUIInventoryAccessor : IDisposable
+    {
+        public void Open();
+        public void Close();
+        public bool Toggle();
+    }
+
     /// <summary>
     /// Универсальный drawer: рисует список слотов inventorySlotIndices (абсолютные индексы в Inventory).
     /// Рендерит слоты пачками (строками) через _uiRowSlotsPrefab.
     /// Количество слотов в одной строке задаётся _maxRowSlotsCount.
     /// </summary>
-    public class UIInventorySlotsDrawer : MonoBehaviour, IDisposable
+    public class UIInventorySlotsDrawer : MonoBehaviour, IUIInventoryAccessor
     {
         [SerializeField] protected Transform _uiSlotsParent;
         [SerializeField] protected GameObject _uiItemSlotPrefab;
@@ -23,6 +30,7 @@ namespace World.Inventories
         protected Dictionary<int, int> _invIndexToUiIndex; // mapping: inventoryIndex -> uiIndex
         protected bool _alwaysUpdate;
 
+        #region Инициализация
         public virtual void SetUp(WorldManager manager, Inventory inventory, bool alwaysUpdate = false)
         {
             _manager = manager;
@@ -55,11 +63,11 @@ namespace World.Inventories
                 // Создаём префаб слота
                 GameObject go = Instantiate(_uiItemSlotPrefab, _uiSlotsParent);
                 go.name = $"{name}_Slot_{i}";
-                
+
                 // Визуализируем текущий слот
                 var drawer = go.GetComponent<UIItemSlotDrawer>();
                 drawer.SetUp(_inventory.GetSlot(invIndex), _manager.ItemDatabase);
-                
+
                 // В компоненте для draggable логики записываем контекст текущего слота и подписываемся на OnDrop событие
                 var dragger = go.GetComponent<UIItemSlotDragger>();
                 dragger.SetSlotContext(new SlotContext(_inventory, invIndex));
@@ -69,7 +77,46 @@ namespace World.Inventories
 
             if (_alwaysUpdate) SubscribeToInventoryEvents();
         }
+        #endregion
 
+        #region Обновление слотов
+        protected virtual void RefreshAll()
+        {
+            if (_uiItemSlots == null || _inventory == null) return;
+            for (int i = 0; i < _uiItemSlots.Length; i++)
+            {
+                int invIndex = _inventoryIndices[i];
+                _uiItemSlots[i].Refresh(_inventory.GetSlot(invIndex));
+            }
+        }
+        /// <summary>Обновление слота по глобальному индексу (тот, который шлёт Inventory.Events).</summary>
+        protected virtual void RefreshSlotByInventoryIndex(int inventoryIndex, ItemStack newStack)
+        {
+            if (_invIndexToUiIndex == null) return;
+            if (_invIndexToUiIndex.TryGetValue(inventoryIndex, out int uiIndex))
+                // используем состояние из Inventory чтобы быть уверенными в консистентности
+                _uiItemSlots[uiIndex].Refresh(_inventory.GetSlot(inventoryIndex));
+        }
+        #endregion
+
+        #region События в инвентаре
+        protected void SubscribeToInventoryEvents()
+        {
+            if (_inventory == null) return;
+            _inventory.Events.SlotChanged += OnInventorySlotChanged;
+        }
+        protected void UnsubscribeFromInventoryEvents()
+        {
+            if (_inventory == null) return;
+            _inventory.Events.SlotChanged -= OnInventorySlotChanged;
+        }
+        private void OnInventorySlotChanged(object sender, SlotChangedEventArgs args)
+        {
+            RefreshSlotByInventoryIndex(args.SlotIndex, args.NewValue);
+        }
+        #endregion
+
+        #region Методы доступа
         public virtual void Open()
         {
             gameObject.SetActive(true);
@@ -92,43 +139,6 @@ namespace World.Inventories
 
             return !isActive;
         }
-
-        protected virtual void RefreshAll()
-        {
-            if (_uiItemSlots == null || _inventory == null) return;
-            for (int i = 0; i < _uiItemSlots.Length; i++)
-            {
-                int invIndex = _inventoryIndices[i];
-                _uiItemSlots[i].Refresh(_inventory.GetSlot(invIndex));
-            }
-        }
-
-        /// <summary>Обновление слота по глобальному индексу (тот, который шлёт Inventory.Events).</summary>
-        protected virtual void RefreshSlotByInventoryIndex(int inventoryIndex, ItemStack newStack)
-        {
-            if (_invIndexToUiIndex == null) return;
-            if (_invIndexToUiIndex.TryGetValue(inventoryIndex, out int uiIndex))
-                // используем состояние из Inventory чтобы быть уверенными в консистентности
-                _uiItemSlots[uiIndex].Refresh(_inventory.GetSlot(inventoryIndex));
-        }
-
-        #region Events
-        protected void SubscribeToInventoryEvents()
-        {
-            if (_inventory == null) return;
-            _inventory.Events.SlotChanged += OnInventorySlotChanged;
-        }
-        protected void UnsubscribeFromInventoryEvents()
-        {
-            if (_inventory == null) return;
-            _inventory.Events.SlotChanged -= OnInventorySlotChanged;
-        }
-        private void OnInventorySlotChanged(object sender, SlotChangedEventArgs args)
-        {
-            RefreshSlotByInventoryIndex(args.SlotIndex, args.NewValue);
-        }
-        #endregion
-
         public virtual void Clear()
         {
             if (_uiItemSlots != null)
@@ -142,7 +152,6 @@ namespace World.Inventories
             _inventoryIndices = null;
             _invIndexToUiIndex = null;
         }
-
         public virtual void Dispose()
         {
             UnsubscribeFromInventoryEvents();
@@ -150,5 +159,6 @@ namespace World.Inventories
             if (gameObject != null)
                 Destroy(gameObject);
         }
+        #endregion
     }
 }
