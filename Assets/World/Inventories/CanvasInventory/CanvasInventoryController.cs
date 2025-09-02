@@ -29,7 +29,7 @@ namespace World.Inventories
         [SerializeField] private SpriteRenderer _itemOnRightHand;
         [SerializeField] private UIMask _uiMask;
 
-        private PlayerInventory _inventory;
+        private PlayerInventory _playerInventory;
         private IUIInventoryAccessor _foreignInventoryAccessor;
         private int _hotbarActiveIndex;
 
@@ -37,7 +37,7 @@ namespace World.Inventories
         {
             get
             {
-                return _inventory.HotbarIndexToSlot(_hotbarActiveIndex);
+                return _playerInventory.HotbarIndexToSlot(_hotbarActiveIndex);
             }
             set
             {
@@ -45,28 +45,28 @@ namespace World.Inventories
                 ChangeActiveItemInfoOnRightHand();
             }
         }
-        public ItemStack ActiveItemStack => _inventory.GetSlot(ActiveHotbarIndex);
+        public ItemStack ActiveItemStack => _playerInventory.GetSlot(ActiveHotbarIndex);
         public ItemInfo ActiveItemInfo => ActiveItemStack.Item?.GetItemInfo(_manager.ItemDatabase);
-        public PlayerInventory Inventory => _inventory;
+        public PlayerInventory Inventory => _playerInventory;
 
         private void Awake()
         {
-            _inventory = new PlayerInventory();
-            _hotbar.SetUp(_inventory);
-            _mainSlots.SetUp(_inventory);
+            _playerInventory = new PlayerInventory();
+            _hotbar.SetUp(_playerInventory);
+            _mainSlots.SetUp(_playerInventory);
             _blockPicker.OnBlockPickedChanged += HandleBlockPickedUpdate;
-            _inventory.Events.SlotChanged += HandleInventorySlotChanged;
+            _playerInventory.Events.SlotChanged += HandleInventorySlotChanged;
         }
         private void Start()
         {
-            _inventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(31), 100), out int remainder1);
-            _inventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(33), 100), out int remainder2);
+            _playerInventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(31), 100), out int remainder1);
+            _playerInventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(33), 100), out int remainder2);
             ActiveHotbarIndex = 0;
         }
         private void OnDestroy()
         {
             _blockPicker.OnBlockPickedChanged -= HandleBlockPickedUpdate;
-            _inventory.Events.SlotChanged -= HandleInventorySlotChanged;
+            _playerInventory.Events.SlotChanged -= HandleInventorySlotChanged;
             _hotbar.Dispose();
         }
         private void OnEnable()
@@ -97,7 +97,7 @@ namespace World.Inventories
         {
             ItemInfo newItemInfo = _manager.ItemDatabase.GetByBlockId(block.Id);
             ItemStack newItemStack = new ItemStack(newItemInfo, quantity: newItemInfo.MaxStack);
-            _inventory.Replace(ActiveHotbarIndex, newItemStack, out ItemStack old);
+            _playerInventory.Replace(ActiveHotbarIndex, newItemStack, out ItemStack old);
         }
         private void HandleInventorySlotChanged(object sender, SlotChangedEventArgs args)
         {
@@ -146,7 +146,7 @@ namespace World.Inventories
         {
             GameObject go = Instantiate(_craftingInventoryPrefab, _inventoryAlignmentTransform);
             UICraftingInventory component = go.GetComponent<UICraftingInventory>();
-            component.SetUp(_manager.ItemDatabase, _manager.ItemCategoryDatabase);
+            component.SetUp(_playerInventory, _manager.ItemDatabase, _manager.ItemCategoryDatabase);
             return component;
         }
         private void OpenForeignInventory(InputAction.CallbackContext context)
@@ -179,7 +179,7 @@ namespace World.Inventories
         }
         private void DropCurrentItem(InputAction.CallbackContext context)
         {
-            if (_inventory.TryRemove(ActiveHotbarIndex, 1, out ItemStack removed) && !removed.IsEmpty)
+            if (_playerInventory.TryRemove(ActiveHotbarIndex, 1, out ItemStack removed) && !removed.IsEmpty)
             {
                 for (int i = 0; i < removed.Quantity; i++)
                 {
@@ -221,7 +221,7 @@ namespace World.Inventories
 
         public bool TryCollect(ItemStack stack)
         {
-            return _inventory.TryAdd(stack, out int remainder);
+            return _playerInventory.TryAdd(stack, out int remainder);
         }
     }
 }

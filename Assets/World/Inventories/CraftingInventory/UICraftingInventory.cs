@@ -10,10 +10,40 @@ namespace World.Inventories
         [SerializeField] private Transform _requiredItemsParent;
         [SerializeField] private GameObject _requiredItemPrefab;
 
-        public void SetUp(ItemDatabase itemDatabase, ItemCategoryDatabase itemCategoryDatabase)
+        private PlayerInventory _playerInventory;
+
+        private void OnEnable()
         {
+            _categorySlotsDrawer.OnSlotCreated += OnSlotCreated;
+            _categorySlotsDrawer.OnSlotDestroy += OnSlotDestroy;
+        }
+        private void OnDisable()
+        {
+            _categorySlotsDrawer.OnSlotCreated -= OnSlotCreated;
+            _categorySlotsDrawer.OnSlotDestroy -= OnSlotDestroy;
+        }
+
+        public void SetUp(PlayerInventory inventory, ItemDatabase itemDatabase, ItemCategoryDatabase itemCategoryDatabase)
+        {
+            _playerInventory = inventory;
             _categorySlotsDrawer.SetUp(itemDatabase);
             _categoriesDrawer.SetUp(itemCategoryDatabase);
+        }
+
+        public void OnSlotCreated(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
+        {
+            drawer.DisableCount();
+            dragger.SetSlotContext(new SlotContext(drawer.Stack, SlotType.Preview));
+            dragger.DisableDragging();
+            dragger.OnClick += OnSlotClicked;
+        }
+        public void OnSlotDestroy(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
+        {
+            dragger.OnClick -= OnSlotClicked;
+        }
+        public void OnSlotClicked(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
+        {
+            Debug.Log($"Clicked to slot {drawer.Stack}");
         }
 
         public void Open()
@@ -33,8 +63,8 @@ namespace World.Inventories
 
         public void Dispose()
         {
-            _categoriesDrawer.Dispose();
             _categorySlotsDrawer.Dispose();
+            _categoriesDrawer.Dispose();
             Destroy(gameObject);
         }
     }

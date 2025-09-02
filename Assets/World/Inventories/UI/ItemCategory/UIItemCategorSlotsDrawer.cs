@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using World.Items;
 
@@ -14,6 +13,9 @@ namespace World.Inventories
 
         private ItemDatabase _itemDatabase;
         private List<GameObject> _instantiatedSlots = new();
+
+        public event Action<UIItemSlotDrawer, UIItemSlotDragger> OnSlotCreated;
+        public event Action<UIItemSlotDrawer, UIItemSlotDragger> OnSlotDestroy;
 
         private void OnEnable()
         {
@@ -47,12 +49,11 @@ namespace World.Inventories
                     var drawer = go.GetComponent<UIItemSlotDrawer>();
                     var stack = new ItemStack(info, info.MaxStack);
                     drawer.SetUp(stack, _itemDatabase);
-                    drawer.DisableCount();
 
                     // Подписываемся на событие перетаскивания с креативного инвентаря
                     var dragger = go.GetComponent<UIItemSlotDragger>();
-                    dragger.SetSlotContext(new SlotContext(stack));
-                    dragger.DisableDragHandlers();
+
+                    OnSlotCreated?.Invoke(drawer, dragger);
 
                     _instantiatedSlots.Add(go);
                 }
@@ -62,7 +63,10 @@ namespace World.Inventories
         public void DestroyCategorySlots()
         {
             foreach (var go in _instantiatedSlots)
+            {
+                OnSlotDestroy?.Invoke(go.GetComponent<UIItemSlotDrawer>(), go.GetComponent<UIItemSlotDragger>());
                 Destroy(go);
+            }
             _instantiatedSlots.Clear();
         }
         public void Dispose()

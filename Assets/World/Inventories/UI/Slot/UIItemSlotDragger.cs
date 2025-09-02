@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -6,8 +7,9 @@ namespace World.Inventories
 {
     public enum SlotType
     {
+        Default,
         Creative,
-        Default
+        Preview
     }
 
     public class SlotContext
@@ -23,10 +25,10 @@ namespace World.Inventories
             SlotIndex = slotIndex;
             SlotType = SlotType.Default;
         }
-        public SlotContext(ItemStack stack)
+        public SlotContext(ItemStack stack, SlotType slotType)
         {
             ItemStack = stack;
-            SlotType = SlotType.Creative;
+            SlotType = slotType;
         }
     }
 
@@ -48,9 +50,13 @@ namespace World.Inventories
         private RectTransform _parentCanvasRT => _parentCanvas.transform as RectTransform;
         private RectTransform _rectTransform;
         private SlotContext _currentSlotContext;
+        private bool _dragging = true;
         private bool _dragHandlersEnabled = true;
 
+        public bool DraggingDisabled => !_dragging;
         public SlotContext CurrentSlotContext => _currentSlotContext;
+
+        public event Action<UIItemSlotDrawer, UIItemSlotDragger> OnClick;
 
         private void Awake()
         {
@@ -81,11 +87,15 @@ namespace World.Inventories
         #region Pointer handlers
         public void OnDrop(PointerEventData eventData)
         {
-            if (DraggingByClick) return;
+            if (DraggingByClick || _dragging == false) return;
             ProcessDrop(eventData.pointerDrag?.GetComponent<UIItemSlotDragger>());
         }
         public void OnPointerClick(PointerEventData eventData)
         {
+            OnClick?.Invoke(_currentDrawer, this);
+
+            if (_dragging == false) return;
+
             if (!DraggingByClick)
             {
                 _dragHandlers.enabled = false;
@@ -136,7 +146,7 @@ namespace World.Inventories
             var fromContext = fromDragger.CurrentSlotContext;
             var toContext = this.CurrentSlotContext;
 
-            if (fromContext == null || toContext == null) return;
+            if (fromContext == null || toContext == null || fromDragger.DraggingDisabled) return;
 
             // При перемещении из обычного слота в креативный слот — УДАЛЕНИЕ
             if (fromContext.SlotType == SlotType.Default && toContext.SlotType == SlotType.Creative)
@@ -165,6 +175,11 @@ namespace World.Inventories
         {
             _dragHandlers.enabled = false;
             _dragHandlersEnabled = false;
+        }
+        public void DisableDragging()
+        {
+            DisableDragHandlers();
+            _dragging = false;
         }
 
         private void UpdateDraggedPosition(Vector3 position)
