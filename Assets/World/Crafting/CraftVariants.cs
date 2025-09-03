@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using World.Inventories;
 
@@ -33,6 +34,9 @@ namespace World.Crafting
     [Serializable]
     public class CraftVariant
     {
+        [Tooltip("Идентификатор варианта крафта этого предмета.")]
+        public byte Id;
+
         [Tooltip("Тип инвентаря в котором будут происходить данные крафты.")]
         public InventoryType InventoryType;
 
@@ -48,6 +52,8 @@ namespace World.Crafting
 
         [Tooltip("Список возможных крафтов для этого предмета")]
         public List<CraftVariant> Variants;
+
+        public CraftVariant GetVariantById(int variantId) => Variants.First(v => v.Id == variantId);
 
         public IEnumerator<CraftVariant> GetEnumerator() => Variants.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

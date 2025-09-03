@@ -21,9 +21,11 @@ namespace World.Inventories
         public ItemStack(ItemInfo info, int quantity = 1) : this(new ItemInstance(info.Id), info.MaxStack, quantity) { }
         public ItemStack(ItemInstance item, int maxStack, int quantity = 1)
         {
+            if (quantity > maxStack) throw new ArgumentOutOfRangeException("Попытка создать ItemStack где Quantity уже больше чем MaxStack!");
+
             if (item == null)
             {
-                if (quantity != 0) throw new InvalidOperationException("Нельзя создать непустой стек с null item.");
+                if (quantity != 0) throw new InvalidOperationException("Нельзя создать непустой ItemStack с null item!");
                 Item = null;
                 Quantity = 0;
                 MaxStack = 0;
@@ -47,19 +49,26 @@ namespace World.Inventories
 
         public int Add(int amount)
         {
-            if (amount <= 0 || Item == null) return 0;
-            int can = Math.Min(amount, MaxStack - Quantity);
-            Quantity += can;
-            return can;
+            if (amount <= 0 || IsEmpty) return 0;
+            int added = Math.Min(amount, MaxStack - Quantity);
+            Quantity += added;
+            return added;
         }
 
         public int Remove(int amount)
         {
             if (amount <= 0 || IsEmpty) return 0;
-            int rem = Math.Min(amount, Quantity);
-            Quantity -= rem;
+            int removed = Math.Min(amount, Quantity);
+            Quantity -= removed;
             if (Quantity == 0) Item = null;
-            return rem;
+            return removed;
+        }
+
+        public void MakeEmpty()
+        {
+            Item = null;
+            MaxStack = 0;
+            Quantity = 0;
         }
 
         public bool Equals(ItemStack other)
@@ -72,6 +81,6 @@ namespace World.Inventories
             );
         }
 
-        public override string ToString() => IsEmpty ? "(пусто)" : $"{Item?.Id} x{Quantity}";
+        public override string ToString() => IsEmpty ? "пустой" : $"Item({Item?.Id},Max={MaxStack},x={Quantity})";
     }
 }

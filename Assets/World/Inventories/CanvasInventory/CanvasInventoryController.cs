@@ -59,8 +59,8 @@ namespace World.Inventories
         }
         private void Start()
         {
-            _playerInventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(31), 100), out int remainder1);
-            _playerInventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(33), 100), out int remainder2);
+            _playerInventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(31), 100));
+            _playerInventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(33), 100));
             ActiveHotbarIndex = 0;
         }
         private void OnDestroy()
@@ -230,7 +230,7 @@ namespace World.Inventories
 
         public bool TryCollect(ItemStack stack)
         {
-            return _playerInventory.TryAdd(stack, out int remainder);
+            return _playerInventory.TryAdd(stack);
         }
     }
 }

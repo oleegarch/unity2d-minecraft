@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using UnityEngine;
+using World.Items;
+using Debug = UnityEngine.Debug;
 
 namespace World.Inventories
 {
@@ -42,11 +46,20 @@ namespace World.Inventories
         #endregion
 
         #region Получение
+        /// <summary>
+        /// Возвращает копию конкретного слота по индексу.
+        /// </summary>
+        public ItemStack GetSlot(int index) => slots[EnsureIndexInRange(index)]?.Clone() ?? ItemStack.Empty;
+
+        /// <summary>
+        /// Возвращает поверхностную копию всех слотов (каждый ItemStack клонируется).
+        /// </summary>
         public IReadOnlyList<ItemStack> GetAllSlots() => slots.Select(s => s?.Clone() ?? ItemStack.Empty).ToArray();
 
+        /// <summary>
+        /// Возвращает только непустые слоты (каждый ItemStack клонируется).
+        /// </summary>
         public IReadOnlyList<ItemStack> GetNonEmptySlots() => slots.Where(s => !s.IsEmpty).Select(s => s.Clone()).ToArray();
-
-        public ItemStack GetSlot(int index) => slots[EnsureIndexInRange(index)]?.Clone() ?? ItemStack.Empty;
         #endregion
 
         #region Проверки наличия
@@ -56,7 +69,7 @@ namespace World.Inventories
         public virtual bool Has(ushort itemId, int needed, int slotIndex)
         {
             EnsureIndexInRange(slotIndex);
-            
+
             var slot = slots[slotIndex];
             if (slot.IsEmpty || slot.Item == null) return false;
 
@@ -99,42 +112,39 @@ namespace World.Inventories
         #region Добавление
         /// <summary>
         /// Попытаться добавить стек: сначала заполняем существующие стеки того же типа, затем используем пустые слоты.
-        /// remainder — количество, которое не удалось разместить. Возвращает true, если всё поместилось.
+        /// ВАЖНО:
+        /// Модифицирует стек переданный в аргументах!
+        /// Если разместить всё не удалось — стек в аргументах будет содержать количество предметов которые остались.
         /// </summary>
-        public virtual bool TryAdd(ItemStack stack, out int remainder)
+        public virtual bool TryAdd(ItemStack stack)
         {
             EnsureValidStack(stack);
 
-            int toPlace = stack.Quantity;
-            var itemId = stack.Item.Id;
-
             // Заполняем существующие стеки
-            for (int i = 0; i < slots.Length && toPlace > 0; i++)
+            for (int i = 0; i < slots.Length && stack.Quantity > 0; i++)
             {
-                var s = slots[i];
-                if (!s.IsEmpty && s.Item != null && s.Item.Id == itemId)
+                var slot = slots[i];
+                if (!slot.IsEmpty && slot.CanStackWith(stack))
                 {
-                    int added = s.Add(toPlace);
+                    int removed = stack.Remove(Math.Min(stack.Quantity, slot.MaxStack));
+                    int added = slot.Add(removed);
                     if (added > 0) Events.InvokeSlotChanged(i, slots[i].Clone());
-                    toPlace -= added;
                 }
             }
 
             // Используем пустые слоты
-            for (int i = 0; i < slots.Length && toPlace > 0; i++)
+            for (int i = 0; i < slots.Length && stack.Quantity > 0; i++)
             {
-                var s = slots[i];
-                if (s.IsEmpty)
+                var slot = slots[i];
+                if (slot.IsEmpty)
                 {
-                    int put = Math.Min(toPlace, stack.MaxStack);
-                    slots[i] = new ItemStack(stack.Item.Clone(), stack.MaxStack, put);
-                    Events.InvokeSlotChanged(i, slots[i].Clone());
-                    toPlace -= put;
+                    slots[i] = stack.Clone();
+                    stack.MakeEmpty();
+                    Events.InvokeSlotChanged(i, slot.Clone());
                 }
             }
 
-            remainder = toPlace;
-            return remainder == 0;
+            return stack.Quantity == 0;
         }
         #endregion
 
@@ -165,6 +175,9 @@ namespace World.Inventories
 
             return false;
         }
+        /// <summary>
+        /// Пытается удалить указанный слот целиком. Возвращает true и отдаёт удалённый стек в out-параметре.
+        /// </summary>
         public virtual bool Remove(int slotIndex, out ItemStack removed)
         {
             EnsureIndexInRange(slotIndex);
@@ -177,6 +190,54 @@ namespace World.Inventories
             Events.InvokeSlotChanged(slotIndex, slots[slotIndex].Clone());
 
             return true;
+        }
+        #endregion
+
+        #region Забрать
+        /// <summary>
+        /// Пытается забрать <paramref name="stack.Quantity"/> предметов типа <paramref name="stack.Item"/> из инвентаря.
+        /// Если предметов не хватает — ничего не заберёт и вернёт false.
+        /// </summary>
+        public virtual bool Take(ushort itemId, int needed)
+        {
+            // Сначала проверяем, что предметов хватает во всём инвентаре
+            if (!Has(itemId, needed))
+                return false;
+
+            int removedQuantity = 0;
+
+            for (int slotIndex = 0; slotIndex < slots.Length && needed > 0; slotIndex++)
+            {
+                var slot = slots[slotIndex];
+                if (!slot.IsEmpty && slot.Item != null && slot.Item.Id == itemId)
+                {
+                    int toRemove = Math.Min(slot.Quantity, needed);
+                    int removedCount = slot.Remove(toRemove);
+
+                    if (removedCount > 0)
+                    {
+                        removedQuantity += removedCount;
+
+                        if (slot.IsEmpty)
+                            slots[slotIndex] = ItemStack.Empty;
+
+                        Events.InvokeSlotChanged(slotIndex, slots[slotIndex].Clone());
+
+                        needed -= removedCount;
+                    }
+                }
+            }
+
+            return true;
+        }
+        public bool Take(ItemStack stack)
+        {
+            EnsureValidStack(stack);
+
+            int needed = stack.Quantity;
+            var itemId = stack.Item.Id;
+
+            return Take(itemId, needed);
         }
         #endregion
 

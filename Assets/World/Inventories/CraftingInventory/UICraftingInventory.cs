@@ -1,4 +1,5 @@
 using UnityEngine;
+using World.Crafting;
 using World.Items;
 
 namespace World.Inventories
@@ -11,6 +12,7 @@ namespace World.Inventories
         [SerializeField] private GameObject _requiredItemPrefab;
 
         private PlayerInventory _playerInventory;
+        private CraftSystem _craftingSystem;
 
         private void OnEnable()
         {
@@ -25,6 +27,7 @@ namespace World.Inventories
 
         public void SetUp(PlayerInventory inventory, ItemDatabase itemDatabase, ItemCategoryDatabase itemCategoryDatabase)
         {
+            _craftingSystem = new CraftingTable(itemDatabase);
             _playerInventory = inventory;
             _categorySlotsDrawer.SetUp(itemDatabase);
             _categoriesDrawer.SetUp(itemCategoryDatabase);

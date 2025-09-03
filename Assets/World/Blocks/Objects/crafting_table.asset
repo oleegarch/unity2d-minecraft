@@ -38,5 +38,5 @@ MonoBehaviour:
   HasCustomCollider: 0
   BreakableByGravity: 0
   Inventory:
-    Type: 1
+    Type: 2
     SlotCount: 0

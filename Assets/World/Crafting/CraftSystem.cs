@@ -6,14 +6,26 @@ namespace World.Crafting
 {
     // Система крафта предметов
     // Она позволяет работать не только с верстаком, но и с печками, наковальнями и другими рабочими блоками.
-    public class CraftSystem
+    public abstract class CraftSystem
     {
-        private ItemDatabase _itemDatabase;
+        protected ItemDatabase _itemDatabase;
 
-        public CraftSystem(ItemDatabase itemDatabase)
-        {
-            _itemDatabase = itemDatabase;
-        }
+        // public abstract bool Craft(Inventory inventory, ItemInfo item, byte variantId)
+        // {
+        //     CraftVariant variant = item.CraftVariants.GetVariantById(variantId);
+
+        //     if (variant == null || !CheckAvailabilityVariant(variant)) return false;
+
+        //     foreach (CraftIngredient ingredient in variant.Ingredients)
+        //     {
+        //         TakeIngredient(inventory, ingredient);
+        //     }
+        // }
+
+        // public bool TakeIngredient(Inventory inventory, CraftIngredient ingredient)
+        // {
+        //     inventory.TryRemove();
+        // }
 
         // Отфильтровать варианты крафтов и вернуть те которые можно скрафтить
         public List<CraftVariant> SelectAvailabilityVariants(Inventory inventory, CraftVariants variants)

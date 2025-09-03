@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Category: 2
   Sprite: {fileID: 21300000, guid: badc726a30b3160408e1c88df302c8be, type: 3}
-  Title: Functional Blocks
+  Title: "\u0424\u0443\u043D\u043A\u0446\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0435
+    \u0431\u043B\u043E\u043A\u0438"
+  IsCategoryForBlocks: 1
