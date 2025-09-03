@@ -14,5 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 21
   Name: stone_diamond_ore
+  Title: "\u041A\u0430\u043C\u0435\u043D\u043D\u0430\u044F \u0430\u043B\u043C\u0430\u0437\u043D\u0430\u044F
+    \u0440\u0443\u0434\u0430"
   BlockId: 21
   Sprite: {fileID: 21300000, guid: 76eb8370d93722948b9f1b8f466c7b76, type: 3}
+  Category: 0
+  MaxStack: 100
+  CraftVariants:
+    ItemType: 
+    Variants: []

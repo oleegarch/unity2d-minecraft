@@ -14,5 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 10
   Name: deepslate_redstone_ore
+  Title: "\u0413\u043B\u0443\u0431\u0438\u043D\u043D\u0430\u044F \u0440\u0435\u0434\u0441\u0442\u043E\u0443\u043D\u043E\u0432\u0430\u044F
+    \u0440\u0443\u0434\u0430"
   BlockId: 10
   Sprite: {fileID: 21300000, guid: 50ebc2c45be29e040b650034320abf27, type: 3}
+  Category: 0
+  MaxStack: 100
+  CraftVariants:
+    ItemType: 
+    Variants: []

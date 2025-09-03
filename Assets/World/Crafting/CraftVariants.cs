@@ -40,6 +40,9 @@ namespace World.Crafting
         [Tooltip("Тип инвентаря в котором будут происходить данные крафты.")]
         public InventoryType InventoryType;
 
+        [Tooltip("Количество предметов на выходе с этого крафта.")]
+        public int ReturnCount;
+
         [Tooltip("Какие ингредие́нты нужны для крафта предмета")]
         public List<CraftIngredient> Ingredients;
     }
@@ -53,6 +56,7 @@ namespace World.Crafting
         [Tooltip("Список возможных крафтов для этого предмета")]
         public List<CraftVariant> Variants;
 
+        public List<CraftVariant> GetVariants(InventoryType inventoryType) => Variants.Where(v => v.InventoryType == inventoryType).ToList();
         public CraftVariant GetVariantById(int variantId) => Variants.First(v => v.Id == variantId);
 
         public IEnumerator<CraftVariant> GetEnumerator() => Variants.GetEnumerator();

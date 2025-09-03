@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using World.Items;
+using World.UI;
 
 namespace World.Inventories
 {
@@ -11,7 +12,7 @@ namespace World.Inventories
         [SerializeField] private Sprite _uiSlotSprite;
         [SerializeField] private Sprite _uiSlotActiveSprite;
         [SerializeField] private Image _uiSlotImage;
-        [SerializeField] private UIStackSlotDrawer _stackDrawer;
+        [SerializeField] private UIImageWithLabel _stackDrawer;
 
         [NonSerialized] public ItemStack Stack;
         [NonSerialized] public ItemDatabase ItemDatabase;
@@ -19,27 +20,32 @@ namespace World.Inventories
 
         public void SetUp(ItemStack stack, ItemDatabase itemDatabase)
         {
-            Stack = stack;
             ItemDatabase = itemDatabase;
-            Refresh();
+            Refresh(stack);
         }
         public void DisableCount()
         {
-            _stackDrawer.DisableCount();
+            _stackDrawer.DisableLabel();
         }
 
         public void Refresh(ItemStack stack)
         {
-            if (!Stack.Equals(stack))
+            if (Stack == null || !Stack.Equals(stack))
             {
                 Stack = stack;
-                Refresh();
+
+                if (!Stack.IsEmpty)
+                {
+                    ItemInfo info = ItemDatabase.Get(Stack.Item.Id);
+                    _stackDrawer.SetUp(info.Sprite, Stack.Quantity.ToString());
+                }
+                else
+                {
+                    _stackDrawer.SetUp(null, null);
+                }
+
+                SetActive(Active);
             }
-        }
-        public void Refresh()
-        {
-            _stackDrawer.SetUp(Stack, ItemDatabase);
-            SetActive(Active);
         }
 
         public void SetActive(bool isActive)
@@ -53,7 +59,6 @@ namespace World.Inventories
         {
             Stack = null;
             Active = false;
-            _stackDrawer.Dispose();
             Destroy(gameObject);
         }
     }

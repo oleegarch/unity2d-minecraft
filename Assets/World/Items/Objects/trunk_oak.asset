@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 28
   Name: trunk_oak
+  Title: "\u0411\u0440\u0435\u0432\u043D\u043E \u0434\u0443\u0431\u0430"
   BlockId: 28
   Sprite: {fileID: 21300000, guid: aba23e207dfc54a4097473b1e8487cdd, type: 3}
   Category: 1
   MaxStack: 100
+  CraftVariants:
+    ItemType: trunk
+    Variants: []

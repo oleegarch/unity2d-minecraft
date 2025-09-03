@@ -17,6 +17,11 @@ namespace World.Inventories
         /// <summary>Возвращает только непустые слоты (каждый ItemStack клонируется).</summary>
         public IReadOnlyList<ItemStack> GetNonEmptySlots();
 
+        /// <summary>Позволяет проверить наличие хотя бы одного пустого слота.</summary>
+        public bool HasEmptySlot { get; }
+        /// <summary>Проверяет наличие нескольких пустых слотов.</summary>
+        public bool HasEmptySlots(int slotsCount);
+
         /// <summary>Проверяет, содержит ли указанный слот как минимум запрошенное количество того же предмета.</summary>
         public bool Has(ushort itemId, int amount, int slotIndex);
         public bool Has(ItemStack requested, int slotIndex);

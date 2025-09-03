@@ -1,4 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using World.UI;
 using World.Crafting;
 using World.Items;
 
@@ -8,11 +11,14 @@ namespace World.Inventories
     {
         [SerializeField] private UIItemCategoriesDrawer _categoriesDrawer;
         [SerializeField] private UIItemCategorSlotsDrawer _categorySlotsDrawer;
-        [SerializeField] private Transform _requiredItemsParent;
-        [SerializeField] private GameObject _requiredItemPrefab;
+        [SerializeField] private Image _itemSelectedImage;
+        [SerializeField] private UICraftingRequiredItems _requiredItems;
+        [SerializeField] private UIImageWithLabel _itemSlotResultDrawer;
+        [SerializeField] private UIItemSlotDragger _itemSlotResultDragger;
 
+        private CraftSystem _craftSystem;
+        private ItemDatabase _itemDatabase;
         private PlayerInventory _playerInventory;
-        private CraftSystem _craftingSystem;
 
         private void OnEnable()
         {
@@ -27,7 +33,8 @@ namespace World.Inventories
 
         public void SetUp(PlayerInventory inventory, ItemDatabase itemDatabase, ItemCategoryDatabase itemCategoryDatabase)
         {
-            _craftingSystem = new CraftingTable(itemDatabase);
+            _craftSystem = new CraftingTable(itemDatabase, InventoryType.CraftingTable);
+            _itemDatabase = itemDatabase;
             _playerInventory = inventory;
             _categorySlotsDrawer.SetUp(itemDatabase);
             _categoriesDrawer.SetUp(itemCategoryDatabase);
@@ -46,7 +53,18 @@ namespace World.Inventories
         }
         public void OnSlotClicked(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
         {
-            Debug.Log($"Clicked to slot {drawer.Stack}");
+            ItemInfo creatingItem = _itemDatabase.Get(dragger.CurrentSlotContext.ItemStack.Item.Id);
+            List<CraftVariant> availableVariants = _craftSystem.SelectAvailabilityVariants(_playerInventory, creatingItem.CraftVariants);
+            _itemSelectedImage.sprite = creatingItem.Sprite;
+            _requiredItems.SetUp(creatingItem, _itemDatabase, _craftSystem);
+
+            if (availableVariants.Count > 0)
+            {
+
+            }
+            else
+            {
+            }
         }
 
         public void Open()

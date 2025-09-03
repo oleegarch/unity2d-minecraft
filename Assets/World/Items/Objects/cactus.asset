@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 1
   Name: cactus
+  Title: "\u041A\u0430\u043A\u0442\u0443\u0441"
   BlockId: 1
   Sprite: {fileID: 21300000, guid: cbd5b5c048c7a014593b9f4aaa99e213, type: 3}
   Category: 1
   MaxStack: 100
+  CraftVariants:
+    ItemType: 
+    Variants: []

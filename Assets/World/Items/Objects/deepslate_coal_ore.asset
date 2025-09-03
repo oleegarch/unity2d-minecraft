@@ -14,5 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 3
   Name: deepslate_coal_ore
+  Title: "\u0413\u043B\u0443\u0431\u0438\u043D\u043D\u0430\u044F \u0443\u0433\u043E\u043B\u044C\u043D\u0430\u044F
+    \u0440\u0443\u0434\u0430"
   BlockId: 3
   Sprite: {fileID: 21300000, guid: 49e1526699835c147a9cbe98b10ad811, type: 3}
+  Category: 0
+  MaxStack: 100
+  CraftVariants:
+    ItemType: 
+    Variants: []

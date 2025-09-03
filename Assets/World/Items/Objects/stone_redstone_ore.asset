@@ -14,5 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 26
   Name: stone_redstone_ore
+  Title: "\u041A\u0430\u043C\u0435\u043D\u043D\u0430\u044F \u0440\u0435\u0434\u0441\u0442\u043E\u0443\u043D\u043E\u0432\u0430\u044F
+    \u0440\u0443\u0434\u0430"
   BlockId: 26
   Sprite: {fileID: 21300000, guid: d37410246e322b54093155aa4dbe7f0b, type: 3}
+  Category: 0
+  MaxStack: 100
+  CraftVariants:
+    ItemType: 
+    Variants: []

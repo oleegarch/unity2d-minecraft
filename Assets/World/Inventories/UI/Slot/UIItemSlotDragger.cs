@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using World.Items;
+using World.UI;
 
 namespace World.Inventories
 {
@@ -37,13 +39,13 @@ namespace World.Inventories
         private static UIItemSlotDragger _draggingStartedByClickFromSlotDragger;
         private static GameObject _draggingStackGO;
         private static RectTransform _draggingStackRT;
-        private static UIStackSlotDrawer _draggingStackDrawer;
+        private static UIImageWithLabel _draggingStackDrawer;
         public static bool DraggingByClick => _draggingStartedByClickFromSlotDragger != null;
-        public static ItemStack DraggingStack => _draggingStackDrawer?.Stack;
+        public static ItemStack DraggingStack;
 
         [SerializeField] private UIItemSlotDragHandlers _dragHandlers;
         [SerializeField] private GameObject _draggingStackPrefab;
-        [SerializeField] private GameObject _currentStackGO;
+        [SerializeField] private GameObject _currentItemStackGameObject;
 
         private UIItemSlotDrawer _currentDrawer;
         private Canvas _parentCanvas;
@@ -119,10 +121,14 @@ namespace World.Inventories
             DestroyDraggingStack();
             ToggleCurrentStackDrawer(false);
 
+            
+            DraggingStack = _currentDrawer.Stack.Clone();
+            ItemInfo draggingInfo = _currentDrawer.ItemDatabase.Get(DraggingStack.Item.Id);
+
             _draggingStackGO = Instantiate(_draggingStackPrefab, _rectTransform.position, Quaternion.identity, _parentCanvas.transform);
             _draggingStackRT = _draggingStackGO.GetComponent<RectTransform>();
-            _draggingStackDrawer = _draggingStackGO.GetComponent<UIStackSlotDrawer>();
-            _draggingStackDrawer.SetUp(_currentDrawer.Stack, _currentDrawer.ItemDatabase);
+            _draggingStackDrawer = _draggingStackGO.GetComponent<UIImageWithLabel>();
+            _draggingStackDrawer.SetUp(draggingInfo.Sprite, DraggingStack.Quantity.ToString());
 
             UpdateDraggedPosition(position);
         }
@@ -198,8 +204,8 @@ namespace World.Inventories
 
         private void ToggleCurrentStackDrawer(bool active)
         {
-            if (_currentStackGO != null)
-                _currentStackGO.SetActive(active);
+            if (_currentItemStackGameObject != null)
+                _currentItemStackGameObject.SetActive(active);
         }
 
         private void DestroyDraggingStack()

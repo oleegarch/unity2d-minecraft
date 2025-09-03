@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07d9a1f7a0721184a9b4c66e2a81fc6e, type: 3}
-  m_Name: chest
+  m_Name: planks_oak
   m_EditorClassIdentifier: 
-  Id: 29
-  Name: chest
-  Title: "\u0421\u0443\u043D\u0434\u0443\u043A"
-  BlockId: 29
-  Sprite: {fileID: 21300000, guid: c0a92b7a6c40f764e978953cfd1f5085, type: 3}
-  Category: 2
+  Id: 48
+  Name: planks_oak
+  Title: "\u0414\u0443\u0431\u043E\u0432\u0430\u044F \u0434\u043E\u0441\u043A\u0430"
+  BlockId: 48
+  Sprite: {fileID: 21300000, guid: da2c867a06ecdfc4a8e5241fff9e27dd, type: 3}
+  Category: 0
   MaxStack: 100
   CraftVariants:
-    ItemType: 
+    ItemType: planks
     Variants:
     - Id: 0
       InventoryType: 2
-      ReturnCount: 1
+      ReturnCount: 4
       Ingredients:
-      - ItemName: 
-        ItemType: planks
-        Quantity: 8
-        Duration: 0.2
-        Type: 1
+      - ItemName: trunk_oak
+        ItemType: 
+        Quantity: 1
+        Duration: 0.1
+        Type: 0

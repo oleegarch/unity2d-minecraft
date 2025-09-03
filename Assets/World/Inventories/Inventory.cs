@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using UnityEngine;
-using World.Items;
-using Debug = UnityEngine.Debug;
 
 namespace World.Inventories
 {
@@ -18,10 +14,10 @@ namespace World.Inventories
         protected readonly ItemStack[] slots;
 
         /// <inheritdoc/>
-        public int Capacity => slots.Length;
+        public InventoryEvents Events { get; }
 
         /// <inheritdoc/>
-        public InventoryEvents Events { get; }
+        public int Capacity => slots.Length;
 
         protected Inventory(int capacity)
         {
@@ -63,6 +59,31 @@ namespace World.Inventories
         #endregion
 
         #region Проверки наличия
+        /// <inheritdoc/>
+        public bool HasEmptySlot
+        {
+            get
+            {
+                foreach (var slot in slots)
+                    if (slot.IsEmpty) return true;
+
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public bool HasEmptySlots(int slotsCount) => GetEmptySlotsCount() >= slotsCount;
+
+        /// Получить количество пустых слотов в инвентаре
+        public int GetEmptySlotsCount()
+        {
+            int emptyCount = 0;
+            foreach (var slot in slots)
+                if (slot.IsEmpty) emptyCount++;
+
+            return emptyCount;
+        }
+
         /// <summary>
         /// Проверяет, что конкретный слот содержит тот же предмет и как минимум запрошенное количество.
         /// </summary>

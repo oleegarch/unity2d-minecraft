@@ -14,5 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 25
   Name: stone_lapis_ore
+  Title: "\u041A\u0430\u043C\u0435\u043D\u043D\u0430\u044F \u043B\u0430\u0437\u0443\u0440\u0438\u0442\u043E\u0432\u0430\u044F
+    \u0440\u0443\u0434\u0430"
   BlockId: 25
   Sprite: {fileID: 21300000, guid: 850b56187c1b3824e913b6ac47b83ea8, type: 3}
+  Category: 0
+  MaxStack: 100
+  CraftVariants:
+    ItemType: 
+    Variants: []

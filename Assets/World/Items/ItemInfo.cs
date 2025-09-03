@@ -12,6 +12,9 @@ namespace World.Items
         [Tooltip("Имя предмета для удобной идентификации.")]
         public string Name;
 
+        [Tooltip("Название предмета который видит пользователь.")]
+        public string Title;
+
         [Tooltip("Какой блок относится к этому предмету. Его Id.")]
         public ushort BlockId;
 

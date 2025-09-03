@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using World.Items;
 using World.Inventories;
+using System.Linq;
 
 namespace World.Crafting
 {
@@ -9,24 +11,56 @@ namespace World.Crafting
     public abstract class CraftSystem
     {
         protected ItemDatabase _itemDatabase;
+        protected InventoryType _inventoryType;
+        public InventoryType InventoryType => _inventoryType;
 
-        // public abstract bool Craft(Inventory inventory, ItemInfo item, byte variantId)
-        // {
-        //     CraftVariant variant = item.CraftVariants.GetVariantById(variantId);
+        // Абстрактный метод для крафта конкретного предмета по определённому варианту крафта
+        public abstract bool Craft(Inventory inventory, Inventory returnInventory, ItemInfo item, byte variantId);
 
-        //     if (variant == null || !CheckAvailabilityVariant(variant)) return false;
+        #region Забрать ингредиенты
+        // Забрать все ингредиенты для крафта с инвентаря по конкретному варианту крафта предварительно проверив их наличие
+        public bool TakeIngredients(Inventory inventory, CraftVariant variant)
+        {
+            if (!CheckAvailabilityVariant(inventory, variant)) return false;
 
-        //     foreach (CraftIngredient ingredient in variant.Ingredients)
-        //     {
-        //         TakeIngredient(inventory, ingredient);
-        //     }
-        // }
+            foreach (CraftIngredient ingredient in variant.Ingredients)
+            {
+                if (!TakeIngredient(inventory, ingredient))
+                    return false;
+            }
 
-        // public bool TakeIngredient(Inventory inventory, CraftIngredient ingredient)
-        // {
-        //     inventory.TryRemove();
-        // }
+            return true;
+        }
+        // Забрать ингредиент для крафта с инвентаря
+        public bool TakeIngredient(Inventory inventory, CraftIngredient ingredient)
+        {
+            ushort itemId = _itemDatabase.GetId(ingredient.ItemName);
 
+            switch (ingredient.Type)
+            {
+                case CraftIngredientType.ExactlyItem:
+                    {
+                        return inventory.Take(itemId, ingredient.Quantity);
+                    }
+                case CraftIngredientType.TypeItem:
+                    {
+                        List<ItemInfo> sameType = GetItemsWithSameCraftingType(ingredient.ItemType);
+                        foreach (ItemInfo item in sameType)
+                        {
+                            if (inventory.Take(item.Id, ingredient.Quantity))
+                                return true;
+                        }
+                        return false;
+                    }
+                default:
+                    {
+                        throw new NotImplementedException($"The TakeGradient method is not implemented for CraftIngredientType=={ingredient.Type.ToString()}");
+                    }
+            }
+        }
+        #endregion
+
+        #region Проверка наличия
         // Отфильтровать варианты крафтов и вернуть те которые можно скрафтить
         public List<CraftVariant> SelectAvailabilityVariants(Inventory inventory, CraftVariants variants)
         {
@@ -46,11 +80,41 @@ namespace World.Crafting
         {
             foreach (var ingredient in variant.Ingredients)
             {
-                if (!inventory.Has(_itemDatabase.GetId(ingredient.ItemName), ingredient.Quantity))
-                    return false;
+                switch (ingredient.Type)
+                {
+                    case CraftIngredientType.ExactlyItem:
+                        {
+                            if (!inventory.Has(_itemDatabase.GetId(ingredient.ItemName), ingredient.Quantity))
+                                return false;
+                        }
+                        break;
+                    case CraftIngredientType.TypeItem:
+                        {
+                            List<ItemInfo> sameType = GetItemsWithSameCraftingType(ingredient.ItemType);
+                            foreach (ItemInfo item in sameType)
+                            {
+                                if (!inventory.Has(item.Id, ingredient.Quantity))
+                                    return false;
+                            }
+                        }
+                        break;
+                    default:
+                        {
+                            throw new NotImplementedException($"The CheckAvailabilityVariant method is not implemented for CraftIngredientType=={ingredient.Type.ToString()}");
+                        }
+                }
             }
 
             return true;
         }
+        #endregion
+
+        #region Хелперы
+        // Вернуть предметы с таким же типом крафта
+        public List<ItemInfo> GetItemsWithSameCraftingType(string craftingType)
+        {
+            return _itemDatabase.items.Where(item => item.CraftVariants.ItemType == craftingType).ToList();
+        }
+        #endregion
     }
 }

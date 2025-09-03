@@ -14,5 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 2
   Name: deepslate
+  Title: "\u0413\u043B\u0443\u0431\u0438\u043D\u043D\u044B\u0439 \u043A\u0430\u043C\u0435\u043D\u044C"
   BlockId: 2
   Sprite: {fileID: 21300000, guid: 13f5f0df4c5c25a45a691d4113b91a69, type: 3}
+  Category: 0
+  MaxStack: 100
+  CraftVariants:
+    ItemType: stone
+    Variants: []

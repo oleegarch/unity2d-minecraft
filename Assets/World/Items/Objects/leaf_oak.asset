@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 15
   Name: leaf_oak
+  Title: "\u041B\u0438\u0441\u0442\u0432\u0430 \u0434\u0443\u0431\u0430"
   BlockId: 15
   Sprite: {fileID: 21300000, guid: 4f55e2037fdce5042b4b54297ad571ba, type: 3}
   Category: 1
   MaxStack: 100
+  CraftVariants:
+    ItemType: 
+    Variants: []

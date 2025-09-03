@@ -14,6 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: 36
   Name: glass_gray
+  Title: "\u0421\u0435\u0440\u043E\u0435 \u0441\u0442\u0435\u043A\u043B\u043E"
   BlockId: 36
   Sprite: {fileID: 21300000, guid: 3fe58c444b64b4c43b399fa7fc76b877, type: 3}
+  Category: 0
   MaxStack: 100
+  CraftVariants:
+    ItemType: glass
+    Variants: []
