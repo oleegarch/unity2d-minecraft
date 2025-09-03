@@ -58,7 +58,8 @@ namespace World.Inventories
         public bool DraggingDisabled => !_dragging;
         public SlotContext CurrentSlotContext => _currentSlotContext;
 
-        public event Action<UIItemSlotDrawer, UIItemSlotDragger> OnClick;
+        public event Action<UIItemSlotDrawer, UIItemSlotDragger> OnClick; // при обычном клике на сам слот
+        public event Action<UIItemSlotDragger, UIItemSlotDragger> OnBeforeDrop; // событие вызывающееся "до попытки переместить данный слот в другой слот"
 
         private void Awake()
         {
@@ -149,8 +150,10 @@ namespace World.Inventories
         /// <summary>Обработать Drop: логика перемещения/клонирования/удаления стака.</summary>
         public void ProcessDrop(UIItemSlotDragger fromDragger)
         {
-            var fromContext = fromDragger.CurrentSlotContext;
-            var toContext = this.CurrentSlotContext;
+            fromDragger.OnBeforeDrop?.Invoke(fromDragger, this);
+            
+            SlotContext fromContext = fromDragger.CurrentSlotContext;
+            SlotContext toContext = this.CurrentSlotContext;
 
             if (fromContext == null || toContext == null || fromDragger.DraggingDisabled) return;
 

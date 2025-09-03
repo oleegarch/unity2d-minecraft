@@ -1,8 +1,8 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using World.Items;
 using World.Inventories;
-using System.Linq;
 
 namespace World.Crafting
 {
@@ -34,12 +34,11 @@ namespace World.Crafting
         // Забрать ингредиент для крафта с инвентаря
         public bool TakeIngredient(Inventory inventory, CraftIngredient ingredient)
         {
-            ushort itemId = _itemDatabase.GetId(ingredient.ItemName);
-
             switch (ingredient.Type)
             {
                 case CraftIngredientType.ExactlyItem:
                     {
+                        ushort itemId = _itemDatabase.GetId(ingredient.ItemName);
                         return inventory.Take(itemId, ingredient.Quantity);
                     }
                 case CraftIngredientType.TypeItem:
@@ -86,18 +85,26 @@ namespace World.Crafting
                         {
                             if (!inventory.Has(_itemDatabase.GetId(ingredient.ItemName), ingredient.Quantity))
                                 return false;
+                            continue;
                         }
-                        break;
                     case CraftIngredientType.TypeItem:
                         {
                             List<ItemInfo> sameType = GetItemsWithSameCraftingType(ingredient.ItemType);
+                            
+                            bool has = false;
                             foreach (ItemInfo item in sameType)
                             {
-                                if (!inventory.Has(item.Id, ingredient.Quantity))
-                                    return false;
+                                if (inventory.Has(item.Id, ingredient.Quantity))
+                                {
+                                    has = true;
+                                    break;
+                                }
                             }
+
+                            if (has) continue;
+
+                            return false;
                         }
-                        break;
                     default:
                         {
                             throw new NotImplementedException($"The CheckAvailabilityVariant method is not implemented for CraftIngredientType=={ingredient.Type.ToString()}");

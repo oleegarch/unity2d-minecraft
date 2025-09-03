@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using World.UI;
+using World.Chunks;
 using World.Crafting;
 using World.Items;
 
@@ -13,31 +13,44 @@ namespace World.Inventories
         [SerializeField] private UIItemCategorSlotsDrawer _categorySlotsDrawer;
         [SerializeField] private Image _itemSelectedImage;
         [SerializeField] private UICraftingRequiredItems _requiredItems;
-        [SerializeField] private UIImageWithLabel _itemSlotResultDrawer;
+        [SerializeField] private UIItemSlotDrawer _itemSlotResultDrawer;
         [SerializeField] private UIItemSlotDragger _itemSlotResultDragger;
 
+        private WorldManager _manager;
         private CraftSystem _craftSystem;
         private ItemDatabase _itemDatabase;
         private PlayerInventory _playerInventory;
+        private BlockInventory _blockInventory;
+        private CraftVariant _craftingVariant;
+        private int _craftSlotIndex;
 
         private void OnEnable()
         {
             _categorySlotsDrawer.OnSlotCreated += OnSlotCreated;
             _categorySlotsDrawer.OnSlotDestroy += OnSlotDestroy;
+            _itemSlotResultDragger.OnBeforeDrop += OnCraftBeforeDrop;
         }
         private void OnDisable()
         {
             _categorySlotsDrawer.OnSlotCreated -= OnSlotCreated;
             _categorySlotsDrawer.OnSlotDestroy -= OnSlotDestroy;
+            _itemSlotResultDragger.OnBeforeDrop -= OnCraftBeforeDrop;
         }
 
-        public void SetUp(PlayerInventory inventory, ItemDatabase itemDatabase, ItemCategoryDatabase itemCategoryDatabase)
+        public void SetUp(PlayerInventory inventory, BlockInventory blockInventory, WorldManager manager)
         {
-            _craftSystem = new CraftingTable(itemDatabase, InventoryType.CraftingTable);
-            _itemDatabase = itemDatabase;
+            _manager = manager;
+            _itemDatabase = manager.ItemDatabase;
+            _craftSystem = new CraftingTable(_itemDatabase, InventoryType.CraftingTable);
+            _blockInventory = blockInventory;
             _playerInventory = inventory;
-            _categorySlotsDrawer.SetUp(itemDatabase);
-            _categoriesDrawer.SetUp(itemCategoryDatabase);
+            _categorySlotsDrawer.SetUp(_itemDatabase);
+            _categoriesDrawer.SetUp(manager.ItemCategoryDatabase);
+            _craftSlotIndex = 0;
+            
+            ItemStack craftStack = blockInventory.GetSlot(_craftSlotIndex);
+            _itemSlotResultDrawer.SetUp(craftStack, _itemDatabase);
+            _itemSlotResultDragger.SetSlotContext(new SlotContext(_blockInventory, _craftSlotIndex));
         }
 
         public void OnSlotCreated(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
@@ -53,18 +66,40 @@ namespace World.Inventories
         }
         public void OnSlotClicked(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
         {
-            ItemInfo creatingItem = _itemDatabase.Get(dragger.CurrentSlotContext.ItemStack.Item.Id);
-            List<CraftVariant> availableVariants = _craftSystem.SelectAvailabilityVariants(_playerInventory, creatingItem.CraftVariants);
-            _itemSelectedImage.sprite = creatingItem.Sprite;
-            _requiredItems.SetUp(creatingItem, _itemDatabase, _craftSystem);
-
-            if (availableVariants.Count > 0)
+            if (_blockInventory.HasEmptySlot)
             {
+                ItemInfo selectedItem = _itemDatabase.Get(dragger.CurrentSlotContext.ItemStack.Item.Id);
+                List<CraftVariant> availableVariants = _craftSystem.SelectAvailabilityVariants(_playerInventory, selectedItem.CraftVariants);
+                _itemSelectedImage.sprite = selectedItem.Sprite;
+                _requiredItems.SetUp(selectedItem, _itemDatabase, _craftSystem);
 
+                if (availableVariants.Count > 0)
+                {
+                    CraftVariant availableVariant = availableVariants[0];
+                    ItemStack previewStack = new ItemStack(selectedItem, availableVariant.ReturnCount);
+                    _itemSlotResultDrawer.Refresh(previewStack);
+                    _itemSlotResultDrawer.SetColor(Color.green);
+                    _itemSlotResultDragger.SetSlotContext(new SlotContext(previewStack, SlotType.Preview));
+                    _craftingVariant = availableVariant;
+                    Debug.Log($"OnSlotClicked green: {_itemSlotResultDragger.CurrentSlotContext.ItemStack}");
+                }
+                else
+                {
+                    ItemStack previewStack = ItemStack.Empty;
+                    _itemSlotResultDrawer.Refresh(previewStack);
+                    _itemSlotResultDrawer.SetColor(Color.red);
+                    _itemSlotResultDragger.SetSlotContext(new SlotContext(previewStack, SlotType.Preview));
+                    Debug.Log($"OnSlotClicked red: {_itemSlotResultDragger.CurrentSlotContext.ItemStack}");
+                }
             }
-            else
-            {
-            }
+        }
+        public void OnCraftBeforeDrop(UIItemSlotDragger fromDragger, UIItemSlotDragger toDragger)
+        {
+            Debug.Log($"OnCraftBeforeDrop: {fromDragger.name}, {fromDragger.CurrentSlotContext.ItemStack}");
+            SlotContext fromContext = fromDragger.CurrentSlotContext;
+            ItemInfo craftingItem = _itemDatabase.Get(fromContext.ItemStack.Item.Id);
+            _craftSystem.Craft(_playerInventory, _blockInventory, craftingItem, _craftingVariant.Id);
+            fromDragger.SetSlotContext(new SlotContext(_blockInventory, _craftSlotIndex));
         }
 
         public void Open()

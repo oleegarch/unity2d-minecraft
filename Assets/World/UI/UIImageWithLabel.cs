@@ -30,9 +30,9 @@ namespace World.UI
         public Sprite GetCurrentImageSprite() => _image.sprite;
         public string GetCurrentLabelText() => _label.text;
 
-        public void DisableLabel()
+        public void ToggleLabel(bool active)
         {
-            _label.gameObject.SetActive(false);
+            _label.gameObject.SetActive(active);
         }
 
         public void StartChangingAnimation(List<Sprite> sprites, List<string> labels)

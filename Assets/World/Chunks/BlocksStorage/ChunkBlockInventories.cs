@@ -8,12 +8,12 @@ namespace World.Chunks.BlocksStorage
     // Интерфейс для логики, связанной с инвентарём блоков
     public interface IChunkBlockInventories : IDisposable
     {
-        public void OverrideInventory(BlockIndex index, BlockLayer layer, Inventory inventory);
-        public bool TryGetInventory(BlockIndex index, BlockLayer layer, out Inventory inventory);
+        public void OverrideInventory(BlockIndex index, BlockLayer layer, BlockInventory inventory);
+        public bool TryGetInventory(BlockIndex index, BlockLayer layer, out BlockInventory inventory);
     }
     public class ChunkBlockInventories : IChunkBlockInventories
     {
-        private readonly Dictionary<BlockLayer, Dictionary<BlockIndex, Inventory>> _inventoriesByLayer = new();
+        private readonly Dictionary<BlockLayer, Dictionary<BlockIndex, BlockInventory>> _inventoriesByLayer = new();
         private readonly ChunkBlockEvents _events;
 
         public ChunkBlockInventories(ChunkBlockEvents events)
@@ -22,14 +22,14 @@ namespace World.Chunks.BlocksStorage
             _events.OnBlockBroken += HandleBlockBroken;
         }
 
-        public void OverrideInventory(BlockIndex index, BlockLayer layer, Inventory inventory)
+        public void OverrideInventory(BlockIndex index, BlockLayer layer, BlockInventory inventory)
         {
             if (!_inventoriesByLayer.TryGetValue(layer, out var _inventories))
                 _inventories = _inventoriesByLayer[layer] = new();
 
             _inventories[index] = inventory;
         }
-        public bool TryGetInventory(BlockIndex index, BlockLayer layer, out Inventory inventory)
+        public bool TryGetInventory(BlockIndex index, BlockLayer layer, out BlockInventory inventory)
         {
             if (_inventoriesByLayer.TryGetValue(layer, out var layerDict) && layerDict.TryGetValue(index, out inventory))
                 return true;
@@ -39,7 +39,7 @@ namespace World.Chunks.BlocksStorage
 
         private void HandleBlockBroken(BlockIndex index, Block block, BlockLayer layer)
         {
-            if (TryGetInventory(index, layer, out Inventory inventory))
+            if (TryGetInventory(index, layer, out BlockInventory inventory))
                 _events.InvokeBlockInventoryDropped(index, inventory, layer);
         }
 

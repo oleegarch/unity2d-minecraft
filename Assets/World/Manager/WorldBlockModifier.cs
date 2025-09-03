@@ -15,7 +15,7 @@ namespace World.Chunks
         public Block Get(WorldPosition worldPosition, BlockLayer blockLayer = BlockLayer.Main);
         public Block GetSimilar(WorldPosition worldPosition, BlockLayer blockLayer, out BlockLayer currentLayer);
         public Block GetBreakable(WorldPosition worldPosition, out BlockLayer blockLayer);
-        public bool TryGetInventory(WorldPosition worldPosition, out Inventory inventory);
+        public bool TryGetInventory(WorldPosition worldPosition, out BlockInventory inventory);
         public BlockStyles GetBlockStyles(WorldPosition worldPosition, BlockLayer layer);
         public bool Set(WorldPosition worldPosition, Block block, BlockLayer layer, BlockStyles styles, BlockUpdateSource source = BlockUpdateSource.Player);
         public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player);
@@ -82,7 +82,7 @@ namespace World.Chunks
 
             return Block.Air;
         }
-        public bool TryGetInventory(WorldPosition worldPosition, out Inventory inventory)
+        public bool TryGetInventory(WorldPosition worldPosition, out BlockInventory inventory)
         {
             inventory = null;
 
@@ -106,7 +106,7 @@ namespace World.Chunks
                 {
                     if (!chunk.Inventories.TryGetInventory(blockIndex, currentLayer, out inventory))
                     {
-                        inventory = new ChestInventory(currentBlockInfo.Inventory.SlotCount);
+                        inventory = new BlockInventory(currentBlockInfo.Inventory.SlotCount);
                         chunk.Inventories.OverrideInventory(blockIndex, currentLayer, inventory);
                     }
                     return true;

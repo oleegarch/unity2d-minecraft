@@ -39,4 +39,4 @@ MonoBehaviour:
   BreakableByGravity: 0
   Inventory:
     Type: 2
-    SlotCount: 0
+    SlotCount: 1

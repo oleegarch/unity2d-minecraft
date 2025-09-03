@@ -25,7 +25,11 @@ namespace World.Inventories
         }
         public void DisableCount()
         {
-            _stackDrawer.DisableLabel();
+            _stackDrawer.ToggleLabel(false);
+        }
+        public void EnableCount()
+        {
+            _stackDrawer.ToggleLabel(true);
         }
 
         public void Refresh(ItemStack stack)
@@ -50,9 +54,16 @@ namespace World.Inventories
 
         public void SetActive(bool isActive)
         {
-            Active = isActive;
+            if (Active != isActive)
+            {
+                Active = isActive;
+                _uiSlotImage.sprite = isActive ? _uiSlotActiveSprite : _uiSlotSprite;
+            }
+        }
 
-            _uiSlotImage.sprite = isActive ? _uiSlotActiveSprite : _uiSlotSprite;
+        public void SetColor(Color color)
+        {
+            _uiSlotImage.color = color;
         }
 
         public void Dispose()

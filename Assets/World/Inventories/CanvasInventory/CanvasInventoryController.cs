@@ -142,11 +142,11 @@ namespace World.Inventories
             component.SetUp(_manager.ItemDatabase, _manager.ItemCategoryDatabase);
             return component;
         }
-        private UICraftingInventory CreateCraftingInventory()
+        private UICraftingInventory CreateCraftingInventory(BlockInventory tableInventory)
         {
             GameObject go = Instantiate(_craftingInventoryPrefab, _inventoryAlignmentTransform);
             UICraftingInventory component = go.GetComponent<UICraftingInventory>();
-            component.SetUp(_playerInventory, _manager.ItemDatabase, _manager.ItemCategoryDatabase);
+            component.SetUp(_playerInventory, tableInventory, _manager);
             return component;
         }
         private void OpenForeignInventory(InputAction.CallbackContext context)
@@ -160,7 +160,7 @@ namespace World.Inventories
                         
                     if (clickedBlockInfo.Inventory.Type == InventoryType.Inventory)
                     {
-                        if (_manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out Inventory inventory))
+                        if (_manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out BlockInventory inventory))
                         {
                             ChangeForeignInventory(CreateForeignInventory(inventory));
                             return;
@@ -168,8 +168,11 @@ namespace World.Inventories
                     }
                     else if (clickedBlockInfo.Inventory.Type == InventoryType.CraftingTable)
                     {
-                        ChangeForeignInventory(CreateCraftingInventory());
-                        return;
+                        if (_manager.Blocks.TryGetInventory(_blockObserver.HoveredPosition, out BlockInventory tableInventory))
+                        {
+                            ChangeForeignInventory(CreateCraftingInventory(tableInventory));
+                            return;
+                        }
                     }
                 }
             }
