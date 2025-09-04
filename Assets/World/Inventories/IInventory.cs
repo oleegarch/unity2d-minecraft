@@ -30,6 +30,8 @@ namespace World.Inventories
         public bool Has(ushort itemId, int amount);
         public bool Has(ItemStack requested);
 
+        /// <summary>Проверяет: Удастся ли втиснуть стек из аргументов в слоты инвентаря с учётом того что стеки можно совмещать.</summary>
+        public bool CanAdd(ItemStack stack);
         /// <summary>Пытается добавить стек в инвентарь. Возвращает true, если весь стек помещён.</summary>
         public bool TryAdd(ItemStack stack);
 

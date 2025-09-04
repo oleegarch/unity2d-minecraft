@@ -14,51 +14,33 @@ namespace World.Inventories
         [SerializeField] private Image _uiSlotImage;
         [SerializeField] private UIImageWithLabel _stackDrawer;
 
-        [NonSerialized] public ItemStack Stack;
-        [NonSerialized] public ItemDatabase ItemDatabase;
-        [NonSerialized] public bool Active;
+        public UIImageWithLabel StackDrawer => _stackDrawer;
 
-        public void SetUp(ItemStack stack, ItemDatabase itemDatabase)
+        public void SetUpStack(ItemDatabase itemDatabase, ItemStack stack)
         {
-            ItemDatabase = itemDatabase;
-            Refresh(stack);
-        }
-        public void DisableCount()
-        {
-            _stackDrawer.ToggleLabel(false);
-        }
-        public void EnableCount()
-        {
-            _stackDrawer.ToggleLabel(true);
-        }
-
-        public void Refresh(ItemStack stack)
-        {
-            if (Stack == null || !Stack.Equals(stack))
+            if (!stack.IsEmpty)
             {
-                Stack = stack;
-
-                if (!Stack.IsEmpty)
-                {
-                    ItemInfo info = ItemDatabase.Get(Stack.Item.Id);
-                    _stackDrawer.SetUp(info.Sprite, Stack.Quantity.ToString());
-                }
-                else
-                {
-                    _stackDrawer.SetUp(null, null);
-                }
-
-                SetActive(Active);
+                var itemInfo = itemDatabase.Get(stack.Item.Id);
+                _stackDrawer.SetUp(itemInfo.Sprite, stack.Quantity.ToString());
             }
+            else
+            {
+                _stackDrawer.SetUp(null, null);
+            }
+        }
+        public void SetUpStack(Sprite sprite, string quantityString)
+        {
+            _stackDrawer.SetUp(sprite, quantityString);
+        }
+
+        public void ToggleCountLabel(bool enabled)
+        {
+            _stackDrawer.ToggleLabel(enabled);
         }
 
         public void SetActive(bool isActive)
         {
-            if (Active != isActive)
-            {
-                Active = isActive;
-                _uiSlotImage.sprite = isActive ? _uiSlotActiveSprite : _uiSlotSprite;
-            }
+            _uiSlotImage.sprite = isActive ? _uiSlotActiveSprite : _uiSlotSprite;
         }
 
         public void SetColor(Color color)
@@ -68,8 +50,6 @@ namespace World.Inventories
 
         public void Dispose()
         {
-            Stack = null;
-            Active = false;
             Destroy(gameObject);
         }
     }

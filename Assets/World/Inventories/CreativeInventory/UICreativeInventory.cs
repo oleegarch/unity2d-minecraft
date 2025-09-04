@@ -23,10 +23,14 @@ namespace World.Inventories
             _categoriesDrawer.SetUp(itemCategoryDatabase);
         }
         
-        public void OnSlotCreated(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
+        public void OnSlotCreated(GameObject go, ItemInfo info)
         {
-            drawer.DisableCount();
-            dragger.SetSlotContext(new SlotContext(drawer.Stack, SlotType.Creative));
+            var stack = new ItemStack(info, info.MaxStack);
+            var drawer = go.GetComponent<UIItemSlotDrawer>();
+            var dragger = go.GetComponent<UIItemSlotDragger>();
+            drawer.SetUpStack(info.Sprite, stack.Quantity.ToString());
+            drawer.ToggleCountLabel(false);
+            dragger.SetSlotContext(new SlotContext(stack, SlotType.Creative));
             dragger.DisableDragHandlers();
         }
 

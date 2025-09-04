@@ -42,19 +42,5 @@ namespace World.Inventories
             _activeHotbarIndex = newIndex;
             return _activeHotbarIndex;
         }
-
-        // доп. helper, если событие даёт глобальный индекс — можно конвертировать в хотбарный индекс
-        private bool TryInventoryIndexToHotbarIndex(int inventoryIndex, out int hotbarIndex)
-        {
-            hotbarIndex = inventoryIndex - _playerInventory.HotbarStart;
-            return hotbarIndex >= 0 && hotbarIndex < PlayerInventory.HotbarSize;
-        }
-
-        // Если нужно — можем переопределить RefreshSlotByInventoryIndex для оптимизированной логики
-        protected override void RefreshSlotByInventoryIndex(int inventoryIndex, ItemStack newStack)
-        {
-            if (TryInventoryIndexToHotbarIndex(inventoryIndex, out int hotbarIndex))
-                _uiItemSlots[hotbarIndex].Refresh(_playerInventory.GetSlot(inventoryIndex));
-        }
     }
 }

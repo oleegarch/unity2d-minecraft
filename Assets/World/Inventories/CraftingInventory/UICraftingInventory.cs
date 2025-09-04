@@ -23,18 +23,32 @@ namespace World.Inventories
         private BlockInventory _blockInventory;
         private CraftVariant _craftingVariant;
         private int _craftSlotIndex;
+        private ushort _selectedToCraftItemId;
+        private bool _likeInventory
+        {
+            get
+            {
+                var slot = _blockInventory.GetSlot(_craftSlotIndex);
+                if (slot.IsEmpty) return false;
+                return slot.Item.Id != _selectedToCraftItemId;
+            }
+        }
 
         private void OnEnable()
         {
             _categorySlotsDrawer.OnSlotCreated += OnSlotCreated;
             _categorySlotsDrawer.OnSlotDestroy += OnSlotDestroy;
-            _itemSlotResultDragger.OnBeforeDrop += OnCraftBeforeDrop;
+            _itemSlotResultDragger.OnClick += OnCraftSlotClicked;
+            _itemSlotResultDragger.OnBeforeDrop += OnCraftSlotBeforeDrop;
+            _itemSlotResultDragger.OnDropped += OnCraftSlotDropped;
         }
         private void OnDisable()
         {
             _categorySlotsDrawer.OnSlotCreated -= OnSlotCreated;
             _categorySlotsDrawer.OnSlotDestroy -= OnSlotDestroy;
-            _itemSlotResultDragger.OnBeforeDrop -= OnCraftBeforeDrop;
+            _itemSlotResultDragger.OnClick -= OnCraftSlotClicked;
+            _itemSlotResultDragger.OnBeforeDrop -= OnCraftSlotBeforeDrop;
+            _itemSlotResultDragger.OnDropped -= OnCraftSlotDropped;
         }
 
         public void SetUp(PlayerInventory inventory, BlockInventory blockInventory, WorldManager manager)
@@ -46,60 +60,130 @@ namespace World.Inventories
             _playerInventory = inventory;
             _categorySlotsDrawer.SetUp(_itemDatabase);
             _categoriesDrawer.SetUp(manager.ItemCategoryDatabase);
+            _itemSlotResultDragger.ToggleHidingSourceStack(false);
             _craftSlotIndex = 0;
-            
-            ItemStack craftStack = blockInventory.GetSlot(_craftSlotIndex);
-            _itemSlotResultDrawer.SetUp(craftStack, _itemDatabase);
-            _itemSlotResultDragger.SetSlotContext(new SlotContext(_blockInventory, _craftSlotIndex));
+
+            _itemSlotResultDrawer.SetUpStack(_itemDatabase, blockInventory.GetSlot(_craftSlotIndex));
+            _itemSlotResultDragger.DisableDrop();
+
+            if (!_blockInventory.HasEmptySlot)
+            {
+                // _itemSlotResultDragger.ToggleHidingSourceStack(true);
+                SetCraftSlotLikeInventorySlot();
+            }
         }
 
-        public void OnSlotCreated(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
+        public void OnSlotCreated(GameObject go, ItemInfo info)
         {
-            drawer.DisableCount();
-            dragger.SetSlotContext(new SlotContext(drawer.Stack, SlotType.Preview));
+            var stack = new ItemStack(info);
+            var drawer = go.GetComponent<UIItemSlotDrawer>();
+            var dragger = go.GetComponent<UIItemSlotDragger>();
+            drawer.SetUpStack(info.Sprite, stack.Quantity.ToString());
+            drawer.ToggleCountLabel(false);
+            dragger.SetSlotContext(new SlotContext(stack, SlotType.Preview));
             dragger.DisableDragging();
             dragger.OnClick += OnSlotClicked;
         }
-        public void OnSlotDestroy(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
+        public void OnSlotDestroy(GameObject go)
         {
+            var dragger = go.GetComponent<UIItemSlotDragger>();
             dragger.OnClick -= OnSlotClicked;
         }
         public void OnSlotClicked(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
         {
-            if (_blockInventory.HasEmptySlot)
-            {
-                ItemInfo selectedItem = _itemDatabase.Get(dragger.CurrentSlotContext.ItemStack.Item.Id);
-                List<CraftVariant> availableVariants = _craftSystem.SelectAvailabilityVariants(_playerInventory, selectedItem.CraftVariants);
-                _itemSelectedImage.sprite = selectedItem.Sprite;
-                _requiredItems.SetUp(selectedItem, _itemDatabase, _craftSystem);
+            if (_likeInventory || !_blockInventory.HasEmptySlot) return;
 
-                if (availableVariants.Count > 0)
-                {
-                    CraftVariant availableVariant = availableVariants[0];
-                    ItemStack previewStack = new ItemStack(selectedItem, availableVariant.ReturnCount);
-                    _itemSlotResultDrawer.Refresh(previewStack);
-                    _itemSlotResultDrawer.SetColor(Color.green);
-                    _itemSlotResultDragger.SetSlotContext(new SlotContext(previewStack, SlotType.Preview));
-                    _craftingVariant = availableVariant;
-                    Debug.Log($"OnSlotClicked green: {_itemSlotResultDragger.CurrentSlotContext.ItemStack}");
-                }
-                else
-                {
-                    ItemStack previewStack = ItemStack.Empty;
-                    _itemSlotResultDrawer.Refresh(previewStack);
-                    _itemSlotResultDrawer.SetColor(Color.red);
-                    _itemSlotResultDragger.SetSlotContext(new SlotContext(previewStack, SlotType.Preview));
-                    Debug.Log($"OnSlotClicked red: {_itemSlotResultDragger.CurrentSlotContext.ItemStack}");
-                }
+            _selectedToCraftItemId = dragger.CurrentSlotContext.ItemStack.Item.Id;
+            SelectItemToCraft(_selectedToCraftItemId);
+            SetCraftSlotLikeCraftingSlot(_selectedToCraftItemId);
+            ShowCraftAvailability(_selectedToCraftItemId);
+            CraftSlotToggleCount();
+        }
+        public void OnCraftSlotClicked(UIItemSlotDrawer drawer, UIItemSlotDragger dragger)
+        {
+            if (_likeInventory) return;
+
+            if (_craftingVariant != null)
+            {
+                CraftItem(_selectedToCraftItemId);
+            }
+
+            ShowCraftAvailability(_selectedToCraftItemId);
+            CraftSlotToggleCount();
+        }
+        public void OnCraftSlotBeforeDrop(UIItemSlotDragger fromDragger, UIItemSlotDragger toDragger)
+        {
+            if (_likeInventory || _craftingVariant == null || UIItemSlotDragger.DraggingByClick) return;
+
+            CraftItem(_selectedToCraftItemId);
+        }
+        public void OnCraftSlotDropped(UIItemSlotDragger fromDragger, UIItemSlotDragger toDragger)
+        {
+            if (!_likeInventory)
+            {
+                SetCraftSlotLikeCraftingSlot(_selectedToCraftItemId);
+                ShowCraftAvailability(_selectedToCraftItemId);
+                CraftSlotToggleCount();
             }
         }
-        public void OnCraftBeforeDrop(UIItemSlotDragger fromDragger, UIItemSlotDragger toDragger)
+
+        public void SelectItemToCraft(ushort itemId)
         {
-            Debug.Log($"OnCraftBeforeDrop: {fromDragger.name}, {fromDragger.CurrentSlotContext.ItemStack}");
-            SlotContext fromContext = fromDragger.CurrentSlotContext;
-            ItemInfo craftingItem = _itemDatabase.Get(fromContext.ItemStack.Item.Id);
-            _craftSystem.Craft(_playerInventory, _blockInventory, craftingItem, _craftingVariant.Id);
-            fromDragger.SetSlotContext(new SlotContext(_blockInventory, _craftSlotIndex));
+            ItemInfo selectedItem = _itemDatabase.Get(itemId);
+            _itemSelectedImage.sprite = selectedItem.Sprite;
+            _requiredItems.SetUp(selectedItem, _itemDatabase, _craftSystem);
+        }
+        public void CraftSlotToggleCount()
+        {
+            _itemSlotResultDrawer.ToggleCountLabel(_blockInventory.HasEmptySlot || _likeInventory);
+        }
+        public void CraftItem(ushort itemId)
+        {
+            ItemInfo craftingItem = _itemDatabase.Get(itemId);
+            if (_craftSystem.Craft(_playerInventory, _blockInventory, craftingItem, _craftingVariant.Id))
+                SetCraftSlotLikeInventorySlot();
+        }
+        public void ShowCraftAvailability(ushort itemId)
+        {
+            ItemInfo selectedItem = _itemDatabase.Get(itemId);
+            List<CraftVariant> availableVariants = _craftSystem.SelectAvailabilityVariants(_playerInventory, selectedItem.CraftVariants);
+
+            if (availableVariants.Count > 0)
+            {
+                CraftVariant availableVariant = availableVariants[0];
+                ItemStack previewStack = new ItemStack(selectedItem, availableVariant.ReturnCount);
+                _itemSlotResultDrawer.SetUpStack(_itemDatabase, previewStack);
+                _itemSlotResultDrawer.SetColor(Color.green);
+            }
+            else
+            {
+                _itemSlotResultDrawer.SetUpStack(_itemDatabase, ItemStack.Empty);
+                _itemSlotResultDrawer.SetColor(Color.red);
+            }
+        }
+        public void SetCraftSlotLikeCraftingSlot(ushort itemId)
+        {
+            ItemInfo selectedItem = _itemDatabase.Get(itemId);
+            List<CraftVariant> availableVariants = _craftSystem.SelectAvailabilityVariants(_playerInventory, selectedItem.CraftVariants);
+
+            if (availableVariants.Count > 0)
+            {
+                CraftVariant availableVariant = availableVariants[0];
+                ItemStack previewStack = new ItemStack(selectedItem, availableVariant.ReturnCount);
+                _itemSlotResultDragger.SetSlotContext(new SlotContext(previewStack, SlotType.Preview));
+                _craftingVariant = availableVariant;
+            }
+            else
+            {
+                _itemSlotResultDragger.SetSlotContext(new SlotContext(ItemStack.Empty, SlotType.Preview));
+            }
+        }
+        public void SetCraftSlotLikeInventorySlot()
+        {
+            ItemStack craftStack = _blockInventory.GetSlot(_craftSlotIndex);
+            _itemSlotResultDrawer.SetUpStack(_itemDatabase, craftStack);
+            _itemSlotResultDragger.SetSlotContext(new SlotContext(_blockInventory, _craftSlotIndex));
+
         }
 
         public void Open()

@@ -130,6 +130,32 @@ namespace World.Inventories
         }
         #endregion
 
+        #region Можно ли добавить
+        /// <summary>
+        /// Метод пытается "втиснуть" предметы в уже существующие совместимые стеки
+        /// Возвращает true если втиснуть данный стек в инвентарь удастся.
+        /// </summary>
+        public bool CanAdd(ItemStack stack)
+        {
+            EnsureValidStack(stack);
+
+            int remaining = stack.Quantity;
+
+            for (int i = 0; i < slots.Length && remaining > 0; i++)
+            {
+                var slot = slots[i];
+                if (!slot.IsEmpty && slot.CanStackWith(stack))
+                {
+                    int space = slot.MaxStack - slot.Quantity;
+                    if (space > 0)
+                        remaining -= Math.Min(space, remaining);
+                }
+            }
+
+            return remaining <= 0;
+        }
+        #endregion
+
         #region Добавление
         /// <summary>
         /// Попытаться добавить стек: сначала заполняем существующие стеки того же типа, затем используем пустые слоты.
@@ -161,7 +187,7 @@ namespace World.Inventories
                 {
                     slots[i] = stack.Clone();
                     stack.MakeEmpty();
-                    Events.InvokeSlotChanged(i, slot.Clone());
+                    Events.InvokeSlotChanged(i, slots[i].Clone());
                 }
             }
 

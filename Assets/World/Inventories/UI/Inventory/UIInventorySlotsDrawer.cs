@@ -66,9 +66,9 @@ namespace World.Inventories
 
                 // Визуализируем текущий слот
                 var drawer = go.GetComponent<UIItemSlotDrawer>();
-                drawer.SetUp(_inventory.GetSlot(invIndex), _manager.ItemDatabase);
+                var stack = _inventory.GetSlot(invIndex);
+                drawer.SetUpStack(_manager.ItemDatabase, stack);
 
-                // В компоненте для draggable логики записываем контекст текущего слота и подписываемся на OnDrop событие
                 var dragger = go.GetComponent<UIItemSlotDragger>();
                 dragger.SetSlotContext(new SlotContext(_inventory, invIndex));
 
@@ -86,16 +86,17 @@ namespace World.Inventories
             for (int i = 0; i < _uiItemSlots.Length; i++)
             {
                 int invIndex = _inventoryIndices[i];
-                _uiItemSlots[i].Refresh(_inventory.GetSlot(invIndex));
+                var stack = _inventory.GetSlot(invIndex);
+                _uiItemSlots[i].SetUpStack(_manager.ItemDatabase, stack);
             }
         }
         /// <summary>Обновление слота по глобальному индексу (тот, который шлёт Inventory.Events).</summary>
         protected virtual void RefreshSlotByInventoryIndex(int inventoryIndex, ItemStack newStack)
         {
             if (_invIndexToUiIndex == null) return;
+
             if (_invIndexToUiIndex.TryGetValue(inventoryIndex, out int uiIndex))
-                // используем состояние из Inventory чтобы быть уверенными в консистентности
-                _uiItemSlots[uiIndex].Refresh(_inventory.GetSlot(inventoryIndex));
+                _uiItemSlots[uiIndex].SetUpStack(_manager.ItemDatabase, newStack);
         }
         #endregion
 

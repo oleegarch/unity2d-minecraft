@@ -16,10 +16,15 @@ namespace World.Crafting
         public override bool Craft(Inventory inventory, Inventory returnInventory, ItemInfo item, byte variantId)
         {
             CraftVariant variant = item.CraftVariants.GetVariantById(variantId);
+            ItemStack stack = new ItemStack(item, variant.ReturnCount);
 
-            if (returnInventory.HasEmptySlot && TakeIngredients(inventory, variant))
+            bool canMoveToReturnInventory = (
+                returnInventory.HasEmptySlot ||
+                returnInventory.CanAdd(stack)
+            );
+
+            if (canMoveToReturnInventory && TakeIngredients(inventory, variant))
             {
-                ItemStack stack = new ItemStack(item, variant.ReturnCount);
                 return returnInventory.TryAdd(stack);
             }
 

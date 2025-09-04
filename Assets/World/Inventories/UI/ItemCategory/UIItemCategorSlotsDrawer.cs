@@ -14,8 +14,8 @@ namespace World.Inventories
         private ItemDatabase _itemDatabase;
         private List<GameObject> _instantiatedSlots = new();
 
-        public event Action<UIItemSlotDrawer, UIItemSlotDragger> OnSlotCreated;
-        public event Action<UIItemSlotDrawer, UIItemSlotDragger> OnSlotDestroy;
+        public event Action<GameObject, ItemInfo> OnSlotCreated;
+        public event Action<GameObject> OnSlotDestroy;
 
         private void OnEnable()
         {
@@ -44,18 +44,8 @@ namespace World.Inventories
                 if (info.Category == category)
                 {
                     GameObject go = Instantiate(_slotPrefab, _slotsParent);
-
-                    // Визуализируем слот
-                    var drawer = go.GetComponent<UIItemSlotDrawer>();
-                    var stack = new ItemStack(info, info.MaxStack);
-                    drawer.SetUp(stack, _itemDatabase);
-
-                    // Подписываемся на событие перетаскивания с креативного инвентаря
-                    var dragger = go.GetComponent<UIItemSlotDragger>();
-
-                    OnSlotCreated?.Invoke(drawer, dragger);
-
                     _instantiatedSlots.Add(go);
+                    OnSlotCreated?.Invoke(go, info);
                 }
             }
         }
@@ -64,7 +54,7 @@ namespace World.Inventories
         {
             foreach (var go in _instantiatedSlots)
             {
-                OnSlotDestroy?.Invoke(go.GetComponent<UIItemSlotDrawer>(), go.GetComponent<UIItemSlotDragger>());
+                OnSlotDestroy?.Invoke(go);
                 Destroy(go);
             }
             _instantiatedSlots.Clear();

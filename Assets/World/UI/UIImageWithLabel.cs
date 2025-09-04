@@ -15,24 +15,49 @@ namespace World.UI
 
         public void SetUp(Sprite sprite, string label, string additionalLabel = null)
         {
-            _image.enabled = sprite != null;
-            _image.sprite = sprite;
-            _label.enabled = !string.IsNullOrEmpty(label);
-            _label.SetText(label);
+            SetImageSprite(sprite);
+            SetLabelText(label);
 
             if (_additionalLabel != null)
-            {
-                _additionalLabel.enabled = !string.IsNullOrEmpty(additionalLabel);
-                _additionalLabel.SetText(additionalLabel);
-            }
+                SetAdditionalLabelText(additionalLabel);
+        }
+        public void SetUp(UIImageWithLabel fromDrawer)
+        {
+            SetUp(fromDrawer.GetCurrentImageSprite(), fromDrawer.GetCurrentLabelText(), fromDrawer.GetCurrentAdditionalLabelText());
         }
 
         public Sprite GetCurrentImageSprite() => _image.sprite;
         public string GetCurrentLabelText() => _label.text;
+        public string GetCurrentAdditionalLabelText() => _additionalLabel != null ? _additionalLabel.text : null;
+
+        public void ToggleImage(bool active)
+        {
+            _image.gameObject.SetActive(active);
+        }
+        public void SetImageSprite(Sprite sprite)
+        {
+            _image.enabled = sprite != null;
+            _image.sprite = sprite;
+        }
 
         public void ToggleLabel(bool active)
         {
             _label.gameObject.SetActive(active);
+        }
+        public void SetLabelText(string text)
+        {
+            _label.SetText(text);
+            _label.enabled = !string.IsNullOrEmpty(text);
+        }
+
+        public void ToggleAdditionalLabel(bool active)
+        {
+            _additionalLabel.gameObject.SetActive(active);
+        }
+        public void SetAdditionalLabelText(string text)
+        {
+            _additionalLabel.enabled = !string.IsNullOrEmpty(text);
+            _additionalLabel.SetText(text);
         }
 
         public void StartChangingAnimation(List<Sprite> sprites, List<string> labels)
@@ -44,7 +69,7 @@ namespace World.UI
         {
             _image.enabled = true;
             _label.enabled = true;
-            
+
             int index = 0;
             while (true)
             {
