@@ -58,6 +58,7 @@ namespace World.Crafting
 
         public List<CraftVariant> GetVariants(InventoryType inventoryType) => Variants.Where(v => v.InventoryType == inventoryType).ToList();
         public CraftVariant GetVariantById(int variantId) => Variants.First(v => v.Id == variantId);
+        public bool IsAvailableFor(InventoryType inventoryType) => Variants.Any(v => v.InventoryType == inventoryType);
 
         public IEnumerator<CraftVariant> GetEnumerator() => Variants.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

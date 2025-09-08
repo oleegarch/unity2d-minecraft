@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,7 @@ namespace World.Inventories
         private WorldManager _manager;
         private CraftSystem _craftSystem;
         private ItemDatabase _itemDatabase;
+        private ItemCategoryDatabase _itemCategoryDatabase;
         private PlayerInventory _playerInventory;
         private BlockInventory _blockInventory;
         private CraftVariant _craftingVariant;
@@ -32,12 +34,26 @@ namespace World.Inventories
         private ItemInfo _selectedToCraftItem => _itemDatabase.Get(_selectedToCraftItemId);
         private List<CraftVariant> _availableVariants => _craftSystem.SelectAvailabilityVariants(_playerInventory, _selectedToCraftItem.CraftVariants);
         private bool _requireCraft => _selectedToCraftItemId != 0 && (_blockInveontorySlot.IsEmpty || _blockInveontorySlot.Item.Id == _selectedToCraftItemId);
+        
+        private IEnumerable<ItemInfo> _availableItems
+            => _itemDatabase.items
+                .Where(info => info.CraftVariants.IsAvailableFor(_craftSystem.InventoryType));
+
+        private HashSet<ItemCategory> _availableCategories 
+            => _availableItems
+                .Select(info => info.Category)
+                .ToHashSet();
+
+        private IEnumerable<ItemCategoryInfo> _availableCategoryInfos 
+            => _availableCategories
+                .Select(category => _itemCategoryDatabase.Get(category));
+
 
         private void Awake()
         {
             _selectItemTitle.enabled = true;
-            _requiredTitle.enabled = false;
             _itemSelectedImage.enabled = false;
+            _requiredTitle.enabled = false;
             _requiredItems.gameObject.SetActive(false);
         }
         private void OnEnable()
@@ -61,11 +77,12 @@ namespace World.Inventories
         {
             _manager = manager;
             _itemDatabase = manager.ItemDatabase;
+            _itemCategoryDatabase = manager.ItemCategoryDatabase;
             _craftSystem = new CraftingTable(_itemDatabase, InventoryType.CraftingTable);
             _blockInventory = blockInventory;
             _playerInventory = inventory;
-            _categorySlotsDrawer.SetUp(_itemDatabase);
-            _categoriesDrawer.SetUp(manager.ItemCategoryDatabase);
+            _categorySlotsDrawer.SetUp(_availableItems);
+            _categoriesDrawer.SetUp(_availableCategoryInfos);
             _craftSlotIndex = 0;
             ConfigureCraftSlot();
             RefreshCraftSlot();

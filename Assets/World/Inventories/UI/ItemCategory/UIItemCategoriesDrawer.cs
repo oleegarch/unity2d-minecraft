@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using World.Items;
@@ -14,7 +15,7 @@ namespace World.Inventories
         [SerializeField] private TextMeshProUGUI _title;
 
         private ItemCategory _activeCategory;
-        private ItemCategoryDatabase _itemCategoryDatabase;
+        private IEnumerable<ItemCategoryInfo> _availableItemCategories;
         private List<GameObject> _instantiatedCategories = new();
 
         public event Action<ItemCategory> OnCategoryChanged;
@@ -26,8 +27,12 @@ namespace World.Inventories
 
         public void SetUp(ItemCategoryDatabase itemCategoryDatabase)
         {
-            _itemCategoryDatabase = itemCategoryDatabase;
-            _activeCategory = itemCategoryDatabase.categories[0].Category;
+            SetUp(itemCategoryDatabase.categories);
+        }
+        public void SetUp(IEnumerable<ItemCategoryInfo> categories)
+        {
+            _availableItemCategories = categories;
+            _activeCategory = categories.First().Category;
 
             RecreateCategoriesButtons();
             SetActiveCategory();
@@ -40,7 +45,8 @@ namespace World.Inventories
         }
         public void SetActiveCategory()
         {
-            _title.SetText(_itemCategoryDatabase.Get(_activeCategory).Title);
+            ItemCategoryInfo categoryInfo = _availableItemCategories.First(info => info.Category == _activeCategory);
+            _title.SetText(categoryInfo.Title);
 
             foreach (var instantiatedCategoryGO in _instantiatedCategories)
             {
@@ -54,7 +60,7 @@ namespace World.Inventories
         {
             DestroyCategoriesButtons();
 
-            foreach (ItemCategoryInfo categoryInfo in _itemCategoryDatabase.categories)
+            foreach (ItemCategoryInfo categoryInfo in _availableItemCategories)
             {
                 var go = Instantiate(_categoryPrefab, categoryInfo.IsCategoryForBlocks ? _categoriesBlocksParent : _categoriesItemsParent);
                 _instantiatedCategories.Add(go);

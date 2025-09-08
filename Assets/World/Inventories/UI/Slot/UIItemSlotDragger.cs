@@ -149,7 +149,6 @@ namespace World.Inventories
         /// <summary>Начать перетаскивание (создаёт статический визуал и скрывает оригинал).</summary>
         public void StartDrag(Vector3 position)
         {
-            Debug.Log($"StartDrag {_currentDrawer.HasContent}");
             if (_currentDrawer.HasContent)
             {
                 DestroyDraggingStack();

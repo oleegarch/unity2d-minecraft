@@ -11,7 +11,7 @@ namespace World.Inventories
         [SerializeField] private GameObject _slotPrefab;
         [SerializeField] private Transform _slotsParent;
 
-        private ItemDatabase _itemDatabase;
+        private IEnumerable<ItemInfo> _availableItems;
         private List<GameObject> _instantiatedSlots = new();
 
         public event Action<GameObject, ItemInfo> OnSlotCreated;
@@ -32,14 +32,18 @@ namespace World.Inventories
 
         public void SetUp(ItemDatabase itemDatabase)
         {
-            _itemDatabase = itemDatabase;
+            _availableItems = itemDatabase.items;
+        }
+        public void SetUp(IEnumerable<ItemInfo> items)
+        {
+            _availableItems = items;
         }
 
         private void RecreateCategorySlots(ItemCategory category)
         {
             DestroyCategorySlots();
 
-            foreach (ItemInfo info in _itemDatabase.items)
+            foreach (ItemInfo info in _availableItems)
             {
                 if (info.Category == category)
                 {
