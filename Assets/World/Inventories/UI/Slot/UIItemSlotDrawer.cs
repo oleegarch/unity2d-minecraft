@@ -1,4 +1,5 @@
 using System;
+using UIGlobal;
 using UnityEngine;
 using UnityEngine.UI;
 using World.Items;
@@ -13,24 +14,29 @@ namespace World.Inventories
         [SerializeField] private Sprite _uiSlotActiveSprite;
         [SerializeField] private Image _uiSlotImage;
         [SerializeField] private UIImageWithLabel _stackDrawer;
+        [SerializeField] private UIHoverColorTransition _colorTransition;
 
         public UIImageWithLabel StackDrawer => _stackDrawer;
+        public bool HasContent => _stackDrawer.GetCurrentImageSprite() != null && !string.IsNullOrEmpty(_stackDrawer.GetCurrentLabelText());
 
         public void SetUpStack(ItemDatabase itemDatabase, ItemStack stack)
         {
-            if (!stack.IsEmpty)
+            if (stack.IsEmpty)
             {
-                var itemInfo = itemDatabase.Get(stack.Item.Id);
-                _stackDrawer.SetUp(itemInfo.Sprite, stack.Quantity.ToString());
+                DisableStack();
+                return;
             }
-            else
-            {
-                _stackDrawer.SetUp(null, null);
-            }
+
+            ItemInfo itemInfo = itemDatabase.Get(stack.Item.Id);
+            _stackDrawer.SetUp(itemInfo.Sprite, stack.Quantity.ToString());
         }
         public void SetUpStack(Sprite sprite, string quantityString)
         {
             _stackDrawer.SetUp(sprite, quantityString);
+        }
+        public void DisableStack()
+        {
+            _stackDrawer.SetUp(null, null);
         }
 
         public void ToggleCountLabel(bool enabled)
@@ -46,6 +52,12 @@ namespace World.Inventories
         public void SetColor(Color color)
         {
             _uiSlotImage.color = color;
+            _colorTransition.enabled = false;
+        }
+        public void ClearColor()
+        {
+            _uiSlotImage.color = Color.white;
+            _colorTransition.enabled = true;
         }
 
         public void Dispose()

@@ -31,7 +31,6 @@ namespace World.Inventories
             drawer.SetUpStack(info.Sprite, stack.Quantity.ToString());
             drawer.ToggleCountLabel(false);
             dragger.SetSlotContext(new SlotContext(stack, SlotType.Creative));
-            dragger.DisableDragHandlers();
         }
 
         public void Open()
