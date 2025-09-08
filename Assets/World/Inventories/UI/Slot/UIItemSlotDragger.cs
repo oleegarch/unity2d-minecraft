@@ -6,6 +6,7 @@ using World.UI;
 
 namespace World.Inventories
 {
+    #region Контекст и тип слота
     public enum SlotType
     {
         // Обычный слот любого инвентаря. Стандартное поведение с перетаскиванием.
@@ -48,32 +49,32 @@ namespace World.Inventories
             SlotType = slotType;
         }
     }
+    #endregion
 
     public class UIItemSlotDragger : MonoBehaviour, IPointerClickHandler, IDropHandler
     {
+        #region Поля
         public static bool DraggingByClick;
         public static bool DraggingStarted => _draggingSlotStartedFromDragger != null;
+        private static ItemStack _draggingStack;
         private static GameObject _draggingStackGO;
         private static UIItemSlotDragger _draggingSlotStartedFromDragger;
         private static RectTransform _draggingStackRT => _draggingStackGO.GetComponent<RectTransform>();
         private static UIImageWithLabel _draggingStackDrawer => _draggingStackGO.GetComponent<UIImageWithLabel>();
-        private static SlotContext _draggingSlotContext => _draggingSlotStartedFromDragger.CurrentSlotContext;
-        private static ItemStack _draggingStack => _draggingSlotContext.ItemStack;
 
         [SerializeField] private UIItemSlotDragHandlers _dragHandlers;
+        [SerializeField] private UIImageWithLabel _sourceStackDrawer;
         [SerializeField] private GameObject _draggingStackPrefab;
-        [SerializeField] private GameObject _currentItemStackGameObject;
 
         private UIItemSlotDrawer _currentDrawer;
         private Canvas _parentCanvas;
         private RectTransform _parentCanvasRT => _parentCanvas.transform as RectTransform;
         private RectTransform _rectTransform;
         private SlotContext _currentSlotContext;
-        private bool _currentItemStackActive = true;
         private bool _dragging = true;
         private bool _dragHandlersEnabled = true;
         private bool _dropEnabled = true;
-        private bool _hidingSourceStack = true;
+        private bool _modifyingSourceStack = true;
 
         public bool DraggingDisabled => !_dragging;
         public SlotContext CurrentSlotContext => _currentSlotContext;
@@ -81,7 +82,9 @@ namespace World.Inventories
         public event Action<UIItemSlotDrawer, UIItemSlotDragger> OnClick; // при обычном клике на сам слот
         public event Action<UIItemSlotDragger, UIItemSlotDragger> OnBeforeDrop; // событие вызывающееся "до попытки переместить ТЕКУЩИЙ слот в другой слот"
         public event Action<UIItemSlotDragger, UIItemSlotDragger> OnDropped; // событие вызывающееся "после перемещения ТЕКУЩЕГО слота в другой слот"
+        #endregion
 
+        #region Жизненный цикл
         private void Awake()
         {
             _rectTransform = transform as RectTransform;
@@ -114,8 +117,9 @@ namespace World.Inventories
             _dragHandlers.ContinueDrag -= ContinueDrag;
             _dragHandlers.FinishDrag -= FinishDrag;
         }
+        #endregion
 
-        #region Pointer handlers
+        #region События drop
         public void OnDrop(PointerEventData eventData)
         {
             if (DraggingByClick || !_dragging || !_dropEnabled) return;
@@ -129,7 +133,11 @@ namespace World.Inventories
 
             if (!DraggingByClick)
             {
-                StartDrag(eventData.position);
+                ItemStack draggingStack = CurrentSlotContext.ItemStack.Clone();
+                if (eventData.button == PointerEventData.InputButton.Right)
+                    draggingStack.Remove(draggingStack.Quantity / 2);
+
+                StartDrag(eventData.position, draggingStack);
 
                 if (_draggingStackGO != null)
                 {
@@ -140,22 +148,26 @@ namespace World.Inventories
             else if (_draggingStackGO != null && _dropEnabled)
             {
                 ProcessDrop(_draggingSlotStartedFromDragger);
+                _draggingSlotStartedFromDragger._dragHandlers.enabled = _draggingSlotStartedFromDragger._dragHandlersEnabled;
                 _draggingSlotStartedFromDragger.FinishDrag();
             }
         }
         #endregion
 
-        #region Drag'n Drop
+        #region События Drag'n Drop
         /// <summary>Начать перетаскивание (создаёт статический визуал и скрывает оригинал).</summary>
-        public void StartDrag(Vector3 position)
+        public void StartDrag(Vector3 position, ItemStack draggingStack)
         {
             if (_currentDrawer.HasContent)
             {
-                DestroyDraggingStack();
-                ToggleSourceStackDrawer(false);
-                SetUpDraggingStack();
+                SetUpDraggingStack(draggingStack);
+                ModifySourceStackDrawer();
                 UpdateDraggingStackPosition(position);
             }
+        }
+        public void StartDrag(Vector3 position)
+        {
+            StartDrag(position, CurrentSlotContext.ItemStack.Clone());
         }
 
         /// <summary>Обновить позицию перетаскиваемого визуала.</summary>
@@ -167,8 +179,8 @@ namespace World.Inventories
         /// <summary>Завершить перетаскивание (удаляет статик и показывает оригинал).</summary>
         public void FinishDrag()
         {
+            ShowSourceStackDrawer();
             DestroyDraggingStack();
-            ToggleSourceStackDrawer(true);
         }
 
         /// <summary>Обработать Drop: логика перемещения/клонирования/удаления стака.</summary>
@@ -184,12 +196,16 @@ namespace World.Inventories
             // При перемещении из обычного слота в креативный слот — УДАЛЕНИЕ
             if (fromContext.SlotType == SlotType.Default && toContext.SlotType == SlotType.Creative)
             {
-                fromContext.Inventory.Remove(fromContext.SlotIndex, out ItemStack removed);
+                ItemStack replaceItemStack = fromContext.ItemStack.Clone();
+                replaceItemStack.Remove(_draggingStack.Quantity);
+                fromContext.Inventory.Replace(fromContext.SlotIndex, replaceItemStack, out ItemStack old);
             }
-            // При перемещении из креативного слота в обычный слот — КЛОНИРОВАНИЕ целого стака
+            // При перемещении из креативного слота в обычный слот — КЛОНИРОВАНИЕ
             else if (fromContext.SlotType == SlotType.Creative && toContext.SlotType == SlotType.Default)
             {
-                toContext.Inventory.Replace(toContext.SlotIndex, fromContext.ItemStack, out ItemStack old);
+                ItemStack replaceItemStack = fromContext.ItemStack.Clone();
+                replaceItemStack.SetQuantity(_draggingStack.Quantity);
+                toContext.Inventory.Replace(toContext.SlotIndex, replaceItemStack, out ItemStack old);
             }
             // При перемещении из обычного слота в обычный слот — ПЕРЕМЕЩЕНИЕ
             else if (fromContext.SlotType == SlotType.Default && toContext.SlotType == SlotType.Default)
@@ -197,12 +213,11 @@ namespace World.Inventories
                 fromContext.Inventory.MoveTo(toContext.Inventory, fromContext.SlotIndex, toContext.SlotIndex, _draggingStack.Quantity);
             }
 
-            fromDragger._dragHandlers.enabled = _dragHandlersEnabled;
             fromDragger.OnDropped?.Invoke(fromDragger, this);
         }
         #endregion
 
-        #region Хелперы
+        #region Контекст слота
         public void SetSlotContextCustom(SlotContext context)
         {
             _currentSlotContext = context;
@@ -211,7 +226,7 @@ namespace World.Inventories
         {
             _currentSlotContext = context;
 
-            ToggleHidingSourceStack(context.SlotType == SlotType.Default);
+            ToggleModifyingSourceStack(context.SlotType == SlotType.Default);
             ToggleDragHandlers(context.SlotType == SlotType.Default);
             ToggleDragging(context.SlotType == SlotType.Default || context.SlotType == SlotType.Creative);
             ToggleDrop(context.SlotType == SlotType.Default || context.SlotType == SlotType.Creative);
@@ -229,31 +244,25 @@ namespace World.Inventories
         {
             _dropEnabled = enabled;
         }
-        public void ToggleHidingSourceStack(bool enabled)
-        {
-            _hidingSourceStack = enabled;
-            _currentItemStackGameObject.SetActive(!_hidingSourceStack || _currentItemStackActive);
-        }
+        #endregion
 
-        public void UpdateDraggingStackDrawer(Sprite sprite, int count)
+        #region Перемещаемый стек
+        public void UpdateDraggingStack(Sprite sprite, int count)
         {
             if (_draggingSlotStartedFromDragger == this)
             {
                 _draggingStackDrawer.SetUp(sprite, count.ToString());
+                _draggingStack = CurrentSlotContext.ItemStack.Clone();
             }
         }
-        private void SetUpDraggingStack()
+        private void SetUpDraggingStack(ItemStack draggingStack)
         {
-            if (_draggingStackGO == null)
-            {
-                _draggingSlotStartedFromDragger = this;
-                _draggingStackGO = Instantiate(_draggingStackPrefab, _rectTransform.position, Quaternion.identity, _parentCanvas.transform);
-            }
+            DestroyDraggingStack();
 
-            if (_draggingSlotStartedFromDragger == this)
-            {
-                _draggingStackDrawer.SetUp(_currentDrawer.StackDrawer);
-            }
+            _draggingSlotStartedFromDragger = this;
+            _draggingStackGO = Instantiate(_draggingStackPrefab, _rectTransform.position, Quaternion.identity, _parentCanvas.transform);
+            _draggingStackDrawer.SetUp(_currentDrawer.StackDrawer.GetCurrentImageSprite(), draggingStack.Quantity.ToString());
+            _draggingStack = draggingStack;
         }
         private void UpdateDraggingStackPosition(Vector3 position)
         {
@@ -268,16 +277,6 @@ namespace World.Inventories
                 _draggingStackRT.localPosition = localPos;
             }
         }
-
-        private void ToggleSourceStackDrawer(bool active)
-        {
-            if (_currentItemStackGameObject != null && _hidingSourceStack == true)
-            {
-                _currentItemStackActive = active;
-                _currentItemStackGameObject.SetActive(_currentItemStackActive);
-            }
-        }
-
         private void DestroyDraggingStack()
         {
             if (_draggingStackGO != null)
@@ -286,6 +285,35 @@ namespace World.Inventories
                 _draggingSlotStartedFromDragger = null;
                 _draggingStackGO = null;
                 DraggingByClick = false;
+            }
+        }
+
+        #endregion
+
+        #region Исходный стек
+        public void ToggleModifyingSourceStack(bool enabled)
+        {
+            _modifyingSourceStack = enabled;
+        }
+        private void ModifySourceStackDrawer()
+        {
+            if (_modifyingSourceStack == true)
+            {
+                int draggingQuantity = _draggingStack != null ? _draggingStack.Quantity : 0;
+                int left = CurrentSlotContext.ItemStack.Quantity - draggingQuantity;
+                _sourceStackDrawer.SetLabelText(left.ToString());
+                _sourceStackDrawer.gameObject.SetActive(left > 0);
+            }
+        }
+        private void ShowSourceStackDrawer()
+        {
+            if (_modifyingSourceStack == true)
+            {
+                if (!CurrentSlotContext.ItemStack.IsEmpty)
+                {
+                    _sourceStackDrawer.SetLabelText(CurrentSlotContext.ItemStack.Quantity.ToString());
+                }
+                _sourceStackDrawer.gameObject.SetActive(true);
             }
         }
         #endregion

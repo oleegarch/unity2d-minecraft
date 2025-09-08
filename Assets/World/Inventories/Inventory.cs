@@ -33,10 +33,15 @@ namespace World.Inventories
                 throw new ArgumentOutOfRangeException(nameof(index));
             return index;
         }
-
         private void EnsureValidStack(ItemStack stack)
         {
-            if (stack == null || stack.IsEmpty || stack.Item == null || stack.Item.Id == 0)
+            EnsureExistsStack(stack);
+            if (stack.IsEmpty || stack.Item == null || stack.Item.Id == 0)
+                throw new InvalidDataException(nameof(stack));
+        }
+        private void EnsureExistsStack(ItemStack stack)
+        {
+            if (stack == null)
                 throw new InvalidDataException(nameof(stack));
         }
         #endregion
@@ -294,7 +299,7 @@ namespace World.Inventories
         /// </summary>
         public void Replace(int index, ItemStack newStack, out ItemStack old)
         {
-            EnsureValidStack(newStack);
+            EnsureExistsStack(newStack);
             EnsureIndexInRange(index);
             old = slots[index];
             slots[index] = newStack.Clone();

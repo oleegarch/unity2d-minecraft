@@ -160,8 +160,8 @@ namespace World.Inventories
                 bool canCraft = _availableVariants.Count > 0;
 
                 _itemSlotResultDrawer.SetColor(canCraft ? Color.green : Color.red);
-                _itemSlotResultDragger.ToggleHidingSourceStack(false);
-                _itemSlotResultDragger.UpdateDraggingStackDrawer(_selectedToCraftItem.Sprite, _blockInveontorySlot.Quantity);
+                _itemSlotResultDragger.ToggleModifyingSourceStack(false);
+                _itemSlotResultDragger.UpdateDraggingStack(_selectedToCraftItem.Sprite, _blockInveontorySlot.Quantity);
                 _craftingVariant = canCraft ? _availableVariants[0] : null;
 
                 if (canCraft)
@@ -183,7 +183,7 @@ namespace World.Inventories
             {
                 _itemSlotResultDrawer.ClearColor();
                 _itemSlotResultDrawer.SetUpStack(_itemDatabase, _blockInveontorySlot);
-                _itemSlotResultDragger.ToggleHidingSourceStack(true);
+                _itemSlotResultDragger.ToggleModifyingSourceStack(true);
                 _craftingVariant = null;
             }
         }

@@ -54,7 +54,6 @@ namespace World.Inventories
             Quantity += added;
             return added;
         }
-
         public int Remove(int amount)
         {
             if (amount <= 0 || IsEmpty) return 0;
@@ -62,6 +61,12 @@ namespace World.Inventories
             Quantity -= removed;
             if (Quantity == 0) Item = null;
             return removed;
+        }
+        public ItemStack SetQuantity(int amount)
+        {
+            Quantity = amount;
+            if (Quantity <= 0) Item = null;
+            return this;
         }
 
         public void MakeEmpty()

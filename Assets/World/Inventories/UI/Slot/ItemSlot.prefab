@@ -120,8 +120,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dragHandlers: {fileID: 7322177146485096974}
+  _sourceStackDrawer: {fileID: 5995759331172009161}
   _draggingStackPrefab: {fileID: 1274409073444489641, guid: a94b23cd4919d3d4eba94655f5eabd53, type: 3}
-  _currentItemStackGameObject: {fileID: 8087886557915930643}
 --- !u!114 &3412032628099889868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,14 +246,9 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3649985999245684083, guid: a94b23cd4919d3d4eba94655f5eabd53, type: 3}
   m_PrefabInstance: {fileID: 7030802595875514810}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8087886557915930643}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dba97ed3f5f1ed94ea2e68363270ab49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &8087886557915930643 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1274409073444489641, guid: a94b23cd4919d3d4eba94655f5eabd53, type: 3}
-  m_PrefabInstance: {fileID: 7030802595875514810}
-  m_PrefabAsset: {fileID: 0}
