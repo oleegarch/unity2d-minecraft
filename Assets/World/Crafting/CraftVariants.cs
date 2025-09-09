@@ -24,7 +24,7 @@ namespace World.Crafting
 
         [Tooltip("Количество предметов для крафта")]
         public int Quantity;
-        [Tooltip("Как долго в секундах происходит крафт этого предмета (для печки и т.п.)")]
+        [Tooltip("Как долго в секундах происходит крафт этого предмета")]
         public float Duration;
 
         [Tooltip("ExactlyItem — определённый предмет, TypeItem — любой предмет определённого типа")]

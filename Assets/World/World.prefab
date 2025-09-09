@@ -356,6 +356,7 @@ GameObject:
   - component: {fileID: 7462098728604620193}
   - component: {fileID: 3330246094659640297}
   - component: {fileID: 4219367044316629845}
+  - component: {fileID: 4908529621701137576}
   - component: {fileID: 1797841827800245505}
   - component: {fileID: 5961720312721555000}
   - component: {fileID: 8717926869780470110}
@@ -483,6 +484,30 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &4908529621701137576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185483721266730774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 820412ae7e9e44f4490f9deca3e272d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rigidbody: {fileID: 4219367044316629845}
+  _animator: {fileID: 7462098728604620193}
+  _playerTransform: {fileID: 282438840575209760}
+  moveSpeed: 5
+  jumpForce: 4.5
+  measureVelocityY: 0.1
+  groundCheckLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  groundCheckTransform: {fileID: 7935461173147862630}
+  groundCheckPositionSize: {x: 0.6, y: 0.2}
+  groundCheckPositionAngle: 0
 --- !u!114 &1797841827800245505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -512,19 +537,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _inputManager: {fileID: 3319511144438469435}
-  _rigidbody: {fileID: 4219367044316629845}
-  _groundCheck: {fileID: 7935461173147862630}
-  _animator: {fileID: 7462098728604620193}
-  _playerTransform: {fileID: 282438840575209760}
-  moveSpeed: 5
-  jumpForce: 4.5
-  measureVelocityY: 1
-  groundCheckLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  groundCheckTransform: {fileID: 7935461173147862630}
-  groundCheckPositionSize: {x: 0.6, y: 0.25}
-  groundCheckPositionAngle: 0
+  _movement: {fileID: 4908529621701137576}
 --- !u!114 &8717926869780470110
 MonoBehaviour:
   m_ObjectHideFlags: 0
