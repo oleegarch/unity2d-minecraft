@@ -119,7 +119,7 @@ namespace World.Inventories
         }
         #endregion
 
-        #region События drop
+        #region События Drop
         public void OnDrop(PointerEventData eventData)
         {
             if (DraggingByClick || !_dragging || !_dropEnabled) return;
@@ -154,11 +154,11 @@ namespace World.Inventories
         }
         #endregion
 
-        #region События Drag'n Drop
+        #region События Drag
         /// <summary>Начать перетаскивание (создаёт статический визуал и скрывает оригинал).</summary>
         public void StartDrag(Vector3 position, ItemStack draggingStack)
         {
-            if (_currentDrawer.HasContent)
+            if (_draggingStackGO == null && _currentDrawer.HasContent)
             {
                 SetUpDraggingStack(draggingStack);
                 ModifySourceStackDrawer();
