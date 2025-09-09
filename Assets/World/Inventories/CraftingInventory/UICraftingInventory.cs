@@ -161,6 +161,7 @@ namespace World.Inventories
 
                 _itemSlotResultDrawer.SetColor(canCraft ? Color.green : Color.red);
                 _itemSlotResultDragger.ToggleModifyingSourceStack(false);
+                _itemSlotResultDragger.ToggleRightClick(false);
                 _itemSlotResultDragger.UpdateDraggingStack(_selectedToCraftItem.Sprite, _blockInveontorySlot.Quantity);
                 _craftingVariant = canCraft ? _availableVariants[0] : null;
 
@@ -184,6 +185,7 @@ namespace World.Inventories
                 _itemSlotResultDrawer.ClearColor();
                 _itemSlotResultDrawer.SetUpStack(_itemDatabase, _blockInveontorySlot);
                 _itemSlotResultDragger.ToggleModifyingSourceStack(true);
+                _itemSlotResultDragger.ToggleRightClick(true);
                 _craftingVariant = null;
             }
         }
