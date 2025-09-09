@@ -14,7 +14,6 @@ namespace World.Chunks
         public bool HasEntityAtPoint(Vector3 position)
         {
             Collider2D collider = Physics2D.OverlapPoint(position, _layerMask);
-            Debug.Log($"HasEntityAtPoint {collider}");
             return collider != null;
         }
         public bool HasEntityAtPoint(WorldPosition position)

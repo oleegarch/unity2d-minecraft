@@ -178,7 +178,7 @@ namespace World.Inventories
                 var slot = slots[i];
                 if (!slot.IsEmpty && slot.CanStackWith(stack))
                 {
-                    int removed = stack.Remove(Math.Min(stack.Quantity, slot.MaxStack));
+                    int removed = stack.Remove(Math.Min(stack.Quantity, slot.SpaceRemaining));
                     int added = slot.Add(removed);
                     if (added > 0) Events.InvokeSlotChanged(i, slots[i].Clone());
                 }

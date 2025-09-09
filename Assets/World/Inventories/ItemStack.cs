@@ -16,6 +16,7 @@ namespace World.Inventories
 
         public bool IsEmpty => Item == null || Quantity <= 0;
         public int SpaceRemaining => Item == null ? 0 : MaxStack - Quantity;
+        public bool HasSpace => SpaceRemaining > 0;
 
         public ItemStack(ushort ItemId, int maxStack, int quantity = 1) : this(new ItemInstance(ItemId), maxStack, quantity) { }
         public ItemStack(ItemInfo info, int quantity = 1) : this(new ItemInstance(info.Id), info.MaxStack, quantity) { }
@@ -42,7 +43,7 @@ namespace World.Inventories
 
         public bool CanStackWith(ItemStack other)
         {
-            if (other == null) return false;
+            if (other == null || !HasSpace) return false;
             if (IsEmpty || other.IsEmpty) return true;
             return Item.CanStackWith(other.Item);
         }

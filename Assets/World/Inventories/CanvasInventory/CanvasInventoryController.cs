@@ -59,8 +59,12 @@ namespace World.Inventories
         }
         private void Start()
         {
-            _playerInventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(31), 100));
-            _playerInventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(33), 100));
+            int stacks = 40;
+            while (stacks-- > 0)
+            {
+                Debug.Log($"try add {stacks}");
+                _playerInventory.TryAdd(new ItemStack(_manager.ItemDatabase.GetByBlockId(31), 100));
+            }
             ActiveHotbarIndex = 0;
         }
         private void OnDestroy()
