@@ -55,10 +55,10 @@ namespace World.Inventories
     {
         #region Поля
         public static bool DraggingByClick;
-        public static bool DraggingStarted => _draggingSlotStartedFromDragger != null;
-        private static ItemStack _draggingStack;
+        public static bool DraggingStarted => _draggingStartedFromDragger != null;
+        private static int _draggingQuantity;
         private static GameObject _draggingStackGO;
-        private static UIItemSlotDragger _draggingSlotStartedFromDragger;
+        private static UIItemSlotDragger _draggingStartedFromDragger;
         private static RectTransform _draggingStackRT => _draggingStackGO.GetComponent<RectTransform>();
         private static UIImageWithLabel _draggingStackDrawer => _draggingStackGO.GetComponent<UIImageWithLabel>();
 
@@ -93,14 +93,14 @@ namespace World.Inventories
         }
         private void Update()
         {
-            if (DraggingByClick && _draggingSlotStartedFromDragger == this)
+            if (DraggingByClick && _draggingStartedFromDragger == this)
             {
                 ContinueDrag(Mouse.current.position.ReadValue());
             }
         }
         private void OnDestroy()
         {
-            if (_draggingSlotStartedFromDragger == this)
+            if (_draggingStartedFromDragger == this)
             {
                 DestroyDraggingStack();
             }
@@ -123,7 +123,7 @@ namespace World.Inventories
         public void OnDrop(PointerEventData eventData)
         {
             if (DraggingByClick || !_dragging || !_dropEnabled) return;
-            ProcessDrop(eventData.pointerDrag?.GetComponent<UIItemSlotDragger>());
+            ProcessDrop(eventData.pointerDrag?.GetComponent<UIItemSlotDragger>(), _draggingQuantity);
         }
         public void OnPointerClick(PointerEventData eventData)
         {
@@ -131,43 +131,64 @@ namespace World.Inventories
 
             if (_dragging == false) return;
 
+            int dropCount = _draggingQuantity;
+            bool isRightClick = eventData.button == PointerEventData.InputButton.Right;
+            bool continueDragging = false;
+            bool oldDraggingByClick = DraggingByClick;
+
             if (!DraggingByClick)
             {
-                ItemStack draggingStack = CurrentSlotContext.ItemStack.Clone();
-                if (eventData.button == PointerEventData.InputButton.Right)
-                    draggingStack.Remove(draggingStack.Quantity / 2);
+                int draggingQuantity = CurrentSlotContext.ItemStack.Quantity;
+                if (isRightClick)
+                    draggingQuantity = Math.Max(1, draggingQuantity / 2);
 
-                StartDrag(eventData.position, draggingStack);
-
-                if (_draggingStackGO != null)
+                if (StartDrag(eventData.position, draggingQuantity))
                 {
                     _dragHandlers.enabled = false;
                     DraggingByClick = true;
                 }
             }
-            else if (_draggingStackGO != null && _dropEnabled)
+            else if (isRightClick)
             {
-                ProcessDrop(_draggingSlotStartedFromDragger);
-                _draggingSlotStartedFromDragger._dragHandlers.enabled = _draggingSlotStartedFromDragger._dragHandlersEnabled;
-                _draggingSlotStartedFromDragger.FinishDrag();
+                dropCount = 1;
+                _draggingQuantity -= dropCount;
+                continueDragging = _draggingQuantity > 0;
+            }
+
+            if (_draggingStackGO != null && oldDraggingByClick && _dropEnabled)
+            {
+                ProcessDrop(_draggingStartedFromDragger, dropCount);
+
+                if (continueDragging)
+                {
+                    _draggingStartedFromDragger.UpdateDraggingStack(_draggingQuantity);
+                    _draggingStartedFromDragger.ModifySourceStackDrawer();
+                }
+                else
+                {
+                    _draggingStartedFromDragger._dragHandlers.enabled = _draggingStartedFromDragger._dragHandlersEnabled;
+                    _draggingStartedFromDragger.FinishDrag();
+                }
             }
         }
         #endregion
 
         #region События Drag
         /// <summary>Начать перетаскивание (создаёт статический визуал и скрывает оригинал).</summary>
-        public void StartDrag(Vector3 position, ItemStack draggingStack)
+        public bool StartDrag(Vector3 position, int draggingQuantity)
         {
-            if (_draggingStackGO == null && _currentDrawer.HasContent)
+            bool started = _draggingStackGO == null && _currentDrawer.HasContent;
+            if (started)
             {
-                SetUpDraggingStack(draggingStack);
+                SetUpDraggingStack(draggingQuantity);
                 ModifySourceStackDrawer();
                 UpdateDraggingStackPosition(position);
             }
+            return started;
         }
         public void StartDrag(Vector3 position)
         {
-            StartDrag(position, CurrentSlotContext.ItemStack.Clone());
+            StartDrag(position, CurrentSlotContext.ItemStack.Quantity);
         }
 
         /// <summary>Обновить позицию перетаскиваемого визуала.</summary>
@@ -184,7 +205,7 @@ namespace World.Inventories
         }
 
         /// <summary>Обработать Drop: логика перемещения/клонирования/удаления стака.</summary>
-        public void ProcessDrop(UIItemSlotDragger fromDragger)
+        public void ProcessDrop(UIItemSlotDragger fromDragger, int quantity)
         {
             fromDragger.OnBeforeDrop?.Invoke(fromDragger, this);
 
@@ -197,20 +218,20 @@ namespace World.Inventories
             if (fromContext.SlotType == SlotType.Default && toContext.SlotType == SlotType.Creative)
             {
                 ItemStack replaceItemStack = fromContext.ItemStack.Clone();
-                replaceItemStack.Remove(_draggingStack.Quantity);
+                replaceItemStack.Remove(quantity);
                 fromContext.Inventory.Replace(fromContext.SlotIndex, replaceItemStack, out ItemStack old);
             }
             // При перемещении из креативного слота в обычный слот — КЛОНИРОВАНИЕ
             else if (fromContext.SlotType == SlotType.Creative && toContext.SlotType == SlotType.Default)
             {
                 ItemStack replaceItemStack = fromContext.ItemStack.Clone();
-                replaceItemStack.SetQuantity(_draggingStack.Quantity);
+                replaceItemStack.SetQuantity(quantity);
                 toContext.Inventory.Replace(toContext.SlotIndex, replaceItemStack, out ItemStack old);
             }
             // При перемещении из обычного слота в обычный слот — ПЕРЕМЕЩЕНИЕ
             else if (fromContext.SlotType == SlotType.Default && toContext.SlotType == SlotType.Default)
             {
-                fromContext.Inventory.MoveTo(toContext.Inventory, fromContext.SlotIndex, toContext.SlotIndex, _draggingStack.Quantity);
+                fromContext.Inventory.MoveTo(toContext.Inventory, fromContext.SlotIndex, toContext.SlotIndex, quantity);
             }
 
             fromDragger.OnDropped?.Invoke(fromDragger, this);
@@ -249,20 +270,28 @@ namespace World.Inventories
         #region Перемещаемый стек
         public void UpdateDraggingStack(Sprite sprite, int count)
         {
-            if (_draggingSlotStartedFromDragger == this)
+            if (_draggingStartedFromDragger == this)
             {
                 _draggingStackDrawer.SetUp(sprite, count.ToString());
-                _draggingStack = CurrentSlotContext.ItemStack.Clone();
+                _draggingQuantity = count;
             }
         }
-        private void SetUpDraggingStack(ItemStack draggingStack)
+        public void UpdateDraggingStack(int count)
+        {
+            if (_draggingStartedFromDragger == this)
+            {
+                _draggingStackDrawer.SetLabelText(count.ToString());
+                _draggingQuantity = count;
+            }
+        }
+        private void SetUpDraggingStack(int draggingQuantity)
         {
             DestroyDraggingStack();
 
-            _draggingSlotStartedFromDragger = this;
+            _draggingQuantity = draggingQuantity;
+            _draggingStartedFromDragger = this;
             _draggingStackGO = Instantiate(_draggingStackPrefab, _rectTransform.position, Quaternion.identity, _parentCanvas.transform);
-            _draggingStackDrawer.SetUp(_currentDrawer.StackDrawer.GetCurrentImageSprite(), draggingStack.Quantity.ToString());
-            _draggingStack = draggingStack;
+            _draggingStackDrawer.SetUp(_currentDrawer.StackDrawer.GetCurrentImageSprite(), _draggingQuantity.ToString());
         }
         private void UpdateDraggingStackPosition(Vector3 position)
         {
@@ -282,7 +311,7 @@ namespace World.Inventories
             if (_draggingStackGO != null)
             {
                 Destroy(_draggingStackGO);
-                _draggingSlotStartedFromDragger = null;
+                _draggingStartedFromDragger = null;
                 _draggingStackGO = null;
                 DraggingByClick = false;
             }
@@ -299,8 +328,7 @@ namespace World.Inventories
         {
             if (_modifyingSourceStack == true)
             {
-                int draggingQuantity = _draggingStack != null ? _draggingStack.Quantity : 0;
-                int left = CurrentSlotContext.ItemStack.Quantity - draggingQuantity;
+                int left = CurrentSlotContext.ItemStack.Quantity - _draggingQuantity;
                 _sourceStackDrawer.SetLabelText(left.ToString());
                 _sourceStackDrawer.gameObject.SetActive(left > 0);
             }
