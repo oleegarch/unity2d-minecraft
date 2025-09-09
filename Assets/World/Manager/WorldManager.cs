@@ -12,7 +12,6 @@ namespace World.Chunks
 {
     public class WorldManager : MonoBehaviour
     {
-        [SerializeField] private LayerMask _entitiesLayerMask;
         [SerializeField] private GameObject _chunkRendererPrefab;
         [SerializeField] private Transform _chunksParent;
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
@@ -31,7 +30,6 @@ namespace World.Chunks
         public ItemCategoryDatabase ItemCategoryDatabase => _chunkGeneratorConfig.ItemCategoryDatabase;
 
         public IChunkGenerator Generator { get; private set; }
-        public WorldEntities Entities { get; private set; }
         public WorldBlockEvents Events { get; private set; }
         public IWorldBlockModifier Blocks { get; private set; }
         public IWorldStorage Storage { get; private set; }
@@ -40,9 +38,8 @@ namespace World.Chunks
 
         private void Awake()
         {
-            Entities = new WorldEntities(_entitiesLayerMask);
-            Events = new WorldBlockEvents();
             Generator = _chunkGeneratorConfig.GetChunkGenerator(_seed);
+            Events = new WorldBlockEvents();
             Storage = new WorldStorage(this, Generator, _chunkRendererPrefab, _chunksParent);
             Blocks = new WorldBlockModifier(Storage, Generator);
         }

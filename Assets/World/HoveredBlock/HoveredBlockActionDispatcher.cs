@@ -1,5 +1,6 @@
 using UnityEngine;
 using World.Chunks;
+using World.Entities;
 using World.Inventories;
 using World.Items;
 
@@ -7,6 +8,7 @@ namespace World.HoveredBlock
 {
     public class HoveredBlockActionDispatcher : MonoBehaviour
     {
+        [SerializeField] private WorldEntities _worldEntities;
         [SerializeField] private CanvasInventoryController _inventoryController;
         [SerializeField] private HoveredBlockObserver _observer;
         [SerializeField] private HoveredBlockBreaker _breaker;
@@ -34,7 +36,7 @@ namespace World.HoveredBlock
                 ItemInfo itemInfo = _worldManager.ItemDatabase.GetByBlockId(_picker.SelectedBlock.Id);
                 if (
                     _inventoryController.Inventory.Has(new ItemStack(itemInfo), _inventoryController.ActiveHotbarIndex) &&
-                    !_worldManager.Entities.HasEntityAtPoint(wc) &&
+                    !_worldEntities.HasEntityAtPoint(wc) &&
                     _worldManager.Blocks.Set(wc, _picker.SelectedBlock, _picker.SelectedLayer, _picker.SelectedStyles)
                 )
                 {

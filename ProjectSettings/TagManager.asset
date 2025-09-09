@@ -15,7 +15,7 @@ TagManager:
   - Player
   - Sun
   - ItemDropped
-  - 
+  - Entity
   - 
   - 
   - 
@@ -52,6 +52,9 @@ TagManager:
     locked: 0
   - name: BlockUI
     uniqueID: 2693136387
+    locked: 0
+  - name: Entity
+    uniqueID: 1901061289
     locked: 0
   - name: Player
     uniqueID: 4075600203

@@ -4,7 +4,7 @@ using World.InputActions;
 
 namespace World.Entities.Player
 {
-    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(EntityMovement))]
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private WorldInputManager _inputManager;
