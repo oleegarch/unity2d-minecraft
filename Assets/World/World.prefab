@@ -687,6 +687,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f92ec6ea0a2c01e46ad9863cc11ace35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _entitiesLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
   _chunkRendererPrefab: {fileID: 7660349154471805984, guid: 9c1e627da06ca184abf92a2ddfadb6c0, type: 3}
   _chunksParent: {fileID: 4278272002193004716}
   _chunkGeneratorConfig: {fileID: 11400000, guid: b37f629017ec25541a3290004e9b275f, type: 2}
