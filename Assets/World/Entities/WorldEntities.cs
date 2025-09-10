@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using World.Chunks;
 
@@ -10,6 +11,8 @@ namespace World.Entities
         [SerializeField] private EntityDatabase _database;
         [SerializeField] private Transform _playerTransform;
         [SerializeField] private Transform _spawnParent;
+
+        private List<GameObject> _spawnedKindMobs = new();
 
         private void OnEnable()
         {

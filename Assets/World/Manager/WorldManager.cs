@@ -7,6 +7,7 @@ using World.Blocks;
 using World.Blocks.Atlases;
 using World.Chunks.Generator;
 using World.Items;
+using World.Entities;
 
 namespace World.Chunks
 {
@@ -28,6 +29,7 @@ namespace World.Chunks
         public BlockAtlasDatabase BlockAtlasDatabase => _chunkGeneratorConfig.BlockAtlasDatabase;
         public ItemDatabase ItemDatabase => _chunkGeneratorConfig.ItemDatabase;
         public ItemCategoryDatabase ItemCategoryDatabase => _chunkGeneratorConfig.ItemCategoryDatabase;
+        public EntityDatabase EntityDatabase => _chunkGeneratorConfig.EntityDatabase;
 
         public IChunkGenerator Generator { get; private set; }
         public WorldBlockEvents Events { get; private set; }
@@ -65,8 +67,6 @@ namespace World.Chunks
 
         private void HandleVisibleChanged(RectInt viewRect)
         {
-            Generator.CacheComputation(viewRect);
-            
             int version = ++_version;
             _ = UpdateVisibleAsync(viewRect, version);
         }
@@ -74,6 +74,8 @@ namespace World.Chunks
         private async Task UpdateVisibleAsync(RectInt rect, int version)
         {
             var needed = new HashSet<ChunkIndex>();
+
+            Generator.CacheComputation(rect);
 
             for (int x = rect.xMin; x <= rect.xMax; x++)
                 for (int y = rect.yMin; y <= rect.yMax; y++)

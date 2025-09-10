@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using World.Chunks.Generator.Steps;
 
@@ -33,26 +34,57 @@ namespace World.Chunks.Generator.Procedural
     // Biome provider implementation
     public class BiomeProvider : IBiomeProvider, IChunkCacheStep
     {
-        private readonly CacheComputationByX<Biome> _cacheHelper;
+        private class BiomeRange
+        {
+            public Biome Biome;
+            public RangeInt Range;
+        }
+
+        private readonly List<BiomeRange> _ranges = new();
         private readonly List<Biome> _biomes;
-        private readonly float _biomeWidth;
+        private readonly int _biomeWidth;
         private readonly int _seed;
 
-        public BiomeProvider(List<Biome> biomes, float biomeWidth, int seed)
+        public BiomeProvider(List<Biome> biomes, int biomeWidth, int seed)
         {
-            _cacheHelper = new CacheComputationByX<Biome>(ComputeBiome, seed);
             _biomes = biomes;
             _biomeWidth = biomeWidth;
             _seed = seed;
         }
 
-        public void CacheComputation(RectInt rect) => _cacheHelper.CacheComputation(rect);
-        public Biome GetBiome(int worldX) => _cacheHelper.GetValue(worldX);
-
-        private Biome ComputeBiome(int worldX)
+        public void CacheComputation(RectInt rect)
         {
-            int zone = Mathf.FloorToInt(worldX / _biomeWidth);
-            var rand = new System.Random(_seed + zone);
+            _ranges.Clear();
+
+            for (int startX = GetStartX(rect.xMin); startX < rect.xMax; startX += _biomeWidth)
+            {
+                _ranges.Add(new BiomeRange
+                {
+                    Biome = ComputeBiomeByStartX(startX),
+                    Range = new RangeInt(startX, _biomeWidth)
+                });
+            }
+        }
+        public Biome GetBiome(int worldX)
+        {
+            BiomeRange range = _ranges.FirstOrDefault(br => br.Range.start <= worldX && br.Range.end > worldX);
+            if (range != null) return range.Biome;
+
+            return ComputeBiome(worldX);
+        }
+        public int GetStartX(int worldX)
+        {
+            float ratio = worldX / (float)_biomeWidth;
+            return Mathf.FloorToInt(ratio) * _biomeWidth;
+        }
+        public Biome ComputeBiome(int worldX)
+        {
+            int startX = GetStartX(worldX);
+            return ComputeBiomeByStartX(startX);
+        }
+        public Biome ComputeBiomeByStartX(int startX)
+        {
+            var rand = new System.Random(_seed + startX);
             return _biomes[rand.Next(_biomes.Count)];
         }
     }

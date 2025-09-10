@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace World.Entities
 {
-    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Rigidbody2D)), RequireComponent(typeof(Animator))]
     public class EntityGroundCheck : MonoBehaviour
     {
         [SerializeField] private Rigidbody2D _rigidbody;
@@ -18,20 +18,12 @@ namespace World.Entities
         [SerializeField] private Vector2 groundCheckPositionSize;
         [SerializeField] private float groundCheckPositionAngle;
 
-        [NonSerialized] public bool Running;
-        [NonSerialized] public bool IsGrounded;
-        [NonSerialized] public bool IsJumping;
-        [NonSerialized] public bool IsFalling;
+        public bool IsGrounded => Physics2D.OverlapBox((Vector2)groundCheckTransform.position, groundCheckPositionSize, groundCheckPositionAngle, groundCheckLayer);
+        public bool IsJumping => _rigidbody.linearVelocityY > measureVelocityY;
+        public bool IsFalling => _rigidbody.linearVelocityY < -measureVelocityY;
 
         private void Update()
         {
-            // Обновляем флаги по физике
-            IsGrounded = Physics2D.OverlapBox((Vector2)groundCheckTransform.position, groundCheckPositionSize, groundCheckPositionAngle, groundCheckLayer);
-
-            float velY = _rigidbody.linearVelocityY;
-            IsJumping = velY >  measureVelocityY;
-            IsFalling =  velY < -measureVelocityY;
-
             // Обновляем параметры Animator
             _animator.SetBool("IsGrounded", IsGrounded);
             _animator.SetBool("IsJumping", IsJumping);

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace World.Entities
 {
-    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Rigidbody2D)), RequireComponent(typeof(Animator))]
     public class EntityMovement : MonoBehaviour
     {
         [SerializeField] private EntityGroundCheck _groundCheck;
@@ -19,7 +19,7 @@ namespace World.Entities
         private bool _jumpRequest;
         private float _moveSpeedMultiplier = 1f;
 
-        [NonSerialized] public bool Running;
+        public bool Running => _moveVelocity != 0;
 
         private void Update()
         {
@@ -50,7 +50,6 @@ namespace World.Entities
         public void Move(float move)
         {
             _moveVelocity = move;
-            Running = move != 0;
         }
         public void MoveSpeed(float speed)
         {

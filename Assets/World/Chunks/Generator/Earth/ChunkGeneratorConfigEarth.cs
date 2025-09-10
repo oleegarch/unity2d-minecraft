@@ -11,7 +11,7 @@ namespace World.Chunks.Generator
     public class ChunkGeneratorConfigEarth : ChunkGeneratorConfig
     {
         [Tooltip("размер биома")]
-        public float BiomeWidth;
+        public int BiomeWidth;
 
         [Tooltip("сколько блоков до следующего биомов будет идти смешивание SurfaceY")]
         public float SurfaceBlendWidth;
