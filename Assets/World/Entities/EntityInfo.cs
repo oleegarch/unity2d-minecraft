@@ -16,5 +16,8 @@ namespace World.Entities
 
         [Tooltip("Префаб сущености для создания.")]
         public GameObject Prefab;
+
+        [Tooltip("Высота коллайдера столкновений.")]
+        public float ColliderHeight;
     }
 }

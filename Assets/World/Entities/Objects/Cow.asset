@@ -16,3 +16,4 @@ MonoBehaviour:
   Name: cow
   Title: "\u041A\u043E\u0440\u043E\u0432\u0430"
   Prefab: {fileID: 2902429995832836539, guid: 5f610661032aa494dafbf73c4849037a, type: 3}
+  ColliderHeight: 1.6

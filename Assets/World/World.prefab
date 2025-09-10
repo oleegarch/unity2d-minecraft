@@ -551,6 +551,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldManager: {fileID: 5868988553912566916}
+  _worldStorage: {fileID: 3907395674899852890}
   _playerTransform: {fileID: 282438840575209760}
   _playerRb2: {fileID: 4219367044316629845}
   _playerGO: {fileID: 1185483721266730774}
@@ -665,7 +666,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4278272002193004716}
   - component: {fileID: 2519934639846788326}
+  - component: {fileID: 2352231934374013578}
   - component: {fileID: 5868988553912566916}
+  - component: {fileID: 3907395674899852890}
   m_Layer: 0
   m_Name: Chunks
   m_TagString: Untagged
@@ -704,6 +707,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cameraObserver: {fileID: 8407411756785181969}
   _chunkGeneratorConfig: {fileID: 11400000, guid: b37f629017ec25541a3290004e9b275f, type: 2}
+--- !u!114 &2352231934374013578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912066206740017318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 252122ea3f69d8a4f8b574726dc09999, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _worldManager: {fileID: 5868988553912566916}
+  _worldStorage: {fileID: 3907395674899852890}
 --- !u!114 &5868988553912566916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -717,10 +734,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _chunkRendererPrefab: {fileID: 7660349154471805984, guid: 9c1e627da06ca184abf92a2ddfadb6c0, type: 3}
-  _chunksParent: {fileID: 4278272002193004716}
   _chunkGeneratorConfig: {fileID: 11400000, guid: b37f629017ec25541a3290004e9b275f, type: 2}
+  _storage: {fileID: 3907395674899852890}
   _visibility: {fileID: 2519934639846788326}
+  _chunksPreloader: {fileID: 2352231934374013578}
   _seed: 0
+--- !u!114 &3907395674899852890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912066206740017318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff35e1b51cff4b44ba1c1d0859e651c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _visibility: {fileID: 2519934639846788326}
+  _manager: {fileID: 5868988553912566916}
+  _prefab: {fileID: 7660349154471805984, guid: 9c1e627da06ca184abf92a2ddfadb6c0, type: 3}
+  _chunksParent: {fileID: 4278272002193004716}
 --- !u!1 &1945966528918650676
 GameObject:
   m_ObjectHideFlags: 0
@@ -1012,6 +1046,9 @@ MonoBehaviour:
   _entitiesLayerMask:
     serializedVersion: 2
     m_Bits: 1152
+  _worldManager: {fileID: 5868988553912566916}
+  _worldStorage: {fileID: 3907395674899852890}
+  _worldChunksPreloader: {fileID: 2352231934374013578}
   _visibility: {fileID: 2519934639846788326}
   _database: {fileID: 11400000, guid: 6dd38874624c9f54795b64d872ed582c, type: 2}
   _playerTransform: {fileID: 282438840575209760}
@@ -7287,6 +7324,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _worldManager: {fileID: 5868988553912566916}
+  _worldStorage: {fileID: 3907395674899852890}
   _worldModeController: {fileID: 1743995927618707106}
   _cameraModeController: {fileID: 8674153355091370118}
   _worldTime: {fileID: 9144659093550293114}

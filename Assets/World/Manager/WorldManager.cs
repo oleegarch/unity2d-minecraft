@@ -1,8 +1,4 @@
 using UnityEngine;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 using World.Blocks;
 using World.Blocks.Atlases;
 using World.Chunks.Generator;
@@ -14,16 +10,12 @@ namespace World.Chunks
     public class WorldManager : MonoBehaviour
     {
         [SerializeField] private GameObject _chunkRendererPrefab;
-        [SerializeField] private Transform _chunksParent;
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
-        [SerializeField] private WorldVisibleService _visibility;
+        [SerializeField] private WorldStorage _storage;
+        [SerializeField] private WorldEntities _entities;
+        [SerializeField] private WorldChunksVisible _visibility;
+        [SerializeField] private WorldChunksPreloader _chunksPreloader;
         [SerializeField] private int _seed;
-
-        private int _version;
-
-        public event Action OnVisibleChunksLoaded;
-        public event Action OnVisibleChunksUpdated;
-        public event Action OnVisibleChunksDestroyed;
 
         public BlockDatabase BlockDatabase => _chunkGeneratorConfig.BlockDatabase;
         public BlockAtlasDatabase BlockAtlasDatabase => _chunkGeneratorConfig.BlockAtlasDatabase;
@@ -34,89 +26,35 @@ namespace World.Chunks
         public IChunkGenerator Generator { get; private set; }
         public WorldBlockEvents Events { get; private set; }
         public IWorldBlockModifier Blocks { get; private set; }
-        public IWorldStorage Storage { get; private set; }
-
-        [NonSerialized] public bool Loaded = false;
 
         private void Awake()
         {
             Generator = _chunkGeneratorConfig.GetChunkGenerator(_seed);
             Events = new WorldBlockEvents();
-            Storage = new WorldStorage(this, Generator, _chunkRendererPrefab, _chunksParent);
-            Blocks = new WorldBlockModifier(Storage, Generator);
+            Blocks = new WorldBlockModifier(_storage, Generator);
         }
         private void Start()
         {
             Generator.RegisterWorldSystems(this);
         }
-
         private void OnEnable()
         {
-            _visibility.OnVisibleChunksChanged += HandleVisibleChanged;
+            _storage.Enable();
+            _chunksPreloader.Enable();
+            _entities.Enable();
+            _visibility.Enable();
         }
         private void OnDisable()
         {
-            _visibility.OnVisibleChunksChanged -= HandleVisibleChanged;
+            _storage.Disable();
+            _chunksPreloader.Disable();
+            _entities.Disable();
+            _visibility.Disable();
         }
         private void OnDestroy()
         {
             Generator.UnregisterWorldSystems(this);
-            Storage.DisposeAll();
-            OnVisibleChunksDestroyed?.Invoke();
-        }
-
-        private void HandleVisibleChanged(RectInt viewRect)
-        {
-            int version = ++_version;
-            _ = UpdateVisibleAsync(viewRect, version);
-        }
-
-        private async Task UpdateVisibleAsync(RectInt rect, int version)
-        {
-            var needed = new HashSet<ChunkIndex>();
-
-            Generator.CacheComputation(rect);
-
-            for (int x = rect.xMin; x <= rect.xMax; x++)
-                for (int y = rect.yMin; y <= rect.yMax; y++)
-                {
-                    if (version != _version) return;
-
-                    ChunkIndex index = new ChunkIndex(x, y);
-                    needed.Add(index);
-
-                    try
-                    {
-                        await Storage.GetOrCreateAsync(index);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.LogException(ex);
-                    }
-                }
-
-            var toRemove = new List<ChunkIndex>();
-            foreach (var kvp in Storage.GetAllCoords().ToList())
-                if (!needed.Contains(kvp))
-                    toRemove.Add(kvp);
-
-            foreach (ChunkIndex index in toRemove)
-                Storage.Dispose(index);
-
-            if (Loaded == false)
-            {
-                Loaded = true;
-                OnVisibleChunksLoaded?.Invoke();
-            }
-
-            OnVisibleChunksUpdated?.Invoke();
-        }
-
-        public void RerenderAll()
-        {
-            Storage.DisposeAll();
-
-            HandleVisibleChanged(_visibility.VisibleRect);
+            _storage.DisposeAll();
         }
     }
 }

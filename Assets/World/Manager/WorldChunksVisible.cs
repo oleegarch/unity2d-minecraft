@@ -10,7 +10,7 @@ namespace World.Chunks
         public event Action<RectInt> OnVisibleChunksChanged;
         public RectInt VisibleRect { get; }
     }
-    public class WorldVisibleService : MonoBehaviour, IChunksVisible
+    public class WorldChunksVisible : MonoBehaviour, IChunksVisible
     {
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
@@ -21,16 +21,13 @@ namespace World.Chunks
         public event Action<RectInt> OnVisibleChunksChanged;
         public RectInt VisibleRect { get; private set; }
 
-        private void Start()
+        public void Enable()
         {
             OnCameraPositionChanged(_cameraObserver.GetPosition());
-        }
-        private void OnEnable()
-        {
             _cameraObserver.OnPositionChanged += OnCameraPositionChanged;
             _cameraObserver.OnOrthographicSizeChanged += OnCameraSizeChanged;
         }
-        private void OnDisable()
+        public void Disable()
         {
             _cameraObserver.OnPositionChanged -= OnCameraPositionChanged;
             _cameraObserver.OnOrthographicSizeChanged -= OnCameraSizeChanged;

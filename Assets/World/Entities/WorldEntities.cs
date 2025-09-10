@@ -9,18 +9,20 @@ namespace World.Entities
     {
         [SerializeField] private LayerMask _entitiesLayerMask;
         [SerializeField] private WorldManager _worldManager;
-        [SerializeField] private WorldVisibleService _visibility;
+        [SerializeField] private WorldStorage _worldStorage;
+        [SerializeField] private WorldChunksPreloader _worldChunksPreloader;
+        [SerializeField] private WorldChunksVisible _visibility;
         [SerializeField] private EntityDatabase _database;
         [SerializeField] private Transform _playerTransform;
         [SerializeField] private Transform _spawnParent;
 
         private List<GameObject> _spawnedEntities = new();
 
-        private void OnEnable()
+        public void Enable()
         {
             _visibility.OnVisibleChunksChanged += HandleVisibleChanged;
         }
-        private void OnDisable()
+        public void Disable()
         {
             _visibility.OnVisibleChunksChanged -= HandleVisibleChanged;
         }
@@ -42,6 +44,8 @@ namespace World.Entities
         {
             Vector3 position = worldPosition.ToVector3Int();
             GameObject spawned = Instantiate(entityPrefab, position, Quaternion.identity, _spawnParent);
+            EntityChunksPreloadWaiting waiting = spawned.GetComponent<EntityChunksPreloadWaiting>();
+            _ = waiting.SetPreloader(_worldChunksPreloader).StartWait();
             _spawnedEntities.Add(spawned);
         }
 

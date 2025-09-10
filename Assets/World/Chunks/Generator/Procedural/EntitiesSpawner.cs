@@ -70,8 +70,9 @@ namespace World.Chunks.Generator.Procedural
                         int worldX = centerBiomeWorldX + offsetX + relativeX;
 
                         int relativeY = properties.RelativeSpawnAt.y;
-                        int surfaceY = _surfaceYProvider.GetSurfaceY(centerBiomeWorldX);
-                        int worldY = surfaceY + relativeY;
+                        int surfaceY = _surfaceYProvider.GetSurfaceY(worldX);
+                        int colliderHeight = Mathf.CeilToInt(properties.EntityInfo.ColliderHeight);
+                        int worldY = surfaceY + relativeY + colliderHeight;
 
                         WorldPosition spawnAt = new WorldPosition(worldX, worldY);
 
