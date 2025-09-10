@@ -20,7 +20,7 @@ namespace World.Chunks.Generator.Procedural
 
         [Tooltip("средний уровень поверхности")]
         public int SurfaceBaseHeight = 0;
-        
+
         [Tooltip("насколько может колебаться поверхность")]
         public int SurfaceHeightRange = 20;
 
@@ -34,16 +34,11 @@ namespace World.Chunks.Generator.Procedural
     // Biome provider implementation
     public class BiomeProvider : IBiomeProvider, IChunkCacheStep
     {
-        private class BiomeRange
-        {
-            public Biome Biome;
-            public RangeInt Range;
-        }
-
-        private readonly List<BiomeRange> _ranges = new();
         private readonly List<Biome> _biomes;
         private readonly int _biomeWidth;
         private readonly int _seed;
+
+        private List<BiomeRange> _ranges = new();
 
         public BiomeProvider(List<Biome> biomes, int biomeWidth, int seed)
         {
@@ -54,16 +49,22 @@ namespace World.Chunks.Generator.Procedural
 
         public void CacheComputation(RectInt rect)
         {
-            _ranges.Clear();
+            _ranges = GetBiomeRanges(rect);
+        }
+        public List<BiomeRange> GetBiomeRanges(RectInt rect)
+        {
+            List<BiomeRange> ranges = new();
 
             for (int startX = GetStartX(rect.xMin); startX < rect.xMax; startX += _biomeWidth)
             {
-                _ranges.Add(new BiomeRange
+                ranges.Add(new BiomeRange
                 {
                     Biome = ComputeBiomeByStartX(startX),
                     Range = new RangeInt(startX, _biomeWidth)
                 });
             }
+
+            return ranges;
         }
         public Biome GetBiome(int worldX)
         {

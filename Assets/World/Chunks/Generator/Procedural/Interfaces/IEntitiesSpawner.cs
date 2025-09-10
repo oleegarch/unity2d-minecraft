@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using World.Entities;
-using World.Chunks.BlocksStorage;
 
 namespace World.Chunks.Generator.Procedural
 {
@@ -10,11 +9,11 @@ namespace World.Chunks.Generator.Procedural
         [Tooltip("сущность которую будем спавнить")]
         public EntityInfo EntityInfo;
         
-        [Tooltip("координаты спавна сущности где каждая единица это блок (0x — это центр биома, 0y — это SurfaceY)")]
-        public Vector2Int SpawnAt = Vector2Int.zero;
+        [Tooltip("мировые координаты спавна сущности")]
+        public WorldPosition SpawnAt = WorldPosition.zero;
     }
     public interface IEntitiesSpawner
     {
-        public List<EntityWillSpawn> SpawnEntity(Chunk chunk);
+        public List<EntityWillSpawn> WhereToSpawnEntity(RectInt rect);
     }
 }

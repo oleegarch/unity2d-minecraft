@@ -25,6 +25,9 @@ namespace World.Chunks.Generator
         [Tooltip("шахты по уровням")]
         public List<CaveLevel> CaveLevels;
 
+        [Tooltip("сущности в биомах")]
+        public List<EntitiesSpawnerConfig> EntitiesInBiomes;
+
         public override IChunkGenerator GetChunkGenerator(int seed)
         {
             // Procedural providers
@@ -36,10 +39,13 @@ namespace World.Chunks.Generator
             var creationStep = new ChunkCreationStep(blockGenerator);
 
             // Global rules for this world
-            var rules = new WorldGlobalRules()
+            var rules = new WorldGlobalRules(chunkSize: 16)
             {
                 CanBreakBehindBlock = blockGenerator.CanBreakBehindBlock
             };
+
+            // Entities spawner
+            var entitiesSpawner = new EntitiesSpawner(EntitiesInBiomes, biomeProvider, surfaceYProvider, seed);
 
             // Procedural post-processing steps
             var plants = new IPlantPlacer[] { new TreePlantPlacer(Plants, biomeProvider, surfaceYProvider, _blockDatabase, seed) }; // Plant placers
@@ -49,9 +55,8 @@ namespace World.Chunks.Generator
             var cacheSteps = new IChunkCacheStep[] { biomeProvider, surfaceYProvider };
 
             // Compose generator
-            var settings = new ChunkGeneratorSettings(_chunkSize);
             var worldSystems = new IWorldSystem[] { new BreakableByGravitySystem() };
-            var composite = new ChunkGeneratorPipeline(this, settings, rules, creationStep, postSteps, cacheSteps, worldSystems);
+            var composite = new ChunkGeneratorPipeline(this, rules, entitiesSpawner, creationStep, postSteps, cacheSteps, worldSystems);
 
             return composite;
         }

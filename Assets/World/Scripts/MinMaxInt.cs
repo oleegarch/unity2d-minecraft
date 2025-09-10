@@ -38,6 +38,16 @@ public struct MinMaxInt
     }
 
     /// <summary>
+    /// Длина MinMax: max - min.
+    /// </summary>
+    public int Length => max - min;
+
+    /// <summary>
+    /// Сумма MinMax: min + max.
+    /// </summary>
+    public int Sum => min + max;
+
+    /// <summary>
     /// Случайное число с использованием UnityEngine.Random.
     /// </summary>
     public int GetRandom() => UnityEngine.Random.Range(min, max + 1);

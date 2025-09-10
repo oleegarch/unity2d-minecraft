@@ -16,6 +16,7 @@ MonoBehaviour:
   _blockAtlasDatabase: {fileID: 11400000, guid: c1d7be8b0c58ca04ba4f6990cb37966b, type: 2}
   _itemDatabase: {fileID: 11400000, guid: b60774e9ea7af34488c309d13a35c6ec, type: 2}
   _itemCategoryDatabase: {fileID: 11400000, guid: b83a01c8ba74b44428154515bb452ccc, type: 2}
+  _entityDatabase: {fileID: 11400000, guid: 6dd38874624c9f54795b64d872ed582c, type: 2}
   _chunkSize: 16
   BiomeWidth: 200
   SurfaceBlendWidth: 20
@@ -150,3 +151,14 @@ MonoBehaviour:
     - OreBlockName: deepslate_redstone_ore
       Threshold: 0.85
       Scale: 0.2
+  EntitiesInBiomes:
+  - BiomeName: forest
+    EntitiesProperties:
+    - EntityInfo: {fileID: 11400000, guid: 12366add00f6de94682677e9d38bbfb6, type: 2}
+      RelativeSpawnAt: {x: 0, y: 0}
+      OffsetRangeX:
+        min: -10
+        max: 10
+      Count:
+        min: 3
+        max: 5

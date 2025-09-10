@@ -18,6 +18,9 @@ namespace World
         // Корректный модуль для отрицательных координат
         private static int Mod(int a, int b) => (a % b + b) % b;
 
+        // Дефолтные состояния
+        public static WorldPosition zero = new WorldPosition(0, 0);
+
         // Получить координаты чанка
         public ChunkIndex ToChunkIndex(int chunkSize) =>
             new ChunkIndex(Mathf.FloorToInt((float)x / chunkSize), Mathf.FloorToInt((float)y / chunkSize));
