@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -6,7 +5,6 @@ namespace World.Chunks
 {
     public class WorldChunksPreloadAt : MonoBehaviour
     {
-        [SerializeField] private Transform _pointsParent;
         [SerializeField] private Transform[] _points;
 
         private WorldPosition[] _cachedPositions;
