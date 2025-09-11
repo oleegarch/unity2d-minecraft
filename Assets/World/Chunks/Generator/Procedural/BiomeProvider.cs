@@ -57,8 +57,6 @@ namespace World.Chunks.Generator.Procedural
             Biome biome = FindBiomeInRanges(worldX);
             if (biome != null) return biome;
 
-            Debug.Log($"GetBiome cached not found!");
-
             return ComputeBiome(worldX);
         }
         public int GetStartX(int worldX)

@@ -38,8 +38,6 @@ namespace World.Chunks.Generator.Procedural
             if (_cacheByVisible.TryGetValue(worldX, out cachedSurfaceY) || _cacheByIndexes.TryGetValue(worldX, out cachedSurfaceY))
                 return cachedSurfaceY;
 
-            Debug.Log($"GetSurfaceY cached not found!");
-
             return ComputeSurfaceY(worldX);
         }
 
@@ -77,14 +75,12 @@ namespace World.Chunks.Generator.Procedural
         public void CacheComputation(RectInt rect)
         {
             CacheComputation(rect.xMin, rect.xMax, _cacheByVisible);
-            Debug.Log($"+GetSurfaceY _cacheByVisible cached! {_cacheByVisible.Count} {rect}");
         }
         public void CacheComputation(HashSet<ChunkIndex> indexes)
         {
             int fromX = indexes.Select(index => index.x * _chunkSize).Min();
             int toX = indexes.Select(index => index.x * _chunkSize + _chunkSize - 1).Max();
             CacheComputation(fromX, toX, _cacheByIndexes);
-            Debug.Log($"+GetSurfaceY _cacheByIndexes cached! {_cacheByIndexes.Count}");
         }
         public void CacheComputation(int fromX, int toX, Dictionary<int, int> updateIt)
         {

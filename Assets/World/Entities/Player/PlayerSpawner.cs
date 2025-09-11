@@ -7,7 +7,7 @@ namespace World.Entities.Player
     public class PlayerSpawner : MonoBehaviour
     {
         [SerializeField] private WorldManager _worldManager;
-        [SerializeField] private WorldStorage _worldStorage;
+        [SerializeField] private WorldChunksCreator _worldChunksCreator;
         [SerializeField] private Transform _playerTransform;
         [SerializeField] private Rigidbody2D _playerRb2;
         [SerializeField] private GameObject _playerGO;
@@ -16,11 +16,11 @@ namespace World.Entities.Player
         {
             _playerRb2.simulated = false;
             _playerGO.SetActive(false);
-            _worldStorage.OnVisibleChunksLoaded += SpawnPlayer;
+            _worldChunksCreator.OnVisibleChunksLoaded += SpawnPlayer;
         }
         private void OnDestroy()
         {
-            _worldStorage.OnVisibleChunksLoaded -= SpawnPlayer;
+            _worldChunksCreator.OnVisibleChunksLoaded -= SpawnPlayer;
         }
 
         private void SpawnPlayer()

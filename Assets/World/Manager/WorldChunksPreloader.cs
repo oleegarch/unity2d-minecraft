@@ -10,7 +10,7 @@ namespace World.Chunks
     public class WorldChunksPreloader : MonoBehaviour
     {
         [SerializeField] private WorldManager _worldManager;
-        [SerializeField] private WorldStorage _worldStorage;
+        [SerializeField] private WorldChunksCreator _worldChunksCreator;
         private IChunkGenerator _generator;
 
         public Dictionary<int, WorldPosition[]> PreloadPositionsByComponent;
@@ -24,12 +24,12 @@ namespace World.Chunks
         public void Enable()
         {
             _generator = _worldManager.Generator;
-            _worldStorage.OnOutChunksUpdated += HandleChunksUpdated;
+            _worldChunksCreator.OnOutChunksUpdated += HandleChunksUpdated;
             PreloadPositionsByComponent = new();
         }
         public void Disable()
         {
-            _worldStorage.OnOutChunksUpdated -= HandleChunksUpdated;
+            _worldChunksCreator.OnOutChunksUpdated -= HandleChunksUpdated;
             PreloadPositionsByComponent = null;
         }
         private void Update()

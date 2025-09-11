@@ -9,7 +9,7 @@ namespace World.Entities
     {
         [SerializeField] private LayerMask _entitiesLayerMask;
         [SerializeField] private WorldManager _worldManager;
-        [SerializeField] private WorldStorage _worldStorage;
+        [SerializeField] private WorldChunksCreator _worldChunksCreator;
         [SerializeField] private WorldChunksPreloader _worldChunksPreloader;
         [SerializeField] private WorldChunksVisible _visibility;
         [SerializeField] private EntityDatabase _database;

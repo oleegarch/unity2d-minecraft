@@ -11,7 +11,7 @@ namespace World.Chunks
     {
         [SerializeField] private GameObject _chunkRendererPrefab;
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
-        [SerializeField] private WorldStorage _storage;
+        [SerializeField] private WorldChunksCreator _storage;
         [SerializeField] private WorldEntities _entities;
         [SerializeField] private WorldChunksVisible _visibility;
         [SerializeField] private WorldChunksPreloader _chunksPreloader;

@@ -9,7 +9,7 @@ namespace World
     public class WorldControllerGUI : MonoBehaviour
     {
         [SerializeField] private WorldManager _worldManager;
-        [SerializeField] private WorldStorage _worldStorage;
+        [SerializeField] private WorldChunksCreator _worldChunksCreator;
         [SerializeField] private WorldModeController _worldModeController;
         [SerializeField] private CameraModeController _cameraModeController;
         [SerializeField] private WorldTime _worldTime;
@@ -37,7 +37,7 @@ namespace World
             // Chunk Manager Methods
             if (GUILayout.Button("Rerender All Chunks"))
             {
-                _worldStorage.RerenderAll();
+                _worldChunksCreator.RerenderAll();
             }
 
             GUILayout.Space(10);

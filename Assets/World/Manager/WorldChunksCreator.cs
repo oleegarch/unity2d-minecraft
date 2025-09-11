@@ -9,7 +9,7 @@ using World.Chunks.Generator;
 namespace World.Chunks
 {
     #region Интерфейс чтения
-    public interface IWorldStorageAccessor
+    public interface IWorldChunksAccessor
     {
         public bool TryGetChunk(ChunkIndex index, out Chunk chunk);
         public bool TryGetRenderer(ChunkIndex index, out ChunkRenderer renderer);
@@ -35,7 +35,7 @@ namespace World.Chunks
     }
     #endregion
 
-    public class WorldStorage : MonoBehaviour, IWorldStorageAccessor
+    public class WorldChunksCreator : MonoBehaviour, IWorldChunksAccessor
     {
         #region Поля
         [SerializeField] private WorldChunksVisible _visibility;
@@ -94,8 +94,6 @@ namespace World.Chunks
         #region Обновление чанков
         private async Task RefreshVisibleChunksAsync(RectInt rect)
         {
-            Debug.Log($"RefreshVisibleChunksAsync started");
-
             HashSet<ChunkIndex> newVisible = new HashSet<ChunkIndex>();
             for (int x = rect.xMin; x <= rect.xMax; x++)
                 for (int y = rect.yMin; y <= rect.yMax; y++)
@@ -113,7 +111,6 @@ namespace World.Chunks
         }
         public async Task RefreshOutChunksAsync(HashSet<ChunkIndex> newVisible)
         {
-            Debug.Log($"RefreshOutChunksAsync started");
             await RefreshChunksInIndexesAsync(newVisible, _outChunks, _outRenderers);
 
             OnOutChunksUpdated?.Invoke();
