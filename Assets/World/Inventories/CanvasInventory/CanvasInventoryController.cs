@@ -30,6 +30,7 @@ namespace World.Inventories
         [SerializeField] private WorldInputManager _inputManager;
 
         [Header("Player right hand")]
+        [SerializeField] private Animator _localPlayerAnimator;
         [SerializeField] private Transform _itemOnRightHandTransform;
         [SerializeField] private SpriteRenderer _itemOnRightHand;
 
@@ -204,6 +205,7 @@ namespace World.Inventories
                 {
                     ItemDropped dropped = _itemsSpawner.DropItemAt(_itemOnRightHandTransform.position, removed);
                     dropped.ThrowItem(_blockObserver.CursorPositionInChunks);
+                    _localPlayerAnimator.SetTrigger("Throw");
                 }
             }
         }

@@ -6133,6 +6133,7 @@ MonoBehaviour:
   _worldMode: {fileID: 1743995927618707106}
   _manager: {fileID: 5868988553912566916}
   _inputManager: {fileID: 3319511144438469435}
+  _localPlayerAnimator: {fileID: 8769697984431825585}
   _itemOnRightHandTransform: {fileID: 5923374060274972408}
   _itemOnRightHand: {fileID: 1325089215548008167}
   _itemsSpawner: {fileID: 2970117667973166668}
@@ -7124,6 +7125,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 820412ae7e9e44f4490f9deca3e272d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &8769697984431825585 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2938358142654145040, guid: f8408549e50310647a8e14f67ba33b7c, type: 3}
+  m_PrefabInstance: {fileID: 5869066573662273697}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8763685183700281387
 PrefabInstance:
   m_ObjectHideFlags: 0
