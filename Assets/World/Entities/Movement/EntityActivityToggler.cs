@@ -6,7 +6,7 @@ namespace World.Entities
     {
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private Animator _animator;
-        [SerializeField] private AbstractEntityActivityToggler[] _components;
+        [SerializeField] private EntityActivityTogglerAbstract[] _components;
         [SerializeField] private bool _disableInAwake = true;
 
         private void Awake()

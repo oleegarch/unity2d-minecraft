@@ -8,7 +8,7 @@ namespace World.Items
     public class ItemDropped : MonoBehaviour, IDisposable
     {
         [SerializeField] private Collider2D _collectCollider;
-        [SerializeField] private float _throwForce = 15f;
+        [SerializeField] private float _throwForce = 5f;
         [SerializeField] private float _disalbeCollectDuration = 0.5f;
 
         private SpriteRenderer _spriteRenderer;

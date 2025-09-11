@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace World.Entities
 {
-    public class EntityDumpWalking : AbstractEntityActivityToggler
+    public class EntityDumpWalking : EntityActivityTogglerAbstract
     {
         [SerializeField] private EntityPointsForMoving _ability;
         [SerializeField] private EntityMovement _movement;
