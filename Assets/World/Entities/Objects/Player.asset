@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 534cf6053dd9a05429ebf6c9c77b4613, type: 3}
-  m_Name: EntityDatabase
+  m_Script: {fileID: 11500000, guid: a90ecc9b2c046144099963df3a231fa8, type: 3}
+  m_Name: Player
   m_EditorClassIdentifier: 
-  entities:
-  - {fileID: 11400000, guid: 2221097775662f34bbe42155fbb0563a, type: 2}
-  - {fileID: 11400000, guid: 12366add00f6de94682677e9d38bbfb6, type: 2}
+  Id: 0
+  Name: player
+  Title: "\u0418\u0433\u0440\u043E\u043A"
+  Prefab: {fileID: 5257953190573768610, guid: 04240ed729bcf58459f9f39bb8a4235e, type: 3}
+  ColliderHeight: 2

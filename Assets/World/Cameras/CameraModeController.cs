@@ -14,7 +14,7 @@ namespace World.Cameras
     {
         [SerializeField] private CameraFollowToRigidbody2D _cameraFollow;
         [SerializeField] private CameraSpectatorController _cameraSpectatorController;
-        [SerializeField] private PlayerController _playerController;
+        [SerializeField] private PlayerMovementController _playerMovementController;
         [SerializeField] private CameraMode _cameraMode;
 
         private CameraMode _currentCameraMode;
@@ -55,12 +55,12 @@ namespace World.Cameras
                 case CameraMode.Player:
                     _cameraSpectatorController.enabled = false;
                     _cameraFollow.enabled = true;
-                    _playerController.enabled = true;
+                    _playerMovementController.enabled = true;
                     break;
                 case CameraMode.Spectator:
                     _cameraSpectatorController.enabled = true;
                     _cameraFollow.enabled = false;
-                    _playerController.enabled = false;
+                    _playerMovementController.enabled = false;
                     break;
             }
 

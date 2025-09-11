@@ -18,9 +18,9 @@ namespace World.Chunks.Generator
         public IEntitiesSpawner EntitiesSpawner { get; }
         public void CacheComputation(RectInt rect);
         public void CacheComputation(HashSet<ChunkIndex> indexes);
-        public UniTask<Chunk> GenerateChunkAsync(ChunkIndex index);
         public void RegisterWorldSystems(WorldManager manager);
         public void UnregisterWorldSystems(WorldManager manager);
+        public UniTask<Chunk> GenerateChunkAsync(ChunkIndex index);
     }
 
     // Composite generator orchestrates
@@ -87,11 +87,6 @@ namespace World.Chunks.Generator
             return chunk;
         }
 
-        public async UniTask<Chunk> GenerateChunkAsync(ChunkIndex index)
-        {
-            return await UniTask.RunOnThreadPool(() => GenerateChunk(index));
-        }
-
         public void RegisterWorldSystems(WorldManager manager)
         {
             foreach (var ws in _worldSystems)
@@ -101,6 +96,11 @@ namespace World.Chunks.Generator
         {
             foreach (var ws in _worldSystems)
                 ws.Dispose();
+        }
+
+        public async UniTask<Chunk> GenerateChunkAsync(ChunkIndex index)
+        {
+            return await UniTask.RunOnThreadPool(() => GenerateChunk(index));
         }
     }
 }

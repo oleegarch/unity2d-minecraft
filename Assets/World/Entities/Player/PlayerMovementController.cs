@@ -4,8 +4,7 @@ using World.InputActions;
 
 namespace World.Entities.Player
 {
-    [RequireComponent(typeof(EntityMovement))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerMovementController : MonoBehaviour
     {
         [SerializeField] private WorldInputManager _inputManager;
         [SerializeField] private EntityMovement _movement;
@@ -14,20 +13,17 @@ namespace World.Entities.Player
         {
             var actions = _inputManager.Controls.Player;
             actions.Move.performed += OnMove;
-            actions.Move.canceled  += OnMove;
+            actions.Move.canceled += OnMove;
             actions.Jump.performed += OnJump;
-            actions.Jump.canceled  += OnJump;
-            actions.Enable();
+            actions.Jump.canceled += OnJump;
         }
-
         private void OnDisable()
         {
             var actions = _inputManager.Controls.Player;
             actions.Move.performed -= OnMove;
-            actions.Move.canceled  -= OnMove;
+            actions.Move.canceled -= OnMove;
             actions.Jump.performed -= OnJump;
-            actions.Jump.canceled  -= OnJump;
-            actions.Disable();
+            actions.Jump.canceled -= OnJump;
         }
 
         private void OnMove(InputAction.CallbackContext ctx)

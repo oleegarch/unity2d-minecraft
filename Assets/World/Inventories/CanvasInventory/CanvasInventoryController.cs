@@ -13,21 +13,30 @@ namespace World.Inventories
 {
     public class CanvasInventoryController : MonoBehaviour
     {
-        [SerializeField] private WorldModeController _worldMode;
+        [Header("UI")]
+        [SerializeField] private UIMask _uiMask;
+
+        [Header("Inventory references")]
         [SerializeField] private UIPlayerHotbarDrawer _hotbar;
         [SerializeField] private UIPlayerMainSlotsDrawer _mainSlots;
         [SerializeField] private GameObject _creativeInventoryPrefab;
         [SerializeField] private GameObject _craftingInventoryPrefab;
         [SerializeField] private GameObject _slotsInventoryPrefab;
         [SerializeField] private Transform _inventoryAlignmentTransform;
+        
+        [Header("World systems")]
+        [SerializeField] private WorldModeController _worldMode;
+        [SerializeField] private WorldManager _manager;
+        [SerializeField] private WorldInputManager _inputManager;
+
+        [Header("Player right hand")]
         [SerializeField] private Transform _itemOnRightHandTransform;
+        [SerializeField] private SpriteRenderer _itemOnRightHand;
+
+        [Header("Other")]
         [SerializeField] private ItemsDroppedSpawner _itemsSpawner;
         [SerializeField] private HoveredBlockObserver _blockObserver;
         [SerializeField] private HoveredBlockPicker _blockPicker;
-        [SerializeField] private WorldManager _manager;
-        [SerializeField] private WorldInputManager _inputManager;
-        [SerializeField] private SpriteRenderer _itemOnRightHand;
-        [SerializeField] private UIMask _uiMask;
 
         private PlayerInventory _playerInventory;
         private IUIInventoryAccessor _foreignInventoryAccessor;

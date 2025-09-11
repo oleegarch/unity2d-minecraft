@@ -20,7 +20,6 @@ namespace World.HoveredBlock
         [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private Transform _breakingMask;
-        [SerializeField] private PlayerController _playerController;
         [SerializeField] private BlockParticleSystemController _particlesController;
 
         [Header("Settings")]

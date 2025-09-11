@@ -46,6 +46,10 @@ namespace World.Chunks.Generator.Procedural
             _seed = seed;
         }
 
+        public int GetSurfaceY(int worldX)
+        {
+            return _surfaceYProvider.GetSurfaceY(worldX);
+        }
         public List<EntityWillSpawn> WhereToSpawnEntity(RectInt rect)
         {
             List<EntityWillSpawn> willSpawn = new();
@@ -70,7 +74,7 @@ namespace World.Chunks.Generator.Procedural
                         int worldX = centerBiomeWorldX + offsetX + relativeX;
 
                         int relativeY = properties.RelativeSpawnAt.y;
-                        int surfaceY = _surfaceYProvider.GetSurfaceY(worldX);
+                        int surfaceY = GetSurfaceY(worldX);
                         int colliderHeight = Mathf.CeilToInt(properties.EntityInfo.ColliderHeight);
                         int worldY = surfaceY + relativeY + colliderHeight;
 

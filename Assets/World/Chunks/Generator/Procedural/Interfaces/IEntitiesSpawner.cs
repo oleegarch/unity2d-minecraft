@@ -14,6 +14,7 @@ namespace World.Chunks.Generator.Procedural
     }
     public interface IEntitiesSpawner
     {
+        public int GetSurfaceY(int worldX);
         public List<EntityWillSpawn> WhereToSpawnEntity(RectInt rect);
     }
 }

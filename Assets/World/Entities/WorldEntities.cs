@@ -13,18 +13,21 @@ namespace World.Entities
         [SerializeField] private WorldChunksPreloader _worldChunksPreloader;
         [SerializeField] private WorldChunksVisible _visibility;
         [SerializeField] private EntityDatabase _database;
-        [SerializeField] private Transform _playerTransform;
         [SerializeField] private Transform _spawnParent;
+        [SerializeField] private Transform _localPlayerTransform;
+        [SerializeField] private EntityInfo _localPlayerEntityInfo;
 
         private List<GameObject> _spawnedEntities = new();
 
         public void Enable()
         {
             _visibility.OnVisibleChunksChanged += HandleVisibleChanged;
+            _worldChunksCreator.OnVisibleChunksLoaded += HandleChunksVisibleLoaded;
         }
         public void Disable()
         {
             _visibility.OnVisibleChunksChanged -= HandleVisibleChanged;
+            _worldChunksCreator.OnVisibleChunksLoaded -= HandleChunksVisibleLoaded;
         }
 
         private void HandleVisibleChanged(RectInt viewRect)
@@ -38,6 +41,12 @@ namespace World.Entities
 
                 SpawnEntity(entityInfo.Prefab, worldPosition);
             }
+        }
+        private void HandleChunksVisibleLoaded()
+        {
+            int surfaceY = _worldManager.Generator.EntitiesSpawner.GetSurfaceY(0);
+            float colliderHeight = _localPlayerEntityInfo.ColliderHeight;
+            _localPlayerTransform.position = new Vector3(0f, surfaceY + colliderHeight, 0f);
         }
 
         public void SpawnEntity(GameObject entityPrefab, WorldPosition worldPosition)
