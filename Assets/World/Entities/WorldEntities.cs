@@ -19,6 +19,8 @@ namespace World.Entities
         [SerializeField] private EntityChunksDynamicPreloading _localPlayerChunksPreloading;
 
         private List<GameObject> _spawnedEntities = new();
+        private List<GameObject> _currentActiveEntities = new();
+        private List<EntityActivityToggler> _activatorsEntities = new();
 
         public void Enable()
         {
@@ -31,9 +33,9 @@ namespace World.Entities
             _worldChunksCreator.OnVisibleChunksLoaded -= HandleChunksVisibleLoaded;
         }
 
-        private void HandleVisibleChanged(RectInt viewRect)
+        private void HandleVisibleChanged(RectInt chunksVisibleRect)
         {
-            List<EntityWillSpawn> willSpawns = _worldManager.Generator.EntitiesSpawner.WhereToSpawnEntity(viewRect);
+            List<EntityWillSpawn> willSpawns = _worldManager.Generator.EntitiesSpawner.WhereToSpawnEntity(chunksVisibleRect);
 
             foreach (EntityWillSpawn willSpawn in willSpawns)
             {
@@ -41,6 +43,25 @@ namespace World.Entities
                 WorldPosition worldPosition = willSpawn.SpawnAt;
 
                 SpawnEntity(entityInfo.Prefab, worldPosition);
+            }
+
+            _currentActiveEntities.Clear();
+
+            RectInt blocksVisibleRect = _visibility.BlocksVisibleRect;
+            foreach (EntityActivityToggler activator in _activatorsEntities)
+            {
+                Vector3 entityPosition = activator.transform.position;
+                Vector2Int entityPosition2Int = new Vector2Int(Mathf.FloorToInt(entityPosition.x), Mathf.FloorToInt(entityPosition.y));
+                if (blocksVisibleRect.Contains(entityPosition2Int))
+                {
+                    activator.Enable();
+                    _currentActiveEntities.Add(activator.gameObject);
+                }
+                else
+                {
+                    activator.Disable();
+                    _currentActiveEntities.Remove(activator.gameObject);
+                }
             }
         }
         private void HandleChunksVisibleLoaded()
@@ -55,8 +76,13 @@ namespace World.Entities
         {
             Vector3 position = worldPosition.ToVector3Int();
             GameObject spawned = Instantiate(entityPrefab, position, Quaternion.identity, _spawnParent);
-            EntityChunksPreloadWaiting waiting = spawned.GetComponent<EntityChunksPreloadWaiting>();
-            _ = waiting.SetPreloader(_worldChunksPreloader).StartWait();
+
+            if (spawned.TryGetComponent<EntityChunksPreloadWaiting>(out var waiting))
+                _ = waiting.SetPreloader(_worldChunksPreloader).StartWait();
+
+            if (spawned.TryGetComponent<EntityActivityToggler>(out var activator))
+                _activatorsEntities.Add(activator);
+                
             _spawnedEntities.Add(spawned);
         }
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace World.Entities
 {
-    public class EntityDumpWalking : MonoBehaviour
+    public class EntityDumpWalking : AbstractEntityActivityToggler
     {
         [SerializeField] private EntityPointsForMoving _ability;
         [SerializeField] private EntityMovement _movement;
@@ -22,15 +22,19 @@ namespace World.Entities
         [SerializeField] private float _walkIncrementAfterJump = 1f;
 
         private Coroutine _walking;
-
-        private void OnEnable()
+        public override void EnableActivity()
         {
+            DisableActivity();
+
             _walking = StartCoroutine(DumpWalking());
         }
-        private void OnDisable()
+        public override void DisableActivity()
         {
-            StopCoroutine(_walking);
-            _walking = null;
+            if (_walking != null)
+            {
+                StopCoroutine(_walking);
+                _walking = null;
+            }
         }
 
         private IEnumerator DumpWalking()

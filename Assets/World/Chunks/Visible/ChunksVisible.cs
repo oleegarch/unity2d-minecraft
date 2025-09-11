@@ -19,7 +19,15 @@ namespace World.Chunks
         private WorldPosition _lastCenterChunk = new WorldPosition(int.MinValue, int.MinValue);
 
         public event Action<RectInt> OnVisibleChunksChanged;
+        
         public RectInt VisibleRect { get; private set; }
+        public RectInt BlocksVisibleRect =>
+            new RectInt(
+                VisibleRect.xMin * _chunkSize,
+                VisibleRect.yMin * _chunkSize,
+                (VisibleRect.width + 1) * _chunkSize - 1,
+                (VisibleRect.height + 1) * _chunkSize - 1
+            );
 
         public void Enable()
         {

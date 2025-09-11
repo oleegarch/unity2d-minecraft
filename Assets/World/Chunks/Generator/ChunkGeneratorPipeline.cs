@@ -57,15 +57,8 @@ namespace World.Chunks.Generator
             _worldSystems = worldSystems.ToList();
         }
 
-        public void CacheComputation(RectInt chunksVisibleRect)
+        public void CacheComputation(RectInt blocksVisibleRect)
         {
-            RectInt blocksVisibleRect = new RectInt(
-                chunksVisibleRect.xMin * ChunkSize,
-                chunksVisibleRect.yMin * ChunkSize,
-                (chunksVisibleRect.width + 1) * ChunkSize - 1,
-                (chunksVisibleRect.height + 1) * ChunkSize - 1
-            );
-
             foreach (var step in _chunkCachingSteps)
                 step.CacheComputation(blocksVisibleRect);
         }

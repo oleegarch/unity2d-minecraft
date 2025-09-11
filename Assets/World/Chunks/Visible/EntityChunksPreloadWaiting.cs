@@ -4,6 +4,12 @@ using World.Chunks;
 
 namespace World.Entities
 {
+    /// <summary>
+    /// Класс позволяет после ставна установить прелоадер чанков и запустить их прелодинг по заранее указанным точкам.
+    /// 
+    /// Использовался для предзагрузки чанков под сущностью чтобы она уже начала существовать вне поля видимости пользователя.
+    /// Сейчас не нужен, так как теперь сущности просто зависают пока они не войдут в область видимости чанков.
+    /// </summary>
     public class EntityChunksPreloadWaiting : MonoBehaviour
     {
         [SerializeField] private Rigidbody2D _rigidbody;
@@ -21,7 +27,7 @@ namespace World.Entities
             _rigidbody.simulated = false;
 
             await _chunksPreloadAt.PreloadAsync(_worldChunksPreloader);
-            
+
             _rigidbody.simulated = true;
         }
     }

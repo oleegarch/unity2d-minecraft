@@ -91,7 +91,7 @@ namespace World.Chunks
             _visibleCts?.Cancel();
             _visibleCts = new CancellationTokenSource();
 
-            _generator.CacheComputation(rect);
+            _generator.CacheComputation(_visibility.BlocksVisibleRect);
             RefreshVisibleChunksAsync(rect, _visibleCts.Token).Forget();
         }
 
