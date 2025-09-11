@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using World.Blocks;
 
 namespace World.Chunks
 {
@@ -12,11 +11,6 @@ namespace World.Chunks
         {
             if (meshData == null) return;
             _pending.Add(meshData);
-        }
-        public void ScheduleRefresh(IEnumerable<ChunkMeshData> meshDatas)
-        {
-            if (meshDatas == null) return;
-            _pending.UnionWith(meshDatas);
         }
 
         // Убрать всё из очереди

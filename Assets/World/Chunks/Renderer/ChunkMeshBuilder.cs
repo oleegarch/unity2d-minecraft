@@ -17,7 +17,7 @@ namespace World.Chunks
             public bool Behind;
         }
 
-        private readonly GameObject _gameObject;
+        private readonly Transform _categoriesParent;
         private readonly BlockDatabase _blockDatabase;
         private readonly BlockAtlasDatabase _blockAtlasDatabase;
         private readonly List<GameObject> _categoryObjects = new();
@@ -29,7 +29,7 @@ namespace World.Chunks
 
         public ChunkMeshBuilder(GameObject gameObject, BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase)
         {
-            _gameObject = gameObject;
+            _categoriesParent = gameObject.transform;
             _blockDatabase = blockDatabase;
             _blockAtlasDatabase = blockAtlasDatabase;
         }
@@ -84,22 +84,22 @@ namespace World.Chunks
                     }
                 }
 
-            _refresher.ScheduleRefresh(_meshDatas.Values);
-
             return this;
         }
 
-        public void CreateMesh(ChunkMeshData meshData)
+        public void ApplyMesh(ChunkMeshData meshData)
         {
-            GameObject go = meshData.ApplyMesh();
-
-            go.transform.SetParent(_gameObject.transform, false);
-            _categoryObjects.Add(go);
+            if (meshData.TryApplyMesh(out GameObject gameObject))
+            {
+                gameObject.transform.SetParent(_categoriesParent, false);
+                _categoryObjects.Add(gameObject);
+                _refresher.ScheduleRefresh(meshData);
+            }
         }
         public ChunkMeshBuilder ApplyMesh()
         {
             foreach (var meshData in _meshDatas.Values)
-                CreateMesh(meshData);
+                ApplyMesh(meshData);
 
             return this;
         }
@@ -150,7 +150,7 @@ namespace World.Chunks
                 if (!_meshDatas.TryGetValue(atlas.Category, out ChunkMeshData meshData))
                 {
                     meshData = new ChunkMeshData(atlas);
-                    CreateMesh(meshData);
+                    ApplyMesh(meshData);
                     _meshDatas[atlas.Category] = meshData;
                 }
 

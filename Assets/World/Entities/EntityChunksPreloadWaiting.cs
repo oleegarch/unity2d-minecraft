@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using World.Chunks;
 
@@ -16,7 +16,7 @@ namespace World.Entities
             return this;
         }
 
-        public async Task StartWait()
+        public async UniTask StartWait()
         {
             _rigidbody.simulated = false;
 

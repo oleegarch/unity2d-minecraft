@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using World.Chunks.BlocksStorage;
 using World.Chunks.Generator;
+using System.Threading;
 
 namespace World.Chunks
 {
@@ -58,11 +59,16 @@ namespace World.Chunks
         private readonly HashSet<ChunkIndex> _loadings = new();
         private IChunkGenerator _generator;
 
+        // Cancellation tokens for current refresh operations
+        private CancellationTokenSource _visibleCts;
+        private CancellationTokenSource _outCts;
+
         #endregion
 
         #region Жизненный цикл
         private void OnDestroy()
         {
+            CancelAllRefreshes();
             DisposeAll();
         }
         public void Enable()
@@ -75,31 +81,41 @@ namespace World.Chunks
         {
             _visibility.OnVisibleChunksChanged -= HandleVisibleChanged;
             _preloader.OnChunksPreload -= HandleOutChanged;
+            CancelAllRefreshes();
         }
         #endregion
 
         #region Слушатели
         private void HandleVisibleChanged(RectInt rect)
         {
+            _visibleCts?.Cancel();
+            _visibleCts = new CancellationTokenSource();
+
             _generator.CacheComputation(rect);
-            _ = RefreshVisibleChunksAsync(rect);
+            RefreshVisibleChunksAsync(rect, _visibleCts.Token).Forget();
         }
+
         public void HandleOutChanged(HashSet<ChunkIndex> newVisible)
         {
+            _outCts?.Cancel();
+            _outCts = new CancellationTokenSource();
+
             _generator.CacheComputation(newVisible);
-            _ = RefreshOutChunksAsync(newVisible);
+            RefreshOutChunksAsync(newVisible, _outCts.Token).Forget();
         }
         #endregion
 
         #region Обновление чанков
-        private async Task RefreshVisibleChunksAsync(RectInt rect)
+        private async UniTask RefreshVisibleChunksAsync(RectInt rect, CancellationToken token = default)
         {
-            HashSet<ChunkIndex> newVisible = new HashSet<ChunkIndex>();
+            var newVisible = new HashSet<ChunkIndex>();
             for (int x = rect.xMin; x <= rect.xMax; x++)
                 for (int y = rect.yMin; y <= rect.yMax; y++)
                     newVisible.Add(new ChunkIndex(x, y));
 
-            await RefreshChunksInIndexesAsync(newVisible, _chunks, _renderers);
+            await RefreshChunksInIndexesAsync(newVisible, _chunks, _renderers, token);
+
+            if (token.IsCancellationRequested) return;
 
             if (Loaded == false)
             {
@@ -109,74 +125,111 @@ namespace World.Chunks
 
             OnVisibleChunksUpdated?.Invoke();
         }
-        public async Task RefreshOutChunksAsync(HashSet<ChunkIndex> newVisible)
+
+        public async UniTask RefreshOutChunksAsync(HashSet<ChunkIndex> newVisible, CancellationToken token = default)
         {
-            await RefreshChunksInIndexesAsync(newVisible, _outChunks, _outRenderers);
+            await RefreshChunksInIndexesAsync(newVisible, _outChunks, _outRenderers, token);
+
+            if (token.IsCancellationRequested) return;
 
             OnOutChunksUpdated?.Invoke();
         }
-        public async Task RefreshChunksInIndexesAsync(
+
+        public async UniTask RefreshChunksInIndexesAsync(
             HashSet<ChunkIndex> newIndexes,
             Dictionary<ChunkIndex, Chunk> writeChunk,
-            Dictionary<ChunkIndex, ChunkRenderer> writeRenderer
+            Dictionary<ChunkIndex, ChunkRenderer> writeRenderer,
+            CancellationToken token = default
         )
         {
-            var alreadyCreatedIndexes = writeChunk.Keys;
+            // snapshot существующих
+            var alreadyCreatedIndexes = writeChunk.Keys.ToList();
             var toRemove = alreadyCreatedIndexes.Except(newIndexes).ToList();
+            var toCreate = newIndexes.Except(alreadyCreatedIndexes).ToList();
+
+            // удаляем ненужные чанки
             DisposeAll(toRemove);
 
-            var toCreate = newIndexes.Except(alreadyCreatedIndexes).ToList();
-            await Task.WhenAll(toCreate.Select(async index =>
-            {
-                try
-                {
-                    await CreateChunkAsync(index, writeChunk, writeRenderer);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogException(ex);
-                }
-            }));
+            // параллельно создаём чанки
+            var tasks = toCreate.Select(index => CreateChunkAsync(index, writeChunk, writeRenderer, token)).ToArray();
+            await UniTask.WhenAll(tasks);
         }
         #endregion
 
         #region Создание чанка
-        public async Task<bool> CreateChunkAsync(
+        public async UniTask<bool> CreateChunkAsync(
             ChunkIndex index,
             Dictionary<ChunkIndex, Chunk> writeChunk,
-            Dictionary<ChunkIndex, ChunkRenderer> writeRenderer
+            Dictionary<ChunkIndex, ChunkRenderer> writeRenderer,
+            CancellationToken token = default
         )
         {
+            if (token.IsCancellationRequested) return false;
+
             if (!TryGetChunk(index, out Chunk chunk) && !_loadings.Contains(index))
             {
-                // Добавляем индекс чанка в структуру загрузки
-                // чтобы не пытаться загрузить данный чанк дважды
-                // и сделать проверку на нужность продолжения рендера
                 _loadings.Add(index);
 
-                // Генерируем данные чанка
-                chunk = await _generator.GenerateChunkAsync(index);
+                try
+                {
+                    // Генерация чанка
+                    Chunk generatedChunk = await _generator.GenerateChunkAsync(index);
 
-                // Пока выполнялся асинхронный GenerateChunkAsync
-                // чанк с данным индексом уже мог удалиться
-                // поэтому проверяем остался ли он в _loadings
-                if (!_loadings.Contains(index)) return false;
+                    if (token.IsCancellationRequested)
+                    {
+                        // отменено после генерации — чистим и выходим
+                        _loadings.Remove(index);
+                        return false;
+                    }
 
-                // Подписываемся на события чанка
-                _manager.Events.SubscribeToChunkEvents(chunk);
+                    chunk = generatedChunk;
 
-                // Создаём рендерер чанка
-                var go = UnityEngine.Object.Instantiate(_prefab, _chunksParent);
-                var renderer = go.GetComponent<ChunkRenderer>();
-                renderer.Initialize(_manager.BlockDatabase, _manager.BlockAtlasDatabase);
-                go.name = index.ToString();
-                go.transform.localPosition = new Vector3(index.x * chunk.Size, index.y * chunk.Size, 0);
+                    // Подписываемся на события чанка
+                    _manager.Events.SubscribeToChunkEvents(chunk);
 
-                // Сохраняем сразу вместе (до асинхронного выполнения рендера чтобы в случае ненужности отменить рендер)
-                writeRenderer[index] = renderer;
-                writeChunk[index] = chunk;
+                    // Инстантиируем префаб и инициализируем рендерер — это должно быть в main thread
+                    await UniTask.SwitchToMainThread(token);
 
-                await renderer.RenderAsync(chunk);
+                    // Возможно chunk был удалён/отменён между вызовами — проверим
+                    if (!_loadings.Contains(index) || token.IsCancellationRequested)
+                    {
+                        // Если отменили, удаляем чанк, отписываем, и выходим
+                        _manager.Events.UnsubscribeFromChunkEvents(chunk);
+                        chunk.Dispose();
+                        _loadings.Remove(index);
+                        return false;
+                    }
+
+                    var go = UnityEngine.Object.Instantiate(_prefab, _chunksParent);
+                    var renderer = go.GetComponent<ChunkRenderer>();
+                    renderer.Initialize(_manager.BlockDatabase, _manager.BlockAtlasDatabase);
+                    go.name = index.ToString();
+                    go.transform.localPosition = new Vector3(index.x * chunk.Size, index.y * chunk.Size, 0);
+
+                    // Сохраняем немедленно (чтобы другие части кода могли найти рендерер/чанк)
+                    writeRenderer[index] = renderer;
+                    writeChunk[index] = chunk;
+
+                    // Ждём асинхронный рендер
+                    await renderer.RenderAsync(chunk).AttachExternalCancellation(token);
+                }
+                catch (OperationCanceledException)
+                {
+                    // просто возвращаем false при отмене
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                    // при ошибке очищаем состояние
+                    if (_loadings.Contains(index)) _loadings.Remove(index);
+                    return false;
+                }
+                finally
+                {
+                    // убедимся, что индекс убран из _loadings, если он всё ещё там
+                    _loadings.Remove(index);
+                }
             }
 
             return true;
@@ -214,7 +267,7 @@ namespace World.Chunks
         }
         public void DisposeAll()
         {
-            foreach (var index in AllCoords)
+            foreach (var index in AllCoords.ToList())
                 Dispose(index);
         }
         #endregion
@@ -255,6 +308,17 @@ namespace World.Chunks
         {
             DisposeAll();
             HandleVisibleChanged(_visibility.VisibleRect);
+        }
+
+        private void CancelAllRefreshes()
+        {
+            _visibleCts?.Cancel();
+            _visibleCts?.Dispose();
+            _visibleCts = null;
+
+            _outCts?.Cancel();
+            _outCts?.Dispose();
+            _outCts = null;
         }
         #endregion
     }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using World.Blocks;
 using World.Blocks.Atlases;
 using World.Chunks.BlocksStorage;
@@ -33,25 +33,30 @@ namespace World.Chunks
             Collider.Refresh();
         }
 
+        // Синхронный рендер (если нужен сразу и коротко)
         public void Render(Chunk chunk)
         {
             Mesh.BuildMesh(chunk).ApplyMesh().Refresh();
             Collider.BuildCollider(chunk).ApplyCollider().Refresh();
         }
-        public async Task<bool> RenderAsync(Chunk chunk)
-        {
-            _cts?.Cancel();
-            _cts = new CancellationTokenSource();
 
+        // Асинхронный рендер с UniTask
+        public async UniTask<bool> RenderAsync(Chunk chunk)
+        {
+            // Отменяем предыдущую задачу рендера
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = new CancellationTokenSource();
             var token = _cts.Token;
 
             try
             {
-                await Task.Run(() =>
+                // Выполняем тяжёлую сборку в thread-pool
+                await UniTask.RunOnThreadPool(() =>
                 {
                     Mesh.BuildMesh(chunk);
                     Collider.BuildCollider(chunk);
-                }, token);
+                }, cancellationToken: token);
 
                 token.ThrowIfCancellationRequested();
             }
@@ -63,6 +68,16 @@ namespace World.Chunks
             {
                 return false;
             }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                return false;
+            }
+
+            // Применение мэш/коллайдера должно быть в main thread
+            await UniTask.SwitchToMainThread(token);
+
+            if (token.IsCancellationRequested) return false;
 
             Mesh.ApplyMesh().Refresh();
             Collider.ApplyCollider().Refresh();
@@ -74,9 +89,11 @@ namespace World.Chunks
         {
             _cts?.Cancel();
             _cts?.Dispose();
-            Mesh.Dispose();
-            Collider.Dispose();
-            Destroy(gameObject);
+            Mesh?.Dispose();
+            Collider?.Dispose();
+
+            if (gameObject != null)
+                Destroy(gameObject);
         }
     }
 }

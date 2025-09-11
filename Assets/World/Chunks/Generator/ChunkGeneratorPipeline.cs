@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using World.Systems;
 using World.Chunks.Generator.Steps;
 using World.Chunks.Generator.Procedural;
 using World.Chunks.BlocksStorage;
 using World.Rules;
+using Cysharp.Threading.Tasks;
 
 namespace World.Chunks.Generator
 {
@@ -18,7 +18,7 @@ namespace World.Chunks.Generator
         public IEntitiesSpawner EntitiesSpawner { get; }
         public void CacheComputation(RectInt rect);
         public void CacheComputation(HashSet<ChunkIndex> indexes);
-        public Task<Chunk> GenerateChunkAsync(ChunkIndex index);
+        public UniTask<Chunk> GenerateChunkAsync(ChunkIndex index);
         public void RegisterWorldSystems(WorldManager manager);
         public void UnregisterWorldSystems(WorldManager manager);
     }
@@ -40,13 +40,13 @@ namespace World.Chunks.Generator
         private readonly IReadOnlyList<IWorldSystem> _worldSystems;
 
         public ChunkGeneratorPipeline(
-            ChunkGeneratorConfig config,
-            WorldGlobalRules rules,
-            IEntitiesSpawner entitiesSpawner,
-            IChunkCreationStep chunkCreationStep,
-            IEnumerable<IChunkPostStep> chunkPostProcessingSteps,
-            IEnumerable<IChunkCacheStep> chunkCachingSteps,
-            IEnumerable<IWorldSystem> worldSystems)
+        ChunkGeneratorConfig config,
+        WorldGlobalRules rules,
+        IEntitiesSpawner entitiesSpawner,
+        IChunkCreationStep chunkCreationStep,
+        IEnumerable<IChunkPostStep> chunkPostProcessingSteps,
+        IEnumerable<IChunkCacheStep> chunkCachingSteps,
+        IEnumerable<IWorldSystem> worldSystems)
         {
             _config = config;
             _rules = rules;
@@ -87,9 +87,9 @@ namespace World.Chunks.Generator
             return chunk;
         }
 
-        public async Task<Chunk> GenerateChunkAsync(ChunkIndex index)
+        public async UniTask<Chunk> GenerateChunkAsync(ChunkIndex index)
         {
-            return await Task.Run(() => GenerateChunk(index));
+            return await UniTask.RunOnThreadPool(() => GenerateChunk(index));
         }
 
         public void RegisterWorldSystems(WorldManager manager)

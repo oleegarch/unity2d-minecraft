@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace World.Chunks
@@ -25,19 +26,21 @@ namespace World.Chunks
             _preloader = preloader;
             _preloader.SetComponentPositions(gameObject.GetInstanceID(), GetWorldPositions());
         }
-        public async Task PreloadAsync(WorldChunksPreloader preloader)
+        public async UniTask PreloadAsync(WorldChunksPreloader preloader)
         {
-            var tcs = new TaskCompletionSource<bool>();
+            var ucs = new UniTaskCompletionSource();
+
             void Handler()
             {
                 preloader.OnChunksPreloaded -= Handler;
-                tcs.TrySetResult(true);
+                ucs.TrySetResult();
             }
+
             preloader.OnChunksPreloaded += Handler;
 
             Preload(preloader);
 
-            await tcs.Task;
+            await ucs.Task;
         }
 
         public void DestroyPreloadComponent()

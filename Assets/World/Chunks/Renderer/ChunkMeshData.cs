@@ -18,7 +18,7 @@ namespace World.Chunks
         private readonly Dictionary<int, BlockIndex> _quadCoordMap = new Dictionary<int, BlockIndex>();
 
         private Mesh _mesh;
-        private GameObject _parentGO;
+        private GameObject _gameObject;
         private MeshFilter _meshFilter;
         private MeshRenderer _meshRenderer;
         private bool _isDirty;
@@ -176,18 +176,22 @@ namespace World.Chunks
             }
         }
 
-        public GameObject ApplyMesh()
+        public bool TryApplyMesh(out GameObject gameObject)
         {
-            if (_parentGO == null)
+            if (_gameObject != null)
             {
-                _parentGO = new GameObject(BlockAtlas.Category.ToString());
-                _mesh = new Mesh { indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
-                _meshFilter = _parentGO.AddComponent<MeshFilter>();
-                _meshRenderer = _parentGO.AddComponent<MeshRenderer>();
-                _meshFilter.mesh = _mesh;
+                gameObject = _gameObject;
+                return false;
             }
 
-            return _parentGO;
+            _gameObject = new GameObject(BlockAtlas.Category.ToString());
+            _mesh = new Mesh { indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
+            _meshFilter = _gameObject.AddComponent<MeshFilter>();
+            _meshRenderer = _gameObject.AddComponent<MeshRenderer>();
+            _meshFilter.mesh = _mesh;
+            gameObject = _gameObject;
+
+            return true;
         }
         public void ApplyTexture()
         {
