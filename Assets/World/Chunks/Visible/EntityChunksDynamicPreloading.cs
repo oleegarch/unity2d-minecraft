@@ -8,11 +8,11 @@ namespace World.Entities
         [SerializeField] private float _watchMoveCallInterval = 1f;
         [SerializeField] private Transform _watchMoveTransform;
         [SerializeField] private Rigidbody2D _rigidbody;
-        [SerializeField] private WorldChunksPreloadAt _chunksPreloadAt;
-        private WorldChunksPreloader _worldChunksPreloader;
+        [SerializeField] private ChunksPreloadAt _chunksPreloadAt;
+        private ChunksPreloader _worldChunksPreloader;
         private Vector2 _preloadedAtPosition;
 
-        public EntityChunksDynamicPreloading SetPreloader(WorldChunksPreloader worldChunksPreloader)
+        public EntityChunksDynamicPreloading SetPreloader(ChunksPreloader worldChunksPreloader)
         {
             _worldChunksPreloader = worldChunksPreloader;
             return this;

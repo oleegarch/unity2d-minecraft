@@ -39,8 +39,8 @@ namespace World.Chunks
     public class WorldChunksCreator : MonoBehaviour, IWorldChunksAccessor
     {
         #region Поля
-        [SerializeField] private WorldChunksVisible _visibility;
-        [SerializeField] private WorldChunksPreloader _preloader;
+        [SerializeField] private ChunksVisible _visibility;
+        [SerializeField] private ChunksPreloader _preloader;
         [SerializeField] private WorldManager _manager;
         [SerializeField] private GameObject _prefab;
         [SerializeField] private Transform _chunksParent;

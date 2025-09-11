@@ -13,8 +13,8 @@ namespace World.Chunks
         [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
         [SerializeField] private WorldChunksCreator _storage;
         [SerializeField] private WorldEntities _entities;
-        [SerializeField] private WorldChunksVisible _visibility;
-        [SerializeField] private WorldChunksPreloader _chunksPreloader;
+        [SerializeField] private ChunksVisible _visibility;
+        [SerializeField] private ChunksPreloader _chunksPreloader;
         [SerializeField] private int _seed;
 
         public BlockDatabase BlockDatabase => _chunkGeneratorConfig.BlockDatabase;

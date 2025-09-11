@@ -7,10 +7,10 @@ namespace World.Entities
     public class EntityChunksPreloadWaiting : MonoBehaviour
     {
         [SerializeField] private Rigidbody2D _rigidbody;
-        [SerializeField] private WorldChunksPreloadAt _chunksPreloadAt;
-        private WorldChunksPreloader _worldChunksPreloader;
+        [SerializeField] private ChunksPreloadAt _chunksPreloadAt;
+        private ChunksPreloader _worldChunksPreloader;
 
-        public EntityChunksPreloadWaiting SetPreloader(WorldChunksPreloader worldChunksPreloader)
+        public EntityChunksPreloadWaiting SetPreloader(ChunksPreloader worldChunksPreloader)
         {
             _worldChunksPreloader = worldChunksPreloader;
             return this;

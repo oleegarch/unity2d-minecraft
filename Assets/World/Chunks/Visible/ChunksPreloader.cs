@@ -6,7 +6,7 @@ using World.Chunks.Generator;
 
 namespace World.Chunks
 {
-    public class WorldChunksPreloader : MonoBehaviour
+    public class ChunksPreloader : MonoBehaviour
     {
         [SerializeField] private WorldManager _worldManager;
         [SerializeField] private WorldChunksCreator _worldChunksCreator;

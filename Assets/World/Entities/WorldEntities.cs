@@ -10,8 +10,8 @@ namespace World.Entities
         [SerializeField] private LayerMask _entitiesLayerMask;
         [SerializeField] private WorldManager _worldManager;
         [SerializeField] private WorldChunksCreator _worldChunksCreator;
-        [SerializeField] private WorldChunksPreloader _worldChunksPreloader;
-        [SerializeField] private WorldChunksVisible _visibility;
+        [SerializeField] private ChunksPreloader _worldChunksPreloader;
+        [SerializeField] private ChunksVisible _visibility;
         [SerializeField] private EntityDatabase _database;
         [SerializeField] private Transform _spawnParent;
         [SerializeField] private Transform _localPlayerTransform;
