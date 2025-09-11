@@ -16,6 +16,7 @@ namespace World.Entities.Player
             actions.Move.canceled += OnMove;
             actions.Jump.performed += OnJump;
             actions.Jump.canceled += OnJump;
+            actions.Enable();
         }
         private void OnDisable()
         {
@@ -24,6 +25,7 @@ namespace World.Entities.Player
             actions.Move.canceled -= OnMove;
             actions.Jump.performed -= OnJump;
             actions.Jump.canceled -= OnJump;
+            actions.Disable();
         }
 
         private void OnMove(InputAction.CallbackContext ctx)

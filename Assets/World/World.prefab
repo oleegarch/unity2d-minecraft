@@ -538,6 +538,7 @@ MonoBehaviour:
   _spawnParent: {fileID: 8990252454849266544}
   _localPlayerTransform: {fileID: 2148751636893910576}
   _localPlayerEntityInfo: {fileID: 11400000, guid: 2221097775662f34bbe42155fbb0563a, type: 2}
+  _localPlayerChunksPreloading: {fileID: 3229971861617245023}
 --- !u!1 &3201416020365399344
 GameObject:
   m_ObjectHideFlags: 0
@@ -7096,6 +7097,17 @@ Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 8486934064520117476, guid: f8408549e50310647a8e14f67ba33b7c, type: 3}
   m_PrefabInstance: {fileID: 5869066573662273697}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3229971861617245023 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9052295416937298942, guid: f8408549e50310647a8e14f67ba33b7c, type: 3}
+  m_PrefabInstance: {fileID: 5869066573662273697}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fbacdb1d9bb6ad408b20747dffe39d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &5923374060274972408 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 236176888382469721, guid: f8408549e50310647a8e14f67ba33b7c, type: 3}
