@@ -11,6 +11,6 @@ namespace World.Chunks.Generator.Procedural
     public interface IBiomeProvider
     {
         public Biome GetBiome(int worldX);
-        public List<BiomeRange> GetBiomeRanges(RectInt rect);
+        public List<BiomeRange> GetBiomeRanges(int fromX, int toX);
     }
 }

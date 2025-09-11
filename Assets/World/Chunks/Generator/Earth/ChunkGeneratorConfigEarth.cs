@@ -30,19 +30,17 @@ namespace World.Chunks.Generator
 
         public override IChunkGenerator GetChunkGenerator(int seed)
         {
+            // Global rules for this world
+            var rules = new WorldGlobalRules(chunkSize: 16);
+
             // Procedural providers
-            var biomeProvider = new BiomeProvider(Biomes, BiomeWidth, seed);
-            var surfaceYProvider = new SurfaceYProvider(biomeProvider, BiomeWidth, SurfaceBlendWidth, seed);
+            var biomeProvider = new BiomeProvider(Biomes, rules.ChunkSize, BiomeWidth, seed);
+            var surfaceYProvider = new SurfaceYProvider(biomeProvider, rules.ChunkSize, BiomeWidth, SurfaceBlendWidth, seed);
 
             // Procedural chunk generation step
             var blockGenerator = new BlockGenerator(_blockDatabase, biomeProvider, surfaceYProvider, CaveLevels, seed); // Procedural generation
             var creationStep = new ChunkCreationStep(blockGenerator);
-
-            // Global rules for this world
-            var rules = new WorldGlobalRules(chunkSize: 16)
-            {
-                CanBreakBehindBlock = blockGenerator.CanBreakBehindBlock
-            };
+            rules.SetCanBreakBehindBlock(blockGenerator.CanBreakBehindBlock);
 
             // Entities spawner
             var entitiesSpawner = new EntitiesSpawner(EntitiesInBiomes, biomeProvider, surfaceYProvider, seed);

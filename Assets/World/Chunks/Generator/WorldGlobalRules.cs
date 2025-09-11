@@ -14,5 +14,10 @@ namespace World.Rules
         {
             ChunkSize = chunkSize;
         }
+
+        public void SetCanBreakBehindBlock(Func<WorldPosition, bool> func)
+        {
+            CanBreakBehindBlock = func;
+        }
     }
 }

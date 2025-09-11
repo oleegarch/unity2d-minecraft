@@ -14,6 +14,8 @@ namespace World.Chunks
         private IChunkGenerator _generator;
 
         public Dictionary<int, WorldPosition[]> PreloadPositionsByComponent;
+
+        public event Action<HashSet<ChunkIndex>> OnChunksPreload;
         public event Action OnChunksPreloaded;
 
         private HashSet<ChunkIndex> _allChunkIndexes;
@@ -22,26 +24,25 @@ namespace World.Chunks
         public void Enable()
         {
             _generator = _worldManager.Generator;
+            _worldStorage.OnOutChunksUpdated += HandleChunksUpdated;
             PreloadPositionsByComponent = new();
         }
         public void Disable()
         {
+            _worldStorage.OnOutChunksUpdated -= HandleChunksUpdated;
             PreloadPositionsByComponent = null;
         }
-
         private void Update()
         {
             if (_isDirty)
             {
                 _allChunkIndexes = new HashSet<ChunkIndex>(PreloadPositionsByComponent.Values.SelectMany(positions => positions.Select(p => p.ToChunkIndex(_generator.ChunkSize))));
                 _isDirty = false;
-                _ = PreloadChunks();
+                OnChunksPreload?.Invoke(_allChunkIndexes);
             }
         }
-
-        private async Task PreloadChunks()
+        private void HandleChunksUpdated()
         {
-            await _worldStorage.RefreshOutChunksAsync(_allChunkIndexes);
             OnChunksPreloaded?.Invoke();
         }
 

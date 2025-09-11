@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using World.Chunks.Generator.Steps;
 
@@ -6,27 +8,40 @@ namespace World.Chunks.Generator.Procedural
     // Surface height provider with biome-based Perlin blending + caching
     public class SurfaceYProvider : ISurfaceYProvider, IChunkCacheStep
     {
-        private readonly CacheComputationByX<int> _cacheHelper;
         private readonly IBiomeProvider _biomeProvider;
         private readonly float _blendDistance;
         private readonly float _biomeWidth;
+        private readonly byte _chunkSize;
         private readonly int _seed;
+
+        private Dictionary<int, int> _cacheByVisible = new();
+        private Dictionary<int, int> _cacheByIndexes = new();
 
         public SurfaceYProvider(
             IBiomeProvider biomeProvider,
+            byte chunkSize,
             float biomeWidth,
             float blendDistance,
             int seed)
         {
-            _cacheHelper = new CacheComputationByX<int>(ComputeSurfaceY, seed);
             _biomeProvider = biomeProvider;
+            _chunkSize = chunkSize;
             _biomeWidth = biomeWidth;
             _blendDistance = blendDistance;
             _seed = seed;
         }
 
-        public void CacheComputation(RectInt rect) => _cacheHelper.CacheComputation(rect);
-        public int GetSurfaceY(int worldX) => _cacheHelper.GetValue(worldX);
+        public int GetSurfaceY(int worldX)
+        {
+            int cachedSurfaceY;
+
+            if (_cacheByVisible.TryGetValue(worldX, out cachedSurfaceY) || _cacheByIndexes.TryGetValue(worldX, out cachedSurfaceY))
+                return cachedSurfaceY;
+
+            Debug.Log($"GetSurfaceY cached not found!");
+
+            return ComputeSurfaceY(worldX);
+        }
 
         public int ComputeSurfaceY(int worldX)
         {
@@ -57,5 +72,27 @@ namespace World.Chunks.Generator.Procedural
 
             return perlinValue * biome.SurfaceHeightRange + biome.SurfaceBaseHeight;
         }
+
+        #region Кеширование
+        public void CacheComputation(RectInt rect)
+        {
+            CacheComputation(rect.xMin, rect.xMax, _cacheByVisible);
+            Debug.Log($"+GetSurfaceY _cacheByVisible cached! {_cacheByVisible.Count} {rect}");
+        }
+        public void CacheComputation(HashSet<ChunkIndex> indexes)
+        {
+            int fromX = indexes.Select(index => index.x * _chunkSize).Min();
+            int toX = indexes.Select(index => index.x * _chunkSize + _chunkSize - 1).Max();
+            CacheComputation(fromX, toX, _cacheByIndexes);
+            Debug.Log($"+GetSurfaceY _cacheByIndexes cached! {_cacheByIndexes.Count}");
+        }
+        public void CacheComputation(int fromX, int toX, Dictionary<int, int> updateIt)
+        {
+            updateIt.Clear();
+
+            for (int worldX = fromX; worldX <= toX; worldX++)
+                updateIt[worldX] = ComputeSurfaceY(worldX);
+        }
+        #endregion
     }
 }

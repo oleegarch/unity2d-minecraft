@@ -49,7 +49,7 @@ namespace World.Chunks.Generator.Procedural
         public List<EntityWillSpawn> WhereToSpawnEntity(RectInt rect)
         {
             List<EntityWillSpawn> willSpawn = new();
-            List<BiomeRange> biomeRanges = _biomeProvider.GetBiomeRanges(rect);
+            List<BiomeRange> biomeRanges = _biomeProvider.GetBiomeRanges(rect.xMin, rect.xMax);
 
             foreach (EntitiesSpawnerConfig config in _entitiesSpawnerConfigs)
             {

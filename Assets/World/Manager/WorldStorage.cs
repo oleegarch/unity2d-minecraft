@@ -39,6 +39,7 @@ namespace World.Chunks
     {
         #region Поля
         [SerializeField] private WorldChunksVisible _visibility;
+        [SerializeField] private WorldChunksPreloader _preloader;
         [SerializeField] private WorldManager _manager;
         [SerializeField] private GameObject _prefab;
         [SerializeField] private Transform _chunksParent;
@@ -68,26 +69,38 @@ namespace World.Chunks
         {
             _generator = _manager.Generator;
             _visibility.OnVisibleChunksChanged += HandleVisibleChanged;
+            _preloader.OnChunksPreload += HandleOutChanged;
         }
         public void Disable()
         {
             _visibility.OnVisibleChunksChanged -= HandleVisibleChanged;
+            _preloader.OnChunksPreload -= HandleOutChanged;
+        }
+        #endregion
+
+        #region Слушатели
+        private void HandleVisibleChanged(RectInt rect)
+        {
+            _generator.CacheComputation(rect);
+            _ = RefreshVisibleChunksAsync(rect);
+        }
+        public void HandleOutChanged(HashSet<ChunkIndex> newVisible)
+        {
+            _generator.CacheComputation(newVisible);
+            _ = RefreshOutChunksAsync(newVisible);
         }
         #endregion
 
         #region Обновление чанков
-        private void HandleVisibleChanged(RectInt rect)
+        private async Task RefreshVisibleChunksAsync(RectInt rect)
         {
+            Debug.Log($"RefreshVisibleChunksAsync started");
+
             HashSet<ChunkIndex> newVisible = new HashSet<ChunkIndex>();
             for (int x = rect.xMin; x <= rect.xMax; x++)
                 for (int y = rect.yMin; y <= rect.yMax; y++)
                     newVisible.Add(new ChunkIndex(x, y));
-    
-            _generator.CacheComputation(rect);
-            _ = RefreshVisibleChunksAsync(newVisible);
-        }
-        private async Task RefreshVisibleChunksAsync(HashSet<ChunkIndex> newVisible)
-        {
+
             await RefreshChunksInIndexesAsync(newVisible, _chunks, _renderers);
 
             if (Loaded == false)
@@ -100,6 +113,7 @@ namespace World.Chunks
         }
         public async Task RefreshOutChunksAsync(HashSet<ChunkIndex> newVisible)
         {
+            Debug.Log($"RefreshOutChunksAsync started");
             await RefreshChunksInIndexesAsync(newVisible, _outChunks, _outRenderers);
 
             OnOutChunksUpdated?.Invoke();

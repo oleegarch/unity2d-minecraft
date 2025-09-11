@@ -17,6 +17,7 @@ namespace World.Chunks.Generator
         public ChunkGeneratorConfig Config { get; }
         public IEntitiesSpawner EntitiesSpawner { get; }
         public void CacheComputation(RectInt rect);
+        public void CacheComputation(HashSet<ChunkIndex> indexes);
         public Task<Chunk> GenerateChunkAsync(ChunkIndex index);
         public void RegisterWorldSystems(WorldManager manager);
         public void UnregisterWorldSystems(WorldManager manager);
@@ -61,12 +62,17 @@ namespace World.Chunks.Generator
             RectInt blocksVisibleRect = new RectInt(
                 chunksVisibleRect.xMin * ChunkSize,
                 chunksVisibleRect.yMin * ChunkSize,
-                chunksVisibleRect.width * ChunkSize,
-                chunksVisibleRect.height * ChunkSize
+                (chunksVisibleRect.width + 1) * ChunkSize - 1,
+                (chunksVisibleRect.height + 1) * ChunkSize - 1
             );
 
             foreach (var step in _chunkCachingSteps)
                 step.CacheComputation(blocksVisibleRect);
+        }
+        public void CacheComputation(HashSet<ChunkIndex> indexes)
+        {
+            foreach (var step in _chunkCachingSteps)
+                step.CacheComputation(indexes);
         }
 
         private Chunk GenerateChunk(ChunkIndex index)
