@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using World.Blocks.Atlases;
 using World.Blocks;
-using World.Chunks.BlocksStorage;
+using World.Chunks.Blocks;
 
 namespace World.Chunks
 {

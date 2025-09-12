@@ -4,7 +4,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using World.Blocks;
 using World.Blocks.Atlases;
-using World.Chunks.BlocksStorage;
+using World.Chunks.Blocks;
 
 namespace World.Chunks
 {

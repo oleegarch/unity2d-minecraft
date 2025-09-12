@@ -1,5 +1,5 @@
 using World.Blocks;
-using World.Chunks.BlocksStorage;
+using World.Chunks.Blocks;
 using World.Chunks.Generator;
 using World.Inventories;
 

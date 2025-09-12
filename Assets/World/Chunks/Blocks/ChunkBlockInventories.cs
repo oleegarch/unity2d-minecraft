@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using World.Blocks;
 using World.Inventories;
 
-namespace World.Chunks.BlocksStorage
+namespace World.Chunks.Blocks
 {
     // Интерфейс для логики, связанной с инвентарём блоков
     public interface IChunkBlockInventories : IDisposable

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using World.Blocks;
 using World.Blocks.Atlases;
 
-namespace World.Chunks.BlocksStorage
+namespace World.Chunks.Blocks
 {
     public struct RenderLayer
     {

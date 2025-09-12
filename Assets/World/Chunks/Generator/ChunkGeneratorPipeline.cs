@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using World.Systems;
 using World.Chunks.Generator.Steps;
 using World.Chunks.Generator.Procedural;
-using World.Chunks.BlocksStorage;
+using World.Chunks.Blocks;
 using World.Rules;
 using Cysharp.Threading.Tasks;
 

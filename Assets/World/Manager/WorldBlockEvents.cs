@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using World.Blocks;
-using World.Chunks.BlocksStorage;
+using World.Chunks.Blocks;
 using World.Inventories;
 
 namespace World.Chunks

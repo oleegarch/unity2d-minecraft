@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using World.Chunks.BlocksStorage;
+using World.Chunks.Blocks;
 using World.Chunks.Generator.Steps;
 
 namespace World.Chunks.Generator.Procedural

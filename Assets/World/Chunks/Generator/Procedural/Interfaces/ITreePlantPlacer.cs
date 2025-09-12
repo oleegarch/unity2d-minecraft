@@ -1,4 +1,4 @@
-using World.Chunks.BlocksStorage;
+using World.Chunks.Blocks;
 
 namespace World.Chunks.Generator.Procedural
 {

@@ -1,5 +1,5 @@
 using World.Blocks;
-using World.Chunks.BlocksStorage.Storages;
+using World.Chunks.Blocks.Storages;
 
 namespace World.Chunks
 {

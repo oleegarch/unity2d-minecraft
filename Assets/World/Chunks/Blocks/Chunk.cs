@@ -1,8 +1,8 @@
 using System;
 using World.Blocks;
-using World.Chunks.BlocksStorage.Storages;
+using World.Chunks.Blocks.Storages;
 
-namespace World.Chunks.BlocksStorage
+namespace World.Chunks.Blocks
 {
     public class Chunk : IDisposable
     {

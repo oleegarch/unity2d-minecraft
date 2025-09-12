@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using World.Blocks;
-using World.Chunks.BlocksStorage;
+using World.Chunks.Blocks;
 using World.Blocks.Atlases;
 
 namespace World.Chunks

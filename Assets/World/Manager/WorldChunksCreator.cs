@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using World.Chunks.BlocksStorage;
+using World.Chunks.Blocks;
 using World.Chunks.Generator;
 using System.Threading;
 
