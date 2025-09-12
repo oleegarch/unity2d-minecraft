@@ -5,8 +5,21 @@ namespace World.Entities
 {
     public class EntityHealthPoints : MonoBehaviour
     {
+        [Tooltip("Модификатор цвета спрайтов для анимации краснения")]
+        [SerializeField] private EntitySpritesColorModifier _spritesColor;
+        [Tooltip("Проверка нахождения на земле или в полёте")]
+        [SerializeField] private EntityGroundCheck _groundCheck;
+
         [Tooltip("Максимальное количество здоровья")]
-        [SerializeField] private float _maxHealth;
+        [SerializeField] private float _maxHealth = 10f;
+
+        [Header("Урон от падения")]
+        [Tooltip("Минимальная высота для получения урона от падения")]
+        [SerializeField] private float _minHeightForDamageFromFall = 4f;
+        [Tooltip("Каждый блок высоты падения после минимального отнимает такое количество здоровья")]
+        [SerializeField] private float _damageFromFallPerBlockHeight = 0.5f;
+        private bool _fallingStarted = false;
+        private float _fallingStartedAtY;
 
         private float _currentHealth;
         public float Health => _currentHealth;
@@ -16,6 +29,20 @@ namespace World.Entities
         private void Awake()
         {
             _currentHealth = _maxHealth;
+        }
+        private void FixedUpdate()
+        {
+            if (_groundCheck.IsFalling && !_fallingStarted)
+            {
+                _fallingStarted = true;
+                _fallingStartedAtY = transform.position.y;
+            }
+            else if (!_groundCheck.IsFalling && _fallingStarted)
+            {
+                float fallingHeight = _fallingStartedAtY - transform.position.y;
+                DamageFromFall(fallingHeight);
+                _fallingStarted = false;
+            }
         }
 
         /// <summary>
@@ -34,7 +61,13 @@ namespace World.Entities
         /// <param name="height">Высота падения в количестве блоков</param>
         public void DamageFromFall(float height)
         {
-
+            if (height > _minHeightForDamageFromFall)
+            {
+                float heightDamage = height - _minHeightForDamageFromFall;
+                float damage = _damageFromFallPerBlockHeight * heightDamage;
+                _spritesColor.FadeAll(Color.red);
+                Damage(damage);
+            }
         }
 
         /// <summary>

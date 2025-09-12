@@ -307,8 +307,10 @@ GameObject:
   - component: {fileID: 7063223392675095521}
   - component: {fileID: 8095541209205512348}
   - component: {fileID: 2059611878113541148}
-  - component: {fileID: 4614802324825996949}
+  - component: {fileID: 68574412015846174}
+  - component: {fileID: 69946420344855724}
   - component: {fileID: 7665706456468120827}
+  - component: {fileID: 4614802324825996949}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -448,6 +450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 7063223392675095521}
   _animator: {fileID: 4541067657352592661}
+  _sendToAnimator: 1
   measureVelocityY: 0.1
   groundCheckLayer:
     serializedVersion: 2
@@ -473,7 +476,7 @@ MonoBehaviour:
   _playerTransform: {fileID: 6584477169498020244}
   moveSpeed: 5
   jumpForce: 4.5
---- !u!114 &4614802324825996949
+--- !u!114 &68574412015846174
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -482,11 +485,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 5257953190573768610}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f0beeef5fa4c8149a4fa2d2f032d8cc, type: 3}
+  m_Script: {fileID: 11500000, guid: b7ca79f6d37f839449cb1628c25204c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 4541067657352592661}
-  _movement: {fileID: 2059611878113541148}
+  _spritesColor: {fileID: 69946420344855724}
+  _groundCheck: {fileID: 8095541209205512348}
+  _maxHealth: 10
+  _minHeightForDamageFromFall: 4
+  _damageFromFallPerBlockHeight: 0.5
+--- !u!114 &69946420344855724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5257953190573768610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afb03bf01e6600d41ae9644896378019, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _bodySprite: {fileID: 12460458992259275}
+  _headSprite: {fileID: 2627891232227038264}
+  _limbSprites:
+  - {fileID: 3685201345903591807}
+  - {fileID: 6852855165456915063}
+  - {fileID: 1638115116778327326}
+  - {fileID: 7465714317739316645}
 --- !u!114 &7665706456468120827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -503,6 +528,20 @@ MonoBehaviour:
   _watchMoveTransform: {fileID: 6584477169498020244}
   _rigidbody: {fileID: 7063223392675095521}
   _chunksPreloadAt: {fileID: 2267780241523682231}
+--- !u!114 &4614802324825996949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5257953190573768610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f0beeef5fa4c8149a4fa2d2f032d8cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 4541067657352592661}
+  _movement: {fileID: 2059611878113541148}
 --- !u!1 &5944282653036379540
 GameObject:
   m_ObjectHideFlags: 0

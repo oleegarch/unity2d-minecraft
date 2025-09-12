@@ -8,6 +8,9 @@ namespace World.Entities
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private Animator _animator;
 
+        [Tooltip("Отправлять bool значения IsGrounded, IsJumping и IsFalling в Animator")]
+        [SerializeField] private bool _sendToAnimator = false;
+
         [Header("Movement Settings")]
         [SerializeField] private float measureVelocityY = 0.1f;
 
@@ -23,10 +26,12 @@ namespace World.Entities
 
         private void Update()
         {
-            // Обновляем параметры Animator
-            _animator.SetBool("IsGrounded", IsGrounded);
-            _animator.SetBool("IsJumping", IsJumping);
-            _animator.SetBool("IsFalling", IsFalling);
+            if (_sendToAnimator)
+            {
+                _animator.SetBool("IsGrounded", IsGrounded);
+                _animator.SetBool("IsJumping", IsJumping);
+                _animator.SetBool("IsFalling", IsFalling);
+            }
         }
 
         private void OnDrawGizmosSelected()
