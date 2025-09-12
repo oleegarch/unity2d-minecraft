@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using World.Blocks;
 using World.Chunks;
+using World.Entities.Player;
 using World.HoveredBlock;
 using World.InputActions;
 using World.Items;
@@ -30,7 +31,7 @@ namespace World.Inventories
         [SerializeField] private WorldInputManager _inputManager;
 
         [Header("Player right hand")]
-        [SerializeField] private Animator _localPlayerAnimator;
+        [SerializeField] private PlayerAnimator _localPlayerAnimator;
         [SerializeField] private Transform _itemOnRightHandTransform;
         [SerializeField] private SpriteRenderer _itemOnRightHand;
 
@@ -205,7 +206,7 @@ namespace World.Inventories
                 {
                     ItemDropped dropped = _itemsSpawner.DropItemAt(_itemOnRightHandTransform.position, removed);
                     dropped.ThrowItem(_blockObserver.CursorPositionInChunks);
-                    _localPlayerAnimator.SetTrigger("Throw");
+                    _localPlayerAnimator.AnimateItemThrow(_blockObserver.CursorPosition);
                 }
             }
         }

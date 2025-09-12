@@ -22,9 +22,9 @@ namespace World.Entities
         private bool _jumpRequest;
         private float _moveSpeedMultiplier = 1f;
 
-        public float Flip => _moveVelocity < 0f ? -1f : 1f;
         public bool Running => _moveVelocity != 0f;
         public float RunningSpeed => _moveVelocity * moveSpeed * _moveSpeedMultiplier;
+        public float RunningDirection => Mathf.Sign(_moveVelocity);
 
         private void OnEnable()
         {
@@ -45,11 +45,9 @@ namespace World.Entities
             _rigidbody.linearVelocityX = RunningSpeed;
 
             // Поворот спрайта
-            if (Running && _playerTransform.localScale.x != Flip)
+            if (Running && _playerTransform.localScale.x != RunningDirection)
             {
-                Vector3 scale = _playerTransform.localScale;
-                scale.x = Flip;
-                _playerTransform.localScale = scale;
+                Flip(RunningDirection);
             }
 
 #if UNITY_EDITOR
@@ -79,6 +77,13 @@ namespace World.Entities
         public void Jump()
         {
             _rigidbody.linearVelocityY = jumpForce;
+        }
+
+        public void Flip(float direction)
+        {
+            Vector3 scale = _playerTransform.localScale;
+            scale.x = direction;
+            _playerTransform.localScale = scale;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace World.HoveredBlock
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private Transform _breakingMask;
         [SerializeField] private BlockParticleSystemController _particlesController;
-        [SerializeField] private Animator _localPlayerAnimator;
+        [SerializeField] private PlayerAnimator _localPlayerAnimator;
 
         [Header("Settings")]
         [SerializeField] private float _cameraDistanceChangedForCancelBreaking = 0.5f;
@@ -118,7 +118,7 @@ namespace World.HoveredBlock
             _currentBreakingCoroutine = null;
             _breakingMask.localScale = Vector3.zero;
             _particlesController.StopBlockBreaking();
-            _localPlayerAnimator.SetBool("Breaking", false);
+            _localPlayerAnimator.StopBlockBreaking();
         }
         private void RestartBreaking()
         {
@@ -150,7 +150,7 @@ namespace World.HoveredBlock
 
             _targetSpriteRenderer.color = hoveredInfo.OutlineColor;
             _particlesController.AnimateBlockBreaking(worldPosition, hoveredInfo);
-            _localPlayerAnimator.SetBool("Breaking", true);
+            _localPlayerAnimator.AnimateBlockBreaking(worldPosition);
 
             float hardness = hoveredInfo.Hardness;
             float passed = 0f;
