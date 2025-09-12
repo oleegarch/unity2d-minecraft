@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace World.Entities
@@ -9,6 +10,8 @@ namespace World.Entities
         [SerializeField] private EntityActivityTogglerAbstract[] _components;
         [SerializeField] private bool _disableInAwake = true;
 
+        [NonSerialized] public bool Activated;
+
         private void Awake()
         {
             if (_disableInAwake)
@@ -17,6 +20,7 @@ namespace World.Entities
 
         public void Enable()
         {
+            Activated = true;
             _rigidbody.simulated = true;
             _animator.enabled = true;
 
@@ -26,6 +30,7 @@ namespace World.Entities
 
         public void Disable()
         {
+            Activated = false;
             _rigidbody.simulated = false;
             _animator.enabled = false;
 

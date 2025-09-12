@@ -35,34 +35,8 @@ namespace World.Entities
 
         private void HandleVisibleChanged(RectInt chunksVisibleRect)
         {
-            List<EntityWillSpawn> willSpawns = _worldManager.Generator.EntitiesSpawner.WhereToSpawnEntity(chunksVisibleRect);
-
-            foreach (EntityWillSpawn willSpawn in willSpawns)
-            {
-                EntityInfo entityInfo = willSpawn.EntityInfo;
-                WorldPosition worldPosition = willSpawn.SpawnAt;
-
-                SpawnEntity(entityInfo.Prefab, worldPosition);
-            }
-
-            _currentActiveEntities.Clear();
-
-            RectInt blocksVisibleRect = _visibility.BlocksVisibleRect;
-            foreach (EntityActivityToggler activator in _activatorsEntities)
-            {
-                Vector3 entityPosition = activator.transform.position;
-                Vector2Int entityPosition2Int = new Vector2Int(Mathf.FloorToInt(entityPosition.x), Mathf.FloorToInt(entityPosition.y));
-                if (blocksVisibleRect.Contains(entityPosition2Int))
-                {
-                    activator.Enable();
-                    _currentActiveEntities.Add(activator.gameObject);
-                }
-                else
-                {
-                    activator.Disable();
-                    _currentActiveEntities.Remove(activator.gameObject);
-                }
-            }
+            SpawnEntities(chunksVisibleRect);
+            ToggleEntities(_visibility.BlocksVisibleRect);
         }
         private void HandleChunksVisibleLoaded()
         {
@@ -72,6 +46,38 @@ namespace World.Entities
             _localPlayerChunksPreloading.SetPreloader(_worldChunksPreloader);
         }
 
+        public void ToggleEntities(RectInt blocksVisibleRect)
+        {
+            foreach (EntityActivityToggler activator in _activatorsEntities)
+            {
+                Vector3 entityPosition = activator.transform.position;
+                Vector2Int entityPosition2Int = new Vector2Int(Mathf.FloorToInt(entityPosition.x), Mathf.FloorToInt(entityPosition.y));
+                bool activate = blocksVisibleRect.Contains(entityPosition2Int);
+                if (activator.Activated == false && activate)
+                {
+                    activator.Enable();
+                    _currentActiveEntities.Add(activator.gameObject);
+                }
+                if(activator.Activated == true && !activate)
+                {
+                    activator.Disable();
+                    _currentActiveEntities.Remove(activator.gameObject);
+                }
+            }
+        }
+
+        public void SpawnEntities(RectInt chunksVisibleRect)
+        {
+            List<EntityWillSpawn> willSpawns = _worldManager.Generator.EntitiesSpawner.WhereToSpawnEntity(chunksVisibleRect);
+
+            foreach (EntityWillSpawn willSpawn in willSpawns)
+            {
+                EntityInfo entityInfo = willSpawn.EntityInfo;
+                WorldPosition worldPosition = willSpawn.SpawnAt;
+
+                SpawnEntity(entityInfo.Prefab, worldPosition);
+            }
+        }
         public void SpawnEntity(GameObject entityPrefab, WorldPosition worldPosition)
         {
             Vector3 position = worldPosition.ToVector3Int();
@@ -82,7 +88,7 @@ namespace World.Entities
 
             if (spawned.TryGetComponent<EntityActivityToggler>(out var activator))
                 _activatorsEntities.Add(activator);
-                
+
             _spawnedEntities.Add(spawned);
         }
 
