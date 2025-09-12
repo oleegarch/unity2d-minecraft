@@ -20,12 +20,16 @@ namespace World.Entities
         [SerializeField] private Vector2 groundCheckPositionSize;
         [SerializeField] private float groundCheckPositionAngle;
 
-        public bool IsGrounded => Physics2D.OverlapBox((Vector2)groundCheckTransform.position, groundCheckPositionSize, groundCheckPositionAngle, groundCheckLayer);
-        public bool IsJumping => _rigidbody.linearVelocityY > measureVelocityY;
-        public bool IsFalling => _rigidbody.linearVelocityY < -measureVelocityY;
+        public bool IsGrounded;
+        public bool IsJumping;
+        public bool IsFalling;
 
         private void Update()
         {
+            IsGrounded = Physics2D.OverlapBox((Vector2)groundCheckTransform.position, groundCheckPositionSize, groundCheckPositionAngle, groundCheckLayer);
+            IsJumping = _rigidbody.linearVelocityY > measureVelocityY;
+            IsFalling = _rigidbody.linearVelocityY < -measureVelocityY;
+            
             if (_sendToAnimator)
             {
                 _animator.SetBool("IsGrounded", IsGrounded);

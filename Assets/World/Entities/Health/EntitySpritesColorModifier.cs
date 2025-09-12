@@ -11,8 +11,13 @@ namespace World.Entities
         [SerializeField] private SpriteRenderer _headSprite;
         [SerializeField] private SpriteRenderer[] _limbSprites;
 
-        private IEnumerable<SpriteRenderer> _allSprites => _limbSprites.Append(_bodySprite).Append(_headSprite);
+        private IEnumerable<SpriteRenderer> _allSprites;
         private Dictionary<SpriteRenderer, Coroutine> _currentFadeColorAnimations = new();
+
+        private void Awake()
+        {
+            _allSprites = _limbSprites.Append(_bodySprite).Append(_headSprite);
+        }
 
         public void FadeHead(Color color)
         {
