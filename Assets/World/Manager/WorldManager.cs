@@ -12,7 +12,6 @@ namespace World.Chunks
         [SerializeField] private WorldEntities _entities;
         [SerializeField] private ChunksVisible _visibility;
         [SerializeField] private ChunksPreloader _chunksPreloader;
-        [SerializeField] private int _seed;
 
         public WorldEnvironmentAccessor EnvironmentAccessor => _environment;
         public WorldBlockEvents Events { get; private set; }
@@ -21,7 +20,9 @@ namespace World.Chunks
 
         private void Awake()
         {
-            Generator = _environment.Environment.GetWorldGenerator("Earth", _seed);
+            _environment.Initialize();
+            
+            Generator = _environment.CurrentWorldGenerator;
             Events = new WorldBlockEvents();
             Blocks = new WorldBlockModifier(_storage, Generator);
         }
@@ -46,7 +47,6 @@ namespace World.Chunks
         private void OnDestroy()
         {
             Generator.UnregisterWorldSystems(this);
-            _storage.DisposeAll();
         }
     }
 }

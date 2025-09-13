@@ -31,11 +31,11 @@ namespace World.Chunks.Generator
         public override IWorldGenerator GetWorldGenerator(WorldEnvironment worldConfig, int seed)
         {
             // Global rules for this world
-            var rules = new WorldGlobalRules(_chunkSize);
+            var rules = new WorldGlobalRules();
 
             // Procedural providers
-            var biomeProvider = new BiomeProvider(Biomes, rules.ChunkSize, BiomeWidth, seed);
-            var surfaceYProvider = new SurfaceYProvider(biomeProvider, rules.ChunkSize, BiomeWidth, SurfaceBlendWidth, seed);
+            var biomeProvider = new BiomeProvider(Biomes, _chunkSize, BiomeWidth, seed);
+            var surfaceYProvider = new SurfaceYProvider(biomeProvider, _chunkSize, BiomeWidth, SurfaceBlendWidth, seed);
 
             // Procedural chunk generation step
             var blockGenerator = new BlockGenerator(worldConfig.BlockDatabase, biomeProvider, surfaceYProvider, CaveLevels, seed); // Procedural generation
@@ -54,7 +54,7 @@ namespace World.Chunks.Generator
 
             // Compose generator
             var worldSystems = new IWorldSystem[] { new BreakableByGravitySystem() };
-            var composite = new WorldGeneratorPipeline(worldConfig, rules, entitiesSpawner, creationStep, postSteps, cacheSteps, worldSystems);
+            var composite = new WorldGeneratorPipeline(worldConfig, this, rules, entitiesSpawner, creationStep, postSteps, cacheSteps, worldSystems);
 
             return composite;
         }

@@ -19,3 +19,4 @@ MonoBehaviour:
   _entityDatabase: {fileID: 11400000, guid: 6dd38874624c9f54795b64d872ed582c, type: 2}
   _worldGeneratorConfigs:
   - {fileID: 11400000, guid: 659c0a70df5cdaa459c56cc0e398dc18, type: 2}
+  _defaultWorldGeneratorName: Earth

@@ -13,8 +13,10 @@ namespace World.Chunks.Generator
     public interface IWorldGenerator
     {
         public byte ChunkSize { get; }
+        public GameObject ChunkPrefab { get; }
         public WorldGlobalRules Rules { get; }
-        public WorldEnvironment Config { get; }
+        public WorldEnvironment Environment { get; }
+        public WorldGeneratorConfig Config { get; }
         public IEntitiesSpawner EntitiesSpawner { get; }
         public void CacheComputation(RectInt rect);
         public void CacheComputation(HashSet<ChunkIndex> indexes);
@@ -26,12 +28,15 @@ namespace World.Chunks.Generator
     // Composite generator orchestrates
     public class WorldGeneratorPipeline : IWorldGenerator
     {
-        public byte ChunkSize => _rules.ChunkSize;
+        public byte ChunkSize => _config.ChunkSize;
+        public GameObject ChunkPrefab => _config.ChunkPrefab;
         public WorldGlobalRules Rules => _rules;
-        public WorldEnvironment Config => _config;
+        public WorldEnvironment Environment => _environment;
+        public WorldGeneratorConfig Config => _config;
         public IEntitiesSpawner EntitiesSpawner => _entitiesSpawner;
 
-        private readonly WorldEnvironment _config;
+        private readonly WorldEnvironment _environment;
+        private readonly WorldGeneratorConfig _config;
         private readonly WorldGlobalRules _rules;
         private readonly IEntitiesSpawner _entitiesSpawner;
         private readonly IChunkCreationStep _creationStep;
@@ -40,7 +45,8 @@ namespace World.Chunks.Generator
         private readonly IReadOnlyList<IWorldSystem> _worldSystems;
 
         public WorldGeneratorPipeline(
-            WorldEnvironment config,
+            WorldEnvironment environment,
+            WorldGeneratorConfig config,
             WorldGlobalRules rules,
             IEntitiesSpawner entitiesSpawner,
             IChunkCreationStep chunkCreationStep,
@@ -49,6 +55,7 @@ namespace World.Chunks.Generator
             IEnumerable<IWorldSystem> worldSystems
         )
         {
+            _environment = environment;
             _config = config;
             _rules = rules;
             _entitiesSpawner = entitiesSpawner;

@@ -101,7 +101,7 @@ namespace World.Chunks
                 if (currentBlock.IsAir)
                     return false;
 
-                BlockInfo currentBlockInfo = _generator.Config.BlockDatabase.Get(currentBlock.Id);
+                BlockInfo currentBlockInfo = _generator.Environment.BlockDatabase.Get(currentBlock.Id);
                 if (currentBlockInfo.Inventory.SlotCount > 0)
                 {
                     if (!chunk.Inventories.TryGetInventory(blockIndex, currentLayer, out inventory))

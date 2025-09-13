@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _generatorName: Earth
   _chunkSize: 16
+  _chunkPrefab: {fileID: 7660349154471805984, guid: 9c1e627da06ca184abf92a2ddfadb6c0, type: 3}
   BiomeWidth: 200
   SurfaceBlendWidth: 20
   Biomes:

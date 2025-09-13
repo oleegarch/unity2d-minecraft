@@ -16,24 +16,20 @@ namespace World.Chunks.Generator
         [SerializeField] protected ItemCategoryDatabase _itemCategoryDatabase;
         [SerializeField] protected EntityDatabase _entityDatabase;
         [SerializeField] protected WorldGeneratorConfig[] _worldGeneratorConfigs;
+        [SerializeField] protected string _defaultWorldGeneratorName;
 
         public BlockDatabase BlockDatabase => _blockDatabase;
         public BlockAtlasDatabase BlockAtlasDatabase => _blockAtlasDatabase;
         public ItemDatabase ItemDatabase => _itemDatabase;
         public ItemCategoryDatabase ItemCategoryDatabase => _itemCategoryDatabase;
         public EntityDatabase EntityDatabase => _entityDatabase;
-
         public WorldGeneratorConfig[] WorldGeneratorConfigs => _worldGeneratorConfigs;
         public string[] WorldGeneratorNames => _worldGeneratorConfigs.Select(c => c.Name).ToArray();
+        public string DefaultWorldGeneratorName => _defaultWorldGeneratorName;
 
         public WorldGeneratorConfig GetWorldGeneratorConfig(string generatorName)
         {
             return _worldGeneratorConfigs.First(c => c.Name == generatorName);
-        }
-        public IWorldGenerator GetWorldGenerator(string generatorName, int seed)
-        {
-            WorldGeneratorConfig generatorConfig = GetWorldGeneratorConfig(generatorName);
-            return generatorConfig.GetWorldGenerator(this, seed);
         }
     }
 }

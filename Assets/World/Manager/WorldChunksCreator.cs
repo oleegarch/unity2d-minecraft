@@ -43,7 +43,6 @@ namespace World.Chunks
         [SerializeField] private ChunksPreloader _preloader;
         [SerializeField] private WorldManager _manager;
         [SerializeField] private WorldEnvironmentAccessor _environment;
-        [SerializeField] private GameObject _prefab;
         [SerializeField] private Transform _chunksParent;
 
         public event Action OnVisibleChunksLoaded;
@@ -201,7 +200,7 @@ namespace World.Chunks
                         return false;
                     }
 
-                    var go = UnityEngine.Object.Instantiate(_prefab, _chunksParent);
+                    var go = UnityEngine.Object.Instantiate(_generator.ChunkPrefab, _chunksParent);
                     var renderer = go.GetComponent<ChunkRenderer>();
                     renderer.Initialize(_environment.BlockDatabase, _environment.BlockAtlasDatabase);
                     go.name = index.ToString();
