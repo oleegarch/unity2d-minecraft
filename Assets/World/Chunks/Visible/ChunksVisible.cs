@@ -13,9 +13,9 @@ namespace World.Chunks
     public class ChunksVisible : MonoBehaviour, IChunksVisible
     {
         [SerializeField] private CameraObserver _cameraObserver;
-        [SerializeField] private WorldConfig _chunkGeneratorConfig;
+        [SerializeField] private WorldEnvironment _chunkGeneratorConfig;
 
-        private int _chunkSize => _chunkGeneratorConfig.GetChunkGeneratorConfig("Earth").ChunkSize;
+        private int _chunkSize => _chunkGeneratorConfig.GetWorldGeneratorConfig("Earth").ChunkSize;
         private WorldPosition _lastCenterChunk = new WorldPosition(int.MinValue, int.MinValue);
 
         public event Action<RectInt> OnVisibleChunksChanged;

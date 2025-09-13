@@ -17,5 +17,5 @@ MonoBehaviour:
   _itemDatabase: {fileID: 11400000, guid: b60774e9ea7af34488c309d13a35c6ec, type: 2}
   _itemCategoryDatabase: {fileID: 11400000, guid: b83a01c8ba74b44428154515bb452ccc, type: 2}
   _entityDatabase: {fileID: 11400000, guid: 6dd38874624c9f54795b64d872ed582c, type: 2}
-  _chunkGeneratorConfigs:
+  _worldGeneratorConfigs:
   - {fileID: 11400000, guid: 659c0a70df5cdaa459c56cc0e398dc18, type: 2}

@@ -8,7 +8,7 @@ namespace World.HoveredBlock.BlockStylesSelector
 {
     public class UIBlockStyleSelector : MonoBehaviour
     {
-        [SerializeField] private WorldManager _worldManager;
+        [SerializeField] private WorldEnvironmentAccessor _environment;
         [SerializeField] private HoveredBlockPicker _hoveredBlockPicker;
         [SerializeField] private GameObject _blockStylePrefab;
         [SerializeField] private CameraObserver _cameraObserver;
@@ -27,7 +27,7 @@ namespace World.HoveredBlock.BlockStylesSelector
             transform.position = screenPos;
             _startedWorldPosition = worldPosition;
 
-            BlockInfo selectedInfo = _worldManager.BlockDatabase.Get(selectedBlock.Id);
+            BlockInfo selectedInfo = _environment.BlockDatabase.Get(selectedBlock.Id);
             int index = 0;
             foreach (BlockPlacementVariant styles in selectedInfo.AvailablePlacements)
             {

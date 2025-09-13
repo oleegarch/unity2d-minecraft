@@ -10,7 +10,7 @@ namespace World.Chunks
     {
         [SerializeField] private WorldManager _worldManager;
         [SerializeField] private WorldChunksCreator _worldChunksCreator;
-        private IChunkGenerator _generator;
+        private IWorldGenerator _generator;
 
         public Dictionary<int, WorldPosition[]> PreloadPositionsByComponent;
 

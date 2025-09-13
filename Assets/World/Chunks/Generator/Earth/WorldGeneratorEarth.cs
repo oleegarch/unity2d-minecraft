@@ -8,7 +8,7 @@ using World.Rules;
 namespace World.Chunks.Generator
 {    
     [CreateAssetMenu(menuName = "ChunkGenerators/EarthGeneratorConfig")]
-    public class ChunkGeneratorEarth : ChunkGeneratorConfig
+    public class WorldGeneratorEarth : WorldGeneratorConfig
     {
         [Tooltip("размер биома")]
         public int BiomeWidth;
@@ -28,7 +28,7 @@ namespace World.Chunks.Generator
         [Tooltip("сущности в биомах")]
         public List<EntitiesSpawnerConfig> EntitiesInBiomes;
 
-        public override IChunkGenerator GetChunkGenerator(WorldConfig worldConfig, int seed)
+        public override IWorldGenerator GetWorldGenerator(WorldEnvironment worldConfig, int seed)
         {
             // Global rules for this world
             var rules = new WorldGlobalRules(_chunkSize);
@@ -54,7 +54,7 @@ namespace World.Chunks.Generator
 
             // Compose generator
             var worldSystems = new IWorldSystem[] { new BreakableByGravitySystem() };
-            var composite = new ChunkGeneratorPipeline(worldConfig, rules, entitiesSpawner, creationStep, postSteps, cacheSteps, worldSystems);
+            var composite = new WorldGeneratorPipeline(worldConfig, rules, entitiesSpawner, creationStep, postSteps, cacheSteps, worldSystems);
 
             return composite;
         }

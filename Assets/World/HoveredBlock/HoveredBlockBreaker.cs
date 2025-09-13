@@ -17,6 +17,7 @@ namespace World.HoveredBlock
         [SerializeField] private CameraObserver _cameraObserver;
         [SerializeField] private WorldInputManager _inputManager;
         [SerializeField] private WorldManager _worldManager;
+        [SerializeField] private WorldEnvironmentAccessor _environment;
         [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private Transform _breakingMask;
@@ -146,7 +147,7 @@ namespace World.HoveredBlock
             Block hoveredBlock = _worldManager.Blocks.GetBreakable(worldPosition, out BlockLayer blockLayer);
             if (hoveredBlock.IsAir) yield break;
 
-            BlockInfo hoveredInfo = _worldManager.BlockDatabase.Get(hoveredBlock.Id);
+            BlockInfo hoveredInfo = _environment.BlockDatabase.Get(hoveredBlock.Id);
 
             _targetSpriteRenderer.color = hoveredInfo.OutlineColor;
             _particlesController.AnimateBlockBreaking(worldPosition, hoveredInfo);

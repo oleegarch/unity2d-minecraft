@@ -78,7 +78,7 @@ namespace World.Systems
                 var cur = _manager.Blocks.GetSimilar(pos, layer, out BlockLayer currentLayer);
                 if (cur.IsAir) continue;
 
-                var info = _manager.BlockDatabase.Get(cur.Id);
+                var info = _manager.EnvironmentAccessor.BlockDatabase.Get(cur.Id);
                 if (info == null) continue;
 
                 // ломаем только гравитационные блоки; негравитационные участвуют лишь как часть цепочки поддержки

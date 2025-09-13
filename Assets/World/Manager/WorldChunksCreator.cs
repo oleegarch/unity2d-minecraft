@@ -42,6 +42,7 @@ namespace World.Chunks
         [SerializeField] private ChunksVisible _visibility;
         [SerializeField] private ChunksPreloader _preloader;
         [SerializeField] private WorldManager _manager;
+        [SerializeField] private WorldEnvironmentAccessor _environment;
         [SerializeField] private GameObject _prefab;
         [SerializeField] private Transform _chunksParent;
 
@@ -57,7 +58,7 @@ namespace World.Chunks
         private readonly Dictionary<ChunkIndex, ChunkRenderer> _renderers = new();
         private readonly Dictionary<ChunkIndex, ChunkRenderer> _outRenderers = new();
         private readonly HashSet<ChunkIndex> _loadings = new();
-        private IChunkGenerator _generator;
+        private IWorldGenerator _generator;
 
         // Cancellation tokens for current refresh operations
         private CancellationTokenSource _visibleCts;
@@ -202,7 +203,7 @@ namespace World.Chunks
 
                     var go = UnityEngine.Object.Instantiate(_prefab, _chunksParent);
                     var renderer = go.GetComponent<ChunkRenderer>();
-                    renderer.Initialize(_manager.BlockDatabase, _manager.BlockAtlasDatabase);
+                    renderer.Initialize(_environment.BlockDatabase, _environment.BlockAtlasDatabase);
                     go.name = index.ToString();
                     go.transform.localPosition = new Vector3(index.x * chunk.Size, index.y * chunk.Size, 0);
 

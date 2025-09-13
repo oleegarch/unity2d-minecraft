@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace World.Chunks.Generator
 {
-    public abstract class ChunkGeneratorConfig : ScriptableObject
+    public abstract class WorldGeneratorConfig : ScriptableObject
     {
         [SerializeField] protected string _generatorName;
         [SerializeField] protected byte _chunkSize = 16;
@@ -10,6 +10,6 @@ namespace World.Chunks.Generator
         public string Name => _generatorName;
         public byte ChunkSize => _chunkSize;
 
-        public abstract IChunkGenerator GetChunkGenerator(WorldConfig worldConfig, int seed);
+        public abstract IWorldGenerator GetWorldGenerator(WorldEnvironment worldConfig, int seed);
     }
 }

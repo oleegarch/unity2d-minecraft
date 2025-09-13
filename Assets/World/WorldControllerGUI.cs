@@ -8,7 +8,7 @@ namespace World
 {
     public class WorldControllerGUI : MonoBehaviour
     {
-        [SerializeField] private WorldManager _worldManager;
+        [SerializeField] private WorldEnvironmentAccessor _environment;
         [SerializeField] private WorldChunksCreator _worldChunksCreator;
         [SerializeField] private WorldModeController _worldModeController;
         [SerializeField] private CameraModeController _cameraModeController;
@@ -87,7 +87,7 @@ namespace World
             // Current picked block
             ushort blockId = _blockPicker.SelectedBlock.Id;
             BlockLayer blockLayer = _blockPicker.SelectedLayer;
-            GUILayout.Label($"Picked block: {_worldManager.BlockDatabase.Get(blockId).Name}(Id:{blockId},Layer:{blockLayer})");
+            GUILayout.Label($"Picked block: {_environment.BlockDatabase.Get(blockId).Name}(Id:{blockId},Layer:{blockLayer})");
 
             GUILayout.EndVertical();
             GUILayout.EndArea();

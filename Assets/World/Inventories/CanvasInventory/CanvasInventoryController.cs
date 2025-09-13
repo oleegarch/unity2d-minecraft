@@ -28,6 +28,7 @@ namespace World.Inventories
         [Header("World systems")]
         [SerializeField] private WorldModeController _worldMode;
         [SerializeField] private WorldManager _manager;
+        [SerializeField] private WorldEnvironmentAccessor _environment;
         [SerializeField] private WorldInputManager _inputManager;
 
         [Header("Player right hand")]
@@ -57,7 +58,7 @@ namespace World.Inventories
             }
         }
         public ItemStack ActiveItemStack => _playerInventory.GetSlot(ActiveHotbarIndex);
-        public ItemInfo ActiveItemInfo => ActiveItemStack.Item?.GetItemInfo(_manager.ItemDatabase);
+        public ItemInfo ActiveItemInfo => ActiveItemStack.Item?.GetItemInfo(_environment.ItemDatabase);
         public PlayerInventory Inventory => _playerInventory;
 
         private void Awake()
@@ -104,7 +105,7 @@ namespace World.Inventories
         }
         private void HandleBlockPickedUpdate(WorldPosition position, Block block, BlockLayer blockLayer, BlockStyles blockStyles)
         {
-            ItemInfo newItemInfo = _manager.ItemDatabase.GetByBlockId(block.Id);
+            ItemInfo newItemInfo = _environment.ItemDatabase.GetByBlockId(block.Id);
             ItemStack newItemStack = new ItemStack(newItemInfo, quantity: newItemInfo.MaxStack);
             _playerInventory.Replace(ActiveHotbarIndex, newItemStack, out ItemStack old);
         }
@@ -148,7 +149,7 @@ namespace World.Inventories
         {
             GameObject go = Instantiate(_creativeInventoryPrefab, _inventoryAlignmentTransform);
             UICreativeInventory component = go.GetComponent<UICreativeInventory>();
-            component.SetUp(_manager.ItemDatabase, _manager.ItemCategoryDatabase);
+            component.SetUp(_environment.ItemDatabase, _environment.ItemCategoryDatabase);
             return component;
         }
         private UICraftingInventory CreateCraftingInventory(BlockInventory tableInventory)
@@ -165,7 +166,7 @@ namespace World.Inventories
                 Block clickedBlock = _manager.Blocks.GetBreakable(_blockObserver.HoveredPosition, out BlockLayer blockLayer);
                 if (!clickedBlock.IsAir)
                 {
-                    BlockInfo clickedBlockInfo = _manager.BlockDatabase.Get(clickedBlock.Id);
+                    BlockInfo clickedBlockInfo = _environment.BlockDatabase.Get(clickedBlock.Id);
                         
                     if (clickedBlockInfo.Inventory.Type == InventoryType.Inventory)
                     {

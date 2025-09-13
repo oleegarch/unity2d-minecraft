@@ -1,8 +1,5 @@
 using UnityEngine;
-using World.Blocks;
-using World.Blocks.Atlases;
 using World.Chunks.Generator;
-using World.Items;
 using World.Entities;
 
 namespace World.Chunks
@@ -10,26 +7,21 @@ namespace World.Chunks
     public class WorldManager : MonoBehaviour
     {
         [SerializeField] private GameObject _chunkRendererPrefab;
-        [SerializeField] private WorldConfig _chunkGeneratorConfig;
+        [SerializeField] private WorldEnvironmentAccessor _environment;
         [SerializeField] private WorldChunksCreator _storage;
         [SerializeField] private WorldEntities _entities;
         [SerializeField] private ChunksVisible _visibility;
         [SerializeField] private ChunksPreloader _chunksPreloader;
         [SerializeField] private int _seed;
 
-        public BlockDatabase BlockDatabase => _chunkGeneratorConfig.BlockDatabase;
-        public BlockAtlasDatabase BlockAtlasDatabase => _chunkGeneratorConfig.BlockAtlasDatabase;
-        public ItemDatabase ItemDatabase => _chunkGeneratorConfig.ItemDatabase;
-        public ItemCategoryDatabase ItemCategoryDatabase => _chunkGeneratorConfig.ItemCategoryDatabase;
-        public EntityDatabase EntityDatabase => _chunkGeneratorConfig.EntityDatabase;
-
-        public IChunkGenerator Generator { get; private set; }
+        public WorldEnvironmentAccessor EnvironmentAccessor => _environment;
         public WorldBlockEvents Events { get; private set; }
+        public IWorldGenerator Generator { get; private set; }
         public IWorldBlockModifier Blocks { get; private set; }
 
         private void Awake()
         {
-            Generator = _chunkGeneratorConfig.GetChunkGenerator("Earth", _seed);
+            Generator = _environment.Environment.GetWorldGenerator("Earth", _seed);
             Events = new WorldBlockEvents();
             Blocks = new WorldBlockModifier(_storage, Generator);
         }

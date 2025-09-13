@@ -24,9 +24,9 @@ namespace World.Chunks
     public class WorldBlockModifier : IWorldBlockModifier
     {
         private readonly IWorldChunksAccessor _storage;
-        private readonly IChunkGenerator _generator;
+        private readonly IWorldGenerator _generator;
 
-        public WorldBlockModifier(IWorldChunksAccessor storage, IChunkGenerator generator)
+        public WorldBlockModifier(IWorldChunksAccessor storage, IWorldGenerator generator)
         {
             _storage = storage;
             _generator = generator;

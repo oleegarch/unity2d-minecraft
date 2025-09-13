@@ -11,6 +11,7 @@ namespace World.HoveredBlock
         [SerializeField] private HoveredBlockObserver _blockHoveredObserver;
         [SerializeField] private HoveredBlockBreaker _blockBreakingProcess;
         [SerializeField] private WorldManager _worldManager;
+        [SerializeField] private WorldEnvironmentAccessor _environment;
         [SerializeField] private SpriteRenderer _targetSpriteRenderer;
         [SerializeField] private float _whenReachedLimitColorAlpha = 0.25f;
 
@@ -39,7 +40,7 @@ namespace World.HoveredBlock
                 transform.position = new Vector3(worldPosition.x, worldPosition.y, 0f);
 
                 // change only rgb, not alpha
-                BlockInfo hoveredInfo = _worldManager.BlockDatabase.Get(hoveredBlock.Id);
+                BlockInfo hoveredInfo = _environment.BlockDatabase.Get(hoveredBlock.Id);
                 Color rgbChanged = _targetSpriteRenderer.color;
                 Color change = hoveredInfo.OutlineColor;
                 rgbChanged.r = change.r;

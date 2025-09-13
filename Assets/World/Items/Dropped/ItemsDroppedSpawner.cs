@@ -8,6 +8,7 @@ namespace World.Items
     public class ItemsDroppedSpawner : MonoBehaviour
     {
         [SerializeField] private WorldManager _manager;
+        [SerializeField] private WorldEnvironmentAccessor _environment;
         [SerializeField] private GameObject _itemDroppedPrefab;
         [SerializeField] private Transform _itemsDroppedParent;
 
@@ -24,7 +25,7 @@ namespace World.Items
 
         private void HandleWorldBlockBroken(WorldPosition position, Block block, BlockLayer blockLayer)
         {
-            ItemInfo info = _manager.ItemDatabase.GetByBlockId(block.Id);
+            ItemInfo info = _environment.ItemDatabase.GetByBlockId(block.Id);
             ItemStack stack = new ItemStack(info);
             DropItemAt(position, stack);
         }
@@ -45,7 +46,7 @@ namespace World.Items
 
             GameObject item = Instantiate(_itemDroppedPrefab, position, Quaternion.identity, _itemsDroppedParent);
             ItemDropped dropped = item.GetComponent<ItemDropped>();
-            dropped.SetUp(stack, _manager.ItemDatabase);
+            dropped.SetUp(stack, _environment.ItemDatabase);
 
             return dropped;
         }

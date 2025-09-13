@@ -76,8 +76,8 @@ namespace World.Inventories
         public void SetUp(PlayerInventory inventory, BlockInventory blockInventory, WorldManager manager)
         {
             _manager = manager;
-            _itemDatabase = manager.ItemDatabase;
-            _itemCategoryDatabase = manager.ItemCategoryDatabase;
+            _itemDatabase = manager.EnvironmentAccessor.ItemDatabase;
+            _itemCategoryDatabase = manager.EnvironmentAccessor.ItemCategoryDatabase;
             _craftSystem = new CraftingTable(_itemDatabase, InventoryType.CraftingTable);
             _blockInventory = blockInventory;
             _playerInventory = inventory;

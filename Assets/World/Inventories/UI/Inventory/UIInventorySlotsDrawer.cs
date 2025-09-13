@@ -67,7 +67,7 @@ namespace World.Inventories
                 // Визуализируем текущий слот
                 var drawer = go.GetComponent<UIItemSlotDrawer>();
                 var stack = _inventory.GetSlot(invIndex);
-                drawer.SetUpStack(_manager.ItemDatabase, stack);
+                drawer.SetUpStack(_manager.EnvironmentAccessor.ItemDatabase, stack);
 
                 var dragger = go.GetComponent<UIItemSlotDragger>();
                 dragger.SetSlotContext(new SlotContext(_inventory, invIndex));
@@ -87,7 +87,7 @@ namespace World.Inventories
             {
                 int invIndex = _inventoryIndices[i];
                 var stack = _inventory.GetSlot(invIndex);
-                _uiItemSlots[i].SetUpStack(_manager.ItemDatabase, stack);
+                _uiItemSlots[i].SetUpStack(_manager.EnvironmentAccessor.ItemDatabase, stack);
             }
         }
         /// <summary>Обновление слота по глобальному индексу (тот, который шлёт Inventory.Events).</summary>
@@ -96,7 +96,7 @@ namespace World.Inventories
             if (_invIndexToUiIndex == null) return;
 
             if (_invIndexToUiIndex.TryGetValue(inventoryIndex, out int uiIndex))
-                _uiItemSlots[uiIndex].SetUpStack(_manager.ItemDatabase, newStack);
+                _uiItemSlots[uiIndex].SetUpStack(_manager.EnvironmentAccessor.ItemDatabase, newStack);
         }
         #endregion
 

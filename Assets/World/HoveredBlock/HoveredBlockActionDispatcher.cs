@@ -15,6 +15,7 @@ namespace World.HoveredBlock
         [SerializeField] private HoveredBlockPicker _picker;
         [SerializeField] private HoveredBlockPlacer _placer;
         [SerializeField] private WorldManager _worldManager;
+        [SerializeField] private WorldEnvironmentAccessor _environment;
 
         private void OnEnable()
         {
@@ -33,7 +34,7 @@ namespace World.HoveredBlock
         {
             if (!_observer.ReachedLimitPosition && !_picker.SelectedBlock.IsAir)
             {
-                ItemInfo itemInfo = _worldManager.ItemDatabase.GetByBlockId(_picker.SelectedBlock.Id);
+                ItemInfo itemInfo = _environment.ItemDatabase.GetByBlockId(_picker.SelectedBlock.Id);
                 if (
                     _inventoryController.Inventory.Has(new ItemStack(itemInfo), _inventoryController.ActiveHotbarIndex) &&
                     !_worldEntities.HasEntityAtPoint(wc) &&
