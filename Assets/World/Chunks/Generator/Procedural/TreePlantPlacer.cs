@@ -130,7 +130,7 @@ namespace World.Chunks.Generator.Procedural
                     new WorldPosition(worldX, y),
                     out BlockIndex blockIndex))
                 {
-                    chunk.Render.SetSilent(blockIndex, trunkBlock, BlockStyles.BehindLikeMain, BlockLayer.Behind);
+                    chunk.BlockStyles.SetSilent(blockIndex, trunkBlock, BlockStyles.BehindLikeMain, BlockLayer.Behind);
                 }
             }
 
@@ -157,7 +157,7 @@ namespace World.Chunks.Generator.Procedural
                             new WorldPosition(leafX, leafY),
                             out BlockIndex blockIndex))
                         {
-                            chunk.Render.SetSilent(blockIndex, leafBlock, BlockStyles.BehindLikeMain, BlockLayer.Behind);
+                            chunk.BlockStyles.SetSilent(blockIndex, leafBlock, BlockStyles.BehindLikeMain, BlockLayer.Behind);
                         }
                     }
                 }

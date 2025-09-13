@@ -120,7 +120,7 @@ namespace World.Chunks
             if (_storage.TryGetChunk(worldPosition, out Chunk chunk))
             {
                 BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-                return chunk.Render.GetBlockStyles(blockIndex, layer);
+                return chunk.BlockStyles.GetBlockStyles(blockIndex, layer);
             }
             return BlockStyles.ByLayer[(int)layer];
         }
@@ -131,7 +131,7 @@ namespace World.Chunks
                 return false;
 
             BlockIndex blockIndex = worldPosition.ToBlockIndex(chunk.Size);
-            return chunk.Render.TrySet(blockIndex, block, styles, layer);
+            return chunk.BlockStyles.TrySet(blockIndex, block, styles, layer);
         }
 
         public bool Break(WorldPosition worldPosition, BlockLayer layer, BlockUpdateSource source = BlockUpdateSource.Player)

@@ -11,6 +11,7 @@ namespace World.Chunks.Blocks
 
         public readonly ChunkBlockEvents Events;
         public readonly IChunkBlockModifier Blocks;
+        public readonly IChunkBlockStyles BlockStyles;
         public readonly IChunkRenderService Render;
         public readonly IChunkBlockInventories Inventories;
 
@@ -26,7 +27,8 @@ namespace World.Chunks.Blocks
                 new ArrayBlockStorage(size),  // BlockLayer.Behind
                 new SparseBlockStorage()      // BlockLayer.Front
             });
-            Render = new ChunkRenderService(Events, Blocks);
+            BlockStyles = new ChunkBlockStyles(Events, Blocks);
+            Render = new ChunkRenderService(Blocks, BlockStyles);
             Inventories = new ChunkBlockInventories(Events);
         }
 
@@ -44,7 +46,7 @@ namespace World.Chunks.Blocks
 
         public void Dispose()
         {
-            Render.Dispose();
+            BlockStyles.Dispose();
             Inventories.Dispose();
         }
     }
