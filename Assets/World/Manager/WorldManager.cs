@@ -10,7 +10,7 @@ namespace World.Chunks
     public class WorldManager : MonoBehaviour
     {
         [SerializeField] private GameObject _chunkRendererPrefab;
-        [SerializeField] private ChunkGeneratorConfig _chunkGeneratorConfig;
+        [SerializeField] private WorldConfig _chunkGeneratorConfig;
         [SerializeField] private WorldChunksCreator _storage;
         [SerializeField] private WorldEntities _entities;
         [SerializeField] private ChunksVisible _visibility;
@@ -29,7 +29,7 @@ namespace World.Chunks
 
         private void Awake()
         {
-            Generator = _chunkGeneratorConfig.GetChunkGenerator(_seed);
+            Generator = _chunkGeneratorConfig.GetChunkGenerator("Earth", _seed);
             Events = new WorldBlockEvents();
             Blocks = new WorldBlockModifier(_storage, Generator);
         }

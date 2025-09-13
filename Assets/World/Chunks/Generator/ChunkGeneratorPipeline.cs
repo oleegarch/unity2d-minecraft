@@ -14,7 +14,7 @@ namespace World.Chunks.Generator
     {
         public byte ChunkSize { get; }
         public WorldGlobalRules Rules { get; }
-        public ChunkGeneratorConfig Config { get; }
+        public WorldConfig Config { get; }
         public IEntitiesSpawner EntitiesSpawner { get; }
         public void CacheComputation(RectInt rect);
         public void CacheComputation(HashSet<ChunkIndex> indexes);
@@ -28,10 +28,10 @@ namespace World.Chunks.Generator
     {
         public byte ChunkSize => _rules.ChunkSize;
         public WorldGlobalRules Rules => _rules;
-        public ChunkGeneratorConfig Config => _config;
+        public WorldConfig Config => _config;
         public IEntitiesSpawner EntitiesSpawner => _entitiesSpawner;
 
-        private readonly ChunkGeneratorConfig _config;
+        private readonly WorldConfig _config;
         private readonly WorldGlobalRules _rules;
         private readonly IEntitiesSpawner _entitiesSpawner;
         private readonly IChunkCreationStep _creationStep;
@@ -40,13 +40,14 @@ namespace World.Chunks.Generator
         private readonly IReadOnlyList<IWorldSystem> _worldSystems;
 
         public ChunkGeneratorPipeline(
-        ChunkGeneratorConfig config,
-        WorldGlobalRules rules,
-        IEntitiesSpawner entitiesSpawner,
-        IChunkCreationStep chunkCreationStep,
-        IEnumerable<IChunkPostStep> chunkPostProcessingSteps,
-        IEnumerable<IChunkCacheStep> chunkCachingSteps,
-        IEnumerable<IWorldSystem> worldSystems)
+            WorldConfig config,
+            WorldGlobalRules rules,
+            IEntitiesSpawner entitiesSpawner,
+            IChunkCreationStep chunkCreationStep,
+            IEnumerable<IChunkPostStep> chunkPostProcessingSteps,
+            IEnumerable<IChunkCacheStep> chunkCachingSteps,
+            IEnumerable<IWorldSystem> worldSystems
+        )
         {
             _config = config;
             _rules = rules;

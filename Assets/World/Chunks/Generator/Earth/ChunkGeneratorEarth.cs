@@ -7,8 +7,8 @@ using World.Rules;
 
 namespace World.Chunks.Generator
 {    
-    [CreateAssetMenu(menuName = "WorldGenerators/EarthGeneratorConfig")]
-    public class ChunkGeneratorConfigEarth : ChunkGeneratorConfig
+    [CreateAssetMenu(menuName = "ChunkGenerators/EarthGeneratorConfig")]
+    public class ChunkGeneratorEarth : ChunkGeneratorConfig
     {
         [Tooltip("размер биома")]
         public int BiomeWidth;
@@ -28,17 +28,17 @@ namespace World.Chunks.Generator
         [Tooltip("сущности в биомах")]
         public List<EntitiesSpawnerConfig> EntitiesInBiomes;
 
-        public override IChunkGenerator GetChunkGenerator(int seed)
+        public override IChunkGenerator GetChunkGenerator(WorldConfig worldConfig, int seed)
         {
             // Global rules for this world
-            var rules = new WorldGlobalRules(chunkSize: 16);
+            var rules = new WorldGlobalRules(_chunkSize);
 
             // Procedural providers
             var biomeProvider = new BiomeProvider(Biomes, rules.ChunkSize, BiomeWidth, seed);
             var surfaceYProvider = new SurfaceYProvider(biomeProvider, rules.ChunkSize, BiomeWidth, SurfaceBlendWidth, seed);
 
             // Procedural chunk generation step
-            var blockGenerator = new BlockGenerator(_blockDatabase, biomeProvider, surfaceYProvider, CaveLevels, seed); // Procedural generation
+            var blockGenerator = new BlockGenerator(worldConfig.BlockDatabase, biomeProvider, surfaceYProvider, CaveLevels, seed); // Procedural generation
             var creationStep = new ChunkCreationStep(blockGenerator);
             rules.SetCanBreakBehindBlock(blockGenerator.CanBreakBehindBlock);
 
@@ -46,7 +46,7 @@ namespace World.Chunks.Generator
             var entitiesSpawner = new EntitiesSpawner(EntitiesInBiomes, biomeProvider, surfaceYProvider, seed);
 
             // Procedural post-processing steps
-            var plants = new IPlantPlacer[] { new TreePlantPlacer(Plants, biomeProvider, surfaceYProvider, _blockDatabase, seed) }; // Plant placers
+            var plants = new IPlantPlacer[] { new TreePlantPlacer(Plants, biomeProvider, surfaceYProvider, worldConfig.BlockDatabase, seed) }; // Plant placers
             var postSteps = new IChunkPostStep[] { new ChunkPlantsPostStep(plants) };
 
             // Cache computation for procedural generation steps
@@ -54,7 +54,7 @@ namespace World.Chunks.Generator
 
             // Compose generator
             var worldSystems = new IWorldSystem[] { new BreakableByGravitySystem() };
-            var composite = new ChunkGeneratorPipeline(this, rules, entitiesSpawner, creationStep, postSteps, cacheSteps, worldSystems);
+            var composite = new ChunkGeneratorPipeline(worldConfig, rules, entitiesSpawner, creationStep, postSteps, cacheSteps, worldSystems);
 
             return composite;
         }

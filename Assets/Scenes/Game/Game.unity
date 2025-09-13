@@ -127,6 +127,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2519934639846788326, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: _chunkGeneratorConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: f3416d31ca2d31a4790fe9fcb8568684, type: 2}
+    - target: {fileID: 5868988553912566916, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
+      propertyPath: _chunkGeneratorConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: f3416d31ca2d31a4790fe9fcb8568684, type: 2}
     - target: {fileID: 6752283934456956255, guid: 2b5352909a325cd4c876054a88654afe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

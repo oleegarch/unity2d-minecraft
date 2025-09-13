@@ -36,7 +36,7 @@ namespace World.Chunks
             public Action<BlockIndex, Inventory, BlockLayer> BlockInventoryCreated;
             public Action<BlockIndex, Inventory, BlockLayer> BlockInventoryRemoved;
         }
-        private Action<BlockIndex, T, BlockLayer> Wrap<T>(Chunk chunk, Action<WorldPosition, T, BlockLayer> worldEvent)
+        private Action<BlockIndex, T, BlockLayer> Proxy<T>(Chunk chunk, Action<WorldPosition, T, BlockLayer> worldEvent)
         {
             return (blockIndex, arg, layer) =>
             {
@@ -44,17 +44,17 @@ namespace World.Chunks
                 worldEvent?.Invoke(worldPos, arg, layer);
             };
         }
-        private Subscriptions Proxy(Chunk chunk)
+        private Subscriptions CreateProxySubscriptions(Chunk chunk)
         {
             var subs = new Subscriptions();
-            subs.BlockSet = Wrap(chunk, OnBlockSet);
-            subs.BlockSetByPlayer = Wrap(chunk, OnBlockSetByPlayer);
-            subs.BlockBroken = Wrap(chunk, OnBlockBroken);
-            subs.BlockBrokenByPlayer = Wrap(chunk, OnBlockBrokenByPlayer);
-            subs.BlockStylesCreated = Wrap(chunk, OnBlockStylesCreated);
-            subs.BlockStylesRemoved = Wrap(chunk, OnBlockStylesRemoved);
-            subs.BlockInventoryCreated = Wrap(chunk, OnBlockInventoryCreated);
-            subs.BlockInventoryRemoved = Wrap(chunk, OnBlockInventoryRemoved);
+            subs.BlockSet = Proxy(chunk, OnBlockSet);
+            subs.BlockSetByPlayer = Proxy(chunk, OnBlockSetByPlayer);
+            subs.BlockBroken = Proxy(chunk, OnBlockBroken);
+            subs.BlockBrokenByPlayer = Proxy(chunk, OnBlockBrokenByPlayer);
+            subs.BlockStylesCreated = Proxy(chunk, OnBlockStylesCreated);
+            subs.BlockStylesRemoved = Proxy(chunk, OnBlockStylesRemoved);
+            subs.BlockInventoryCreated = Proxy(chunk, OnBlockInventoryCreated);
+            subs.BlockInventoryRemoved = Proxy(chunk, OnBlockInventoryRemoved);
             return subs;
         }
 
@@ -64,7 +64,7 @@ namespace World.Chunks
             if (chunk.Events == null) throw new ArgumentException("chunk.Events is null", nameof(chunk));
             if (_subscriptions.ContainsKey(chunk)) return; // уже подписаны
 
-            var subs = Proxy(chunk);
+            var subs = CreateProxySubscriptions(chunk);
 
             // Подписываемся на события чанка
             chunk.Events.OnBlockSet += subs.BlockSet;
