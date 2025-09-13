@@ -1,8 +1,9 @@
 using System.Collections.Generic;
-using UnityEngine;
 using World.Blocks;
 using World.Chunks;
+using World.Chunks.Blocks;
 using World.Chunks.Blocks.Storages;
+using World.Inventories;
 
 namespace World.Storage
 {
@@ -10,19 +11,23 @@ namespace World.Storage
     {
         public readonly ChunkIndex Index;
         public readonly byte Size;
-        public readonly IBlockLayerStorage[] Layers;
+        public readonly IBlockLayerStorage[] ModifiedBlockLayers;
+        public readonly Dictionary<BlockLayer, Dictionary<BlockIndex, BlockStyles>> ModifiedBlockStyleOverrides;
+        public readonly Dictionary<BlockLayer, Dictionary<BlockIndex, BlockInventory>> ModifiedInventoriesByLayer;
 
-        public ChunkDiff(ChunkIndex index, byte size)
+        public ChunkDiff(Chunk chunk)
         {
-            Index = index;
-            Size = size;
+            Index = chunk.Index;
+            Size = chunk.Size;
 
-            Layers = new IBlockLayerStorage[]
+            ModifiedBlockLayers = new IBlockLayerStorage[]
             {
                 new SparseBlockStorage(),  // BlockLayer.Main
                 new SparseBlockStorage(),  // BlockLayer.Behind
                 new SparseBlockStorage()   // BlockLayer.Front
             };
+            ModifiedBlockStyleOverrides = new();
+            ModifiedInventoriesByLayer = new();
         }
     }
 }

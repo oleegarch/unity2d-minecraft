@@ -14,12 +14,12 @@ namespace World.Items
         private void Start()
         {
             _manager.Events.OnBlockBroken += HandleWorldBlockBroken;
-            _manager.Events.OnBlockInventoryDropped += HandleWorldBlockInventoryDropped;
+            _manager.Events.OnBlockInventoryRemoved += HandleWorldBlockInventoryDropped;
         }
         private void OnDestroy()
         {
             _manager.Events.OnBlockBroken -= HandleWorldBlockBroken;
-            _manager.Events.OnBlockInventoryDropped -= HandleWorldBlockInventoryDropped;
+            _manager.Events.OnBlockInventoryRemoved -= HandleWorldBlockInventoryDropped;
         }
 
         private void HandleWorldBlockBroken(WorldPosition position, Block block, BlockLayer blockLayer)

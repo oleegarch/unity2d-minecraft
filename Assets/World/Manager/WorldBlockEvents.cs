@@ -12,7 +12,7 @@ namespace World.Chunks
         public event Action<WorldPosition, Block, BlockLayer> OnBlockBroken;
         public event Action<WorldPosition, Block, BlockLayer> OnBlockSetByPlayer;
         public event Action<WorldPosition, Block, BlockLayer> OnBlockBrokenByPlayer;
-        public event Action<WorldPosition, Inventory, BlockLayer> OnBlockInventoryDropped;
+        public event Action<WorldPosition, Inventory, BlockLayer> OnBlockInventoryRemoved;
 
         // Храним делегаты, чтобы можно было корректно отписаться потом
         private class Subscriptions
@@ -61,7 +61,7 @@ namespace World.Chunks
             subs.BlockInventoryDropped = (blockIndex, inventory, layer) =>
             {
                 var worldPos = chunk.Index.ToWorldPosition(blockIndex, chunk.Size);
-                OnBlockInventoryDropped?.Invoke(worldPos, inventory, layer);
+                OnBlockInventoryRemoved?.Invoke(worldPos, inventory, layer);
             };
 
             // Подписываемся на события чанка
@@ -69,7 +69,7 @@ namespace World.Chunks
             chunk.Events.OnBlockBroken += subs.BlockBroken;
             chunk.Events.OnBlockSetByPlayer += subs.BlockSetByPlayer;
             chunk.Events.OnBlockBrokenByPlayer += subs.BlockBrokenByPlayer;
-            chunk.Events.OnBlockInventoryDropped += subs.BlockInventoryDropped;
+            chunk.Events.OnBlockInventoryRemoved += subs.BlockInventoryDropped;
 
             _subscriptions.Add(chunk, subs);
         }
@@ -84,7 +84,7 @@ namespace World.Chunks
                 chunk.Events.OnBlockBroken -= subs.BlockBroken;
                 chunk.Events.OnBlockSetByPlayer -= subs.BlockSetByPlayer;
                 chunk.Events.OnBlockBrokenByPlayer -= subs.BlockBrokenByPlayer;
-                chunk.Events.OnBlockInventoryDropped -= subs.BlockInventoryDropped;
+                chunk.Events.OnBlockInventoryRemoved -= subs.BlockInventoryDropped;
             }
 
             _subscriptions.Remove(chunk);

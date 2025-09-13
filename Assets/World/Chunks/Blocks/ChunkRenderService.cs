@@ -79,6 +79,40 @@ namespace World.Chunks.Blocks
             return false;
         }
 
+        public BlockStyles GetBlockStyles(BlockIndex index, BlockLayer layer)
+        {
+            if (!_styleOverrides.TryGetValue(layer, out var overrides) || !overrides.ContainsKey(index))
+                return BlockStyles.ByLayer[(int)layer];
+
+            return overrides[index];
+        }
+        public void OverrideBlockStyles(BlockIndex index, BlockStyles styles, BlockLayer layer)
+        {
+            // если в аргументе стилей такие же стили как дефолтные этого слоя — попытаемся удалить их вовсе
+            // потому что они итак возвращаются по умолчанию при отсутствии перезаписанных стилей
+            if (styles == BlockStyles.ByLayer[(int)layer])
+            {
+                RemoveOverrideBlockStyles(index, layer);
+                return;
+            }
+
+            if (!_styleOverrides.TryGetValue(layer, out var overrides))
+                overrides = _styleOverrides[layer] = new();
+
+            overrides[index] = styles;
+            _events.InvokeBlockStylesCreated(index, styles, layer);
+        }
+        public bool RemoveOverrideBlockStyles(BlockIndex index, BlockLayer layer)
+        {
+            if (!_styleOverrides.TryGetValue(layer, out var overrides) || !overrides.ContainsKey(index))
+                return false;
+
+            _events.InvokeBlockStylesRemoved(index, overrides[index], layer);
+            overrides.Remove(index);
+
+            return true;
+        }
+
         public List<RenderLayer> GetRenderStack(BlockIndex index, BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase)
         {
             var stack = new List<RenderLayer>(2);
@@ -101,38 +135,6 @@ namespace World.Chunks.Blocks
                 stack.Add(new RenderLayer { Id = main.Id, Behind = false });
 
             return stack;
-        }
-
-        public BlockStyles GetBlockStyles(BlockIndex index, BlockLayer layer)
-        {
-            if (!_styleOverrides.TryGetValue(layer, out var overrides) || !overrides.ContainsKey(index))
-                return BlockStyles.ByLayer[(int)layer];
-
-            return overrides[index];
-        }
-        public void OverrideBlockStyles(BlockIndex index, BlockStyles styles, BlockLayer layer)
-        {
-            // если в аргументе стилей такие же стили как дефолтные этого слоя — попытаемся удалить их вовсе
-            // потому что они итак возвращаются по умолчанию при отсутствии перезаписанных стилей
-            if (styles == BlockStyles.ByLayer[(int)layer])
-            {
-                RemoveOverrideBlockStyles(index, layer);
-                return;
-            }
-
-            if (!_styleOverrides.TryGetValue(layer, out var overrides))
-                overrides = _styleOverrides[layer] = new();
-
-            overrides[index] = styles;
-        }
-        public bool RemoveOverrideBlockStyles(BlockIndex index, BlockLayer layer)
-        {
-            if (!_styleOverrides.TryGetValue(layer, out var overrides) || !overrides.ContainsKey(index))
-                return false;
-
-            overrides.Remove(index);
-
-            return true;
         }
         public bool ShouldBehind(BlockIndex index, BlockLayer layer = BlockLayer.Behind)
         {
