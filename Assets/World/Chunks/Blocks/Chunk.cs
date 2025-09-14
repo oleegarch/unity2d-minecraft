@@ -28,8 +28,8 @@ namespace World.Chunks.Blocks
                 new SparseBlockStorage()      // BlockLayer.Front
             });
             BlockStyles = new ChunkBlockStyles(Events, Blocks);
-            Render = new ChunkRenderService(Blocks, BlockStyles);
             Inventories = new ChunkBlockInventories(Events);
+            Render = new ChunkRenderService(Blocks, BlockStyles);
         }
 
         public bool TryGetBlockIndex(WorldPosition worldPosition, out BlockIndex blockIndex)

@@ -39,13 +39,13 @@ namespace World.Chunks
         }
 
         // INVENTORIES
-        public event Action<BlockIndex, Inventory, BlockLayer> OnBlockInventoryCreated;
-        public event Action<BlockIndex, Inventory, BlockLayer> OnBlockInventoryRemoved;
-        internal void InvokeBlockInventoryCreated(BlockIndex index, Inventory inventory, BlockLayer layer)
+        public event Action<BlockIndex, BlockInventory, BlockLayer> OnBlockInventoryCreated;
+        public event Action<BlockIndex, BlockInventory, BlockLayer> OnBlockInventoryRemoved;
+        internal void InvokeBlockInventoryCreated(BlockIndex index, BlockInventory inventory, BlockLayer layer)
         {
             OnBlockInventoryCreated?.Invoke(index, inventory, layer);
         }
-        internal void InvokeBlockInventoryRemoved(BlockIndex index, Inventory oldInventory, BlockLayer layer)
+        internal void InvokeBlockInventoryRemoved(BlockIndex index, BlockInventory oldInventory, BlockLayer layer)
         {
             OnBlockInventoryRemoved?.Invoke(index, oldInventory, layer);
         }

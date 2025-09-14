@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using World.Blocks;
 
@@ -16,15 +17,21 @@ namespace World.Chunks.Blocks.Storages
 
             return Block.Air;
         }
-        public void Set(BlockIndex index, Block block)
+
+        public void Set(BlockIndex index, Block block) => _blocks[index] = block;
+        public void Remove(BlockIndex index) => _blocks.Remove(index);
+
+        // Перечисление пар (индекс, блок)
+        public IEnumerator<KeyValuePair<BlockIndex, Block>> GetEnumerator() => _blocks.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        // Дополнительное перечисление только блоков
+        public IEnumerable<Block> Blocks
         {
-            if (block.IsAir)
+            get
             {
-                _blocks.Remove(index);
-            }
-            else
-            {
-                _blocks[index] = block;
+                foreach (var kv in _blocks)
+                    yield return kv.Value;
             }
         }
     }
