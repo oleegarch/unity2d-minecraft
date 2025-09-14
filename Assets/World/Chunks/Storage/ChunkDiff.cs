@@ -7,6 +7,7 @@ using World.Inventories;
 
 namespace World.Chunks.Storage
 {
+    #region Данные хранилища
     /// <summary>
     /// Класс хранящий изменения произошедшие в Chunk.
     /// </summary>
@@ -33,6 +34,8 @@ namespace World.Chunks.Storage
             ModifiedInventoriesByLayer = new();
         }
     }
+    #endregion
+
     /// <summary>
     /// Класс отвечающий за слушание изменений в Chunk и запись этих изменений в Data(ChunkDiffData).
     /// </summary>
@@ -40,18 +43,15 @@ namespace World.Chunks.Storage
     {
         #region Конструктор и поля
         private Chunk _chunk;
-        private bool _isLinked = false;
         private bool _isApplied = false;
         private bool _isSubscribedToEvents = false;
-        public bool IsLinked => _isLinked;
+        public bool IsLinked => _chunk != null;
         public bool IsApplied => _isApplied;
         public bool IsSubscribedToEvents => _isSubscribedToEvents;
 
         public ChunkDiffData Data;
         public event Action OnDataChanged;
 
-        // Данный конструктор позволяет передать ChunkDiffData для чанка в котором уже начат сбор изменений.
-        // *Следом применит изменения для чанка и подпишется на события.
         public ChunkDiff(ChunkDiffData data)
         {
             Data = data;
@@ -61,17 +61,15 @@ namespace World.Chunks.Storage
         #region Привязать чанк
         public void LinkChunk(Chunk chunk)
         {
-            if (_isLinked) throw new InvalidOperationException($"ChunkDiff.ApplyChunk: chunk already linked!");
+            if (IsLinked) throw new InvalidOperationException($"ChunkDiff.ApplyChunk: chunk already linked!");
 
             _chunk = chunk;
-            _isLinked = true;
         }
         public void UnlinkChunk()
         {
-            if (!_isLinked) throw new InvalidOperationException($"ChunkDiff.UnlinkChunk: chunk not linked!");
+            if (!IsLinked) throw new InvalidOperationException($"ChunkDiff.UnlinkChunk: chunk not linked!");
 
             _chunk = null;
-            _isLinked = false;
             _isApplied = false;
         }
         #endregion

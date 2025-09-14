@@ -29,7 +29,7 @@ namespace World.Chunks.Storage
         public ChunksStorageData Data;
         public bool Loaded;
         public event Action OnDataLoaded;
-        // public event Action OnDataChanged; можно сделать глобальный проксировщик всех ChunkDiffData, но он пока не нужен
+        public event Action OnDataChanged;
 
         private readonly Dictionary<ChunkIndex, ChunkDiff> _currentChunkDiffs;
         private readonly JSONDataFileSystemSaver _saver;
@@ -77,11 +77,12 @@ namespace World.Chunks.Storage
                 }
                 else
                 {
-                    // ВОССТАНОВЛЕНИЕ — ChunkDiffData есть, но самого ChunkDiff нет, значит изменения записывались, но Chunk был удалён из памяти
+                    // ВОССТАНОВЛЕНИЕ — ChunkDiffData есть, но самого ChunkDiff нет, значит изменения записывались или существуют, но Chunk был удалён из словаря
                     diff = new ChunkDiff(data);
                     diff.LinkChunk(chunk);
                     diff.ApplyDiff();
                     diff.SubscribeToChunkEvents();
+                    diff.OnDataChanged += HandleDiffDataChanged;
                     _currentChunkDiffs[index] = diff;
                 }
             }
@@ -99,15 +100,30 @@ namespace World.Chunks.Storage
             {
                 diff.UnsubscribeFromChunkEvents();
                 diff.UnlinkChunk();
+                diff.OnDataChanged -= HandleDiffDataChanged;
                 _currentChunkDiffs.Remove(index);
             }
         }
 
+        /// <summary>
+        /// Проксируем все изменения в ChunkDiff в локальное событие ChunksStorage.OnDataChanged
+        /// </summary>
+        public void HandleDiffDataChanged()
+        {
+            OnDataChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Сохранить все изменения через установленный _saver
+        /// </summary>
         public async UniTask Save()
         {
             await _saver.SaveAsync(Data, $"{_filename}.json");
         }
 
+        /// <summary>
+        /// Загрузить все изменения через установленный _saver
+        /// </summary>
         public async UniTask Load()
         {
             Data = await _saver.LoadAsync<ChunksStorageData>($"{_filename}.json");
