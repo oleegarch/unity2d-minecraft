@@ -42,7 +42,7 @@ namespace World.Utils.Serialization
             // Асинхронная файловая операция в пуле потоков
             await UniTask.RunOnThreadPool(() => File.WriteAllText(fullPath, payload));
 
-            Logger.DevLog($"DataSaver: saved {typeof(T).Name} -> {fullPath}");
+            Logger.DevLog($"DataFileSystemSaver: saved {typeof(T).Name} -> {fullPath}");
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace World.Utils.Serialization
             string fullPath = GetFullPath(fileName);
             if (!File.Exists(fullPath))
             {
-                Logger.DevLog($"DataSaver: file not found: {fullPath}");
+                Logger.DevLog($"DataFileSystemSaver: file not found: {fullPath}");
                 return default;
             }
 
@@ -63,7 +63,7 @@ namespace World.Utils.Serialization
 
             T result = Deserialize<T>(json);
 
-            Logger.DevLog($"DataSaver: loaded {typeof(T).Name} <- {fullPath}");
+            Logger.DevLog($"DataFileSystemSaver: loaded {typeof(T).Name} <- {fullPath}");
 
             return result;
         }

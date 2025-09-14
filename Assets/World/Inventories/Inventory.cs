@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -55,12 +54,12 @@ namespace World.Inventories
         /// <summary>
         /// Возвращает поверхностную копию всех слотов (каждый ItemStack клонируется).
         /// </summary>
-        public IReadOnlyList<ItemStack> GetAllSlots() => slots.Select(s => s?.Clone() ?? ItemStack.Empty).ToArray();
+        public ItemStack[] GetAllSlots() => slots.Select(s => s?.Clone() ?? ItemStack.Empty).ToArray();
 
         /// <summary>
         /// Возвращает только непустые слоты (каждый ItemStack клонируется).
         /// </summary>
-        public IReadOnlyList<ItemStack> GetNonEmptySlots() => slots.Where(s => !s.IsEmpty).Select(s => s.Clone()).ToArray();
+        public ItemStack[] GetNonEmptySlots() => slots.Where(s => !s.IsEmpty).Select(s => s.Clone()).ToArray();
         #endregion
 
         #region Проверки наличия

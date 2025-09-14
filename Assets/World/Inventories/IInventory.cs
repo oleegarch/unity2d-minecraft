@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace World.Inventories
 {
     public interface IInventory
@@ -13,9 +11,9 @@ namespace World.Inventories
         /// <summary>Возвращает копию конкретного слота по индексу.</summary>
         public ItemStack GetSlot(int slotIndex);
         /// <summary>Возвращает поверхностную копию всех слотов (каждый ItemStack клонируется).</summary>
-        public IReadOnlyList<ItemStack> GetAllSlots();
+        public ItemStack[] GetAllSlots();
         /// <summary>Возвращает только непустые слоты (каждый ItemStack клонируется).</summary>
-        public IReadOnlyList<ItemStack> GetNonEmptySlots();
+        public ItemStack[] GetNonEmptySlots();
 
         /// <summary>Позволяет проверить наличие хотя бы одного пустого слота.</summary>
         public bool HasEmptySlot { get; }

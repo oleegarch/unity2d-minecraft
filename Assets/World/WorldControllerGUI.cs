@@ -9,7 +9,7 @@ namespace World
     public class WorldControllerGUI : MonoBehaviour
     {
         [SerializeField] private WorldEnvironmentAccessor _environment;
-        [SerializeField] private WorldChunksCreator _worldChunksCreator;
+        [SerializeField] private ChunksCreator _worldChunksCreator;
         [SerializeField] private WorldModeController _worldModeController;
         [SerializeField] private CameraModeController _cameraModeController;
         [SerializeField] private WorldTime _worldTime;

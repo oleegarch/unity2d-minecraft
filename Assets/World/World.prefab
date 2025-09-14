@@ -240,6 +240,7 @@ GameObject:
   - component: {fileID: 2352231934374013578}
   - component: {fileID: 5868988553912566916}
   - component: {fileID: 3907395674899852890}
+  - component: {fileID: 3934127519280321965}
   m_Layer: 0
   m_Name: Chunks
   m_TagString: Untagged
@@ -277,7 +278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cameraObserver: {fileID: 8407411756785181969}
-  _chunkGeneratorConfig: {fileID: 11400000, guid: f3416d31ca2d31a4790fe9fcb8568684, type: 2}
+  _environment: {fileID: 1375968228288472390}
 --- !u!114 &2352231934374013578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -306,11 +307,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _chunkRendererPrefab: {fileID: 7660349154471805984, guid: 9c1e627da06ca184abf92a2ddfadb6c0, type: 3}
   _environment: {fileID: 1375968228288472390}
-  _storage: {fileID: 3907395674899852890}
+  _storage: {fileID: 3934127519280321965}
+  _creator: {fileID: 3907395674899852890}
   _entities: {fileID: 4105236720323530563}
   _visibility: {fileID: 2519934639846788326}
   _chunksPreloader: {fileID: 2352231934374013578}
-  _seed: 0
 --- !u!114 &3907395674899852890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -327,8 +328,21 @@ MonoBehaviour:
   _preloader: {fileID: 2352231934374013578}
   _manager: {fileID: 5868988553912566916}
   _environment: {fileID: 1375968228288472390}
-  _prefab: {fileID: 7660349154471805984, guid: 9c1e627da06ca184abf92a2ddfadb6c0, type: 3}
   _chunksParent: {fileID: 4278272002193004716}
+--- !u!114 &3934127519280321965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912066206740017318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c2a2ac0b9e6aef4c9564c77a781b878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _environment: {fileID: 1375968228288472390}
+  _creator: {fileID: 3907395674899852890}
 --- !u!1 &2528568537063441390
 GameObject:
   m_ObjectHideFlags: 0
@@ -6459,6 +6473,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _environment: {fileID: 11400000, guid: f3416d31ca2d31a4790fe9fcb8568684, type: 2}
+  _seed: 0
 --- !u!114 &75138438775379441
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,14 +1,16 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using World.Chunks.Generator;
+using World.Chunks.Storage;
 using World.Entities;
 
 namespace World.Chunks
 {
     public class WorldManager : MonoBehaviour
     {
-        [SerializeField] private GameObject _chunkRendererPrefab;
         [SerializeField] private WorldEnvironmentAccessor _environment;
-        [SerializeField] private WorldChunksCreator _storage;
+        [SerializeField] private ChunksStorageDispatcher _storage;
+        [SerializeField] private ChunksCreator _creator;
         [SerializeField] private WorldEntities _entities;
         [SerializeField] private ChunksVisible _visibility;
         [SerializeField] private ChunksPreloader _chunksPreloader;
@@ -20,33 +22,42 @@ namespace World.Chunks
 
         private void Awake()
         {
-            _environment.Initialize();
-            
-            Generator = _environment.CurrentWorldGenerator;
-            Events = new WorldBlockEvents();
-            Blocks = new WorldBlockModifier(_storage, Generator);
+            _ = Startup();
         }
-        private void Start()
+        private async UniTask Startup()
+        {
+            _environment.Initialize();
+            _storage.Initialize();
+
+            await _storage.Load();
+            await UniTask.SwitchToMainThread();
+
+            Generator = _environment.CurrentWorldGenerator;
+            Events = new WorldBlockEvents(_creator);
+            Blocks = new WorldBlockModifier(_creator, Generator);
+
+            EnableAll();
+        }
+        public void EnableAll()
         {
             Generator.RegisterWorldSystems(this);
-        }
-        private void OnEnable()
-        {
-            _storage.Enable();
+            _creator.Enable();
             _chunksPreloader.Enable();
             _entities.Enable();
             _visibility.Enable();
         }
-        private void OnDisable()
+        public void DisableAll()
         {
-            _storage.Disable();
+            Generator.UnregisterWorldSystems(this);
+            _creator.Disable();
             _chunksPreloader.Disable();
             _entities.Disable();
             _visibility.Disable();
         }
         private void OnDestroy()
         {
-            Generator.UnregisterWorldSystems(this);
+            Events.Dispose();
+            DisableAll();
         }
     }
 }

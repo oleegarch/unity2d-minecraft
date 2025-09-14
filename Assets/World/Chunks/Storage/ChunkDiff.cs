@@ -8,41 +8,21 @@ using World.Inventories;
 namespace World.Chunks.Storage
 {
     /// <summary>
-    /// Класс хранящий изменения в Chunk.
-    /// 
-    /// В конструктор передаётся сам Chunk, а дальше происходит подписка на изменения,
-    /// позволяющая хранить все произведённые изменения в Chunk здесь(ChunkDiff).
-    /// 
-    /// Изменения блоков хранятся в ModifiedBlockLayers в Sparse слоях,
-    /// которые позволяют хранить конкретные изменения, а не весь чанк блоков целиком.
+    /// Класс хранящий изменения произошедшие в Chunk.
     /// </summary>
     [Serializable]
-    public class ChunkDiff
+    public class ChunkDiffData
     {
-        #region Конструктор
         public readonly ChunkIndex Index;
         public readonly byte Size;
         public readonly IBlockLayerStorage[] ModifiedBlockLayers;
         public readonly Dictionary<BlockLayer, Dictionary<BlockIndex, BlockStyles>> ModifiedBlockStyleOverrides;
         public readonly Dictionary<BlockLayer, Dictionary<BlockIndex, BlockInventory>> ModifiedInventoriesByLayer;
 
-        public event Action OnChanged;
-
-        private Chunk _chunk;
-        private bool _isApplied;
-        private bool _isSubscribedToEvents;
-        public bool IsApplied => _isApplied;
-        public bool IsSubscribedToEvents => _isSubscribedToEvents;
-
-        public ChunkDiff(Chunk chunk)
+        public ChunkDiffData(ChunkIndex index, byte size)
         {
-            _chunk = chunk;
-            _isApplied = false;
-            _isSubscribedToEvents = false;
-
-            Index = chunk.Index;
-            Size = chunk.Size;
-
+            Index = index;
+            Size = size;
             ModifiedBlockLayers = new IBlockLayerStorage[]
             {
                 new SparseBlockStorage(),  // BlockLayer.Main
@@ -52,24 +32,57 @@ namespace World.Chunks.Storage
             ModifiedBlockStyleOverrides = new();
             ModifiedInventoriesByLayer = new();
         }
+    }
+    /// <summary>
+    /// Класс отвечающий за слушание изменений в Chunk и запись этих изменений в Data(ChunkDiffData).
+    /// </summary>
+    public class ChunkDiff
+    {
+        #region Конструктор и поля
+        private Chunk _chunk;
+        private bool _isLinked = false;
+        private bool _isApplied = false;
+        private bool _isSubscribedToEvents = false;
+        public bool IsLinked => _isLinked;
+        public bool IsApplied => _isApplied;
+        public bool IsSubscribedToEvents => _isSubscribedToEvents;
+
+        public ChunkDiffData Data;
+        public event Action OnDataChanged;
+
+        // Данный конструктор позволяет передать ChunkDiffData для чанка в котором уже начат сбор изменений.
+        // *Следом применит изменения для чанка и подпишется на события.
+        public ChunkDiff(ChunkDiffData data)
+        {
+            Data = data;
+        }
+        #endregion
+
+        #region Привязать чанк
+        public void LinkChunk(Chunk chunk)
+        {
+            if (_isLinked) throw new InvalidOperationException($"ChunkDiff.ApplyChunk: chunk already linked!");
+
+            _chunk = chunk;
+            _isLinked = true;
+        }
+        public void UnlinkChunk()
+        {
+            if (!_isLinked) throw new InvalidOperationException($"ChunkDiff.UnlinkChunk: chunk not linked!");
+
+            _chunk = null;
+            _isLinked = false;
+            _isApplied = false;
+        }
         #endregion
 
         #region Применить измененя
-        public void ApplyChunk(Chunk chunk)
-        {
-            if (_isApplied)
-                throw new InvalidOperationException($"ChunkDiff.ApplyChunk: chunk already applied!");
-
-            _chunk = chunk;
-            
-            ApplyDiff();
-        }
         public void ApplyDiff()
         {
-            for (byte i = 0; i < ModifiedBlockLayers.Length; i++)
+            for (byte i = 0; i < Data.ModifiedBlockLayers.Length; i++)
             {
                 BlockLayer layer = (BlockLayer)i;
-                IBlockLayerStorage storage = ModifiedBlockLayers[i];
+                IBlockLayerStorage storage = Data.ModifiedBlockLayers[i];
                 foreach (KeyValuePair<BlockIndex, Block> kvp in storage)
                 {
                     BlockIndex index = kvp.Key;
@@ -78,7 +91,7 @@ namespace World.Chunks.Storage
                 }
             }
 
-            foreach (var stylesOverrides in ModifiedBlockStyleOverrides)
+            foreach (var stylesOverrides in Data.ModifiedBlockStyleOverrides)
             {
                 BlockLayer layer = stylesOverrides.Key;
                 var overrides = stylesOverrides.Value;
@@ -90,7 +103,7 @@ namespace World.Chunks.Storage
                 }
             }
 
-            foreach (var inventoriesByLayer in ModifiedInventoriesByLayer)
+            foreach (var inventoriesByLayer in Data.ModifiedInventoriesByLayer)
             {
                 BlockLayer layer = inventoriesByLayer.Key;
                 var inventories = inventoriesByLayer.Value;
@@ -109,58 +122,64 @@ namespace World.Chunks.Storage
         #region Подписка на события
         public void SubscribeToChunkEvents()
         {
-            _chunk.Events.OnBlockSet += HandleBlockSet;
-            _chunk.Events.OnBlockBroken += HandleBlockBroken;
-            _chunk.Events.OnBlockStylesCreated += HandleBlockStylesCreated;
-            _chunk.Events.OnBlockStylesRemoved += HandleBlockStylesRemoved;
-            _chunk.Events.OnBlockInventoryCreated += HandleBlockInventoryCreated;
-            _chunk.Events.OnBlockInventoryRemoved += HandleBlockInventoryRemoved;
-            _isSubscribedToEvents = true;
+            if (_isSubscribedToEvents == false)
+            {
+                _chunk.Events.OnBlockSet += HandleBlockSet;
+                _chunk.Events.OnBlockBroken += HandleBlockBroken;
+                _chunk.Events.OnBlockStylesCreated += HandleBlockStylesCreated;
+                _chunk.Events.OnBlockStylesRemoved += HandleBlockStylesRemoved;
+                _chunk.Events.OnBlockInventoryCreated += HandleBlockInventoryCreated;
+                _chunk.Events.OnBlockInventoryRemoved += HandleBlockInventoryRemoved;
+                _isSubscribedToEvents = true;
+            }
         }
         public void UnsubscribeFromChunkEvents()
         {
-            _chunk.Events.OnBlockSet -= HandleBlockSet;
-            _chunk.Events.OnBlockBroken -= HandleBlockBroken;
-            _chunk.Events.OnBlockStylesCreated -= HandleBlockStylesCreated;
-            _chunk.Events.OnBlockStylesRemoved -= HandleBlockStylesRemoved;
-            _chunk.Events.OnBlockInventoryCreated -= HandleBlockInventoryCreated;
-            _chunk.Events.OnBlockInventoryRemoved -= HandleBlockInventoryRemoved;
-            _isSubscribedToEvents = false;
+            if (_isSubscribedToEvents == true)
+            {
+                _chunk.Events.OnBlockSet -= HandleBlockSet;
+                _chunk.Events.OnBlockBroken -= HandleBlockBroken;
+                _chunk.Events.OnBlockStylesCreated -= HandleBlockStylesCreated;
+                _chunk.Events.OnBlockStylesRemoved -= HandleBlockStylesRemoved;
+                _chunk.Events.OnBlockInventoryCreated -= HandleBlockInventoryCreated;
+                _chunk.Events.OnBlockInventoryRemoved -= HandleBlockInventoryRemoved;
+                _isSubscribedToEvents = false;
+            }
         }
         #endregion
 
         #region Обработка событмй
         private void HandleBlockSet(BlockIndex index, Block block, BlockLayer layer)
         {
-            ModifiedBlockLayers[(byte)layer].Set(index, block);
-            OnChanged?.Invoke();
+            Data.ModifiedBlockLayers[(byte)layer].Set(index, block);
+            OnDataChanged?.Invoke();
         }
         private void HandleBlockBroken(BlockIndex index, Block oldBlock, BlockLayer layer)
         {
-            ModifiedBlockLayers[(byte)layer].Set(index, Block.Air);
-            OnChanged?.Invoke();
+            Data.ModifiedBlockLayers[(byte)layer].Set(index, Block.Air);
+            OnDataChanged?.Invoke();
         }
 
         private void HandleBlockStylesCreated(BlockIndex index, BlockStyles styles, BlockLayer layer)
         {
-            (ModifiedBlockStyleOverrides[layer] ??= new())[index] = styles;
-            OnChanged?.Invoke();
+            Data.ModifiedBlockStyleOverrides.GetOrCreate(layer).Add(index, styles);
+            OnDataChanged?.Invoke();
         }
         private void HandleBlockStylesRemoved(BlockIndex index, BlockStyles styles, BlockLayer layer)
         {
-            if (ModifiedBlockStyleOverrides.TryGetValue(layer, out var overrides)) overrides.Remove(index);
-            OnChanged?.Invoke();
+            if (Data.ModifiedBlockStyleOverrides.TryGetValue(layer, out var overrides)) overrides.Remove(index);
+            OnDataChanged?.Invoke();
         }
 
         private void HandleBlockInventoryCreated(BlockIndex index, BlockInventory inventory, BlockLayer layer)
         {
-            (ModifiedInventoriesByLayer[layer] ??= new())[index] = inventory;
-            OnChanged?.Invoke();
+            Data.ModifiedInventoriesByLayer.GetOrCreate(layer).Add(index, inventory);
+            OnDataChanged?.Invoke();
         }
         private void HandleBlockInventoryRemoved(BlockIndex index, BlockInventory inventory, BlockLayer layer)
         {
-            if (ModifiedInventoriesByLayer.TryGetValue(layer, out var overrides)) overrides.Remove(index);
-            OnChanged?.Invoke();
+            if (Data.ModifiedInventoriesByLayer.TryGetValue(layer, out var overrides)) overrides.Remove(index);
+            OnDataChanged?.Invoke();
         }
         #endregion
     }

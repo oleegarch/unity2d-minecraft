@@ -9,7 +9,7 @@ namespace World.Chunks
     public class ChunksPreloader : MonoBehaviour
     {
         [SerializeField] private WorldManager _worldManager;
-        [SerializeField] private WorldChunksCreator _worldChunksCreator;
+        [SerializeField] private ChunksCreator _worldChunksCreator;
         private IWorldGenerator _generator;
 
         public Dictionary<int, WorldPosition[]> PreloadPositionsByComponent;

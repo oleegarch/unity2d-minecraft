@@ -1,14 +1,28 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine.Rendering;
 using World.Blocks;
 using World.Chunks.Blocks;
 using World.Inventories;
 
 namespace World.Chunks
 {
-    public class WorldBlockEvents
+    public class WorldBlockEvents : IDisposable
     {
+        // Подписка на создание и удаление чанка
+        private IChunksAccessor _creator;
+
+        public WorldBlockEvents(ChunksCreator creator)
+        {
+            _creator = creator;
+            _creator.OnChunkCreated += SubscribeToChunkEvents;
+            _creator.OnChunkBeforeRemove += UnsubscribeFromChunkEvents;
+        }
+        public void Dispose()
+        {
+            _creator.OnChunkCreated -= SubscribeToChunkEvents;
+            _creator.OnChunkBeforeRemove -= UnsubscribeFromChunkEvents;
+        }
+
         // BLOCKS
         public event Action<WorldPosition, Block, BlockLayer> OnBlockSet;
         public event Action<WorldPosition, Block, BlockLayer> OnBlockSetByPlayer;
@@ -20,8 +34,8 @@ namespace World.Chunks
         public event Action<WorldPosition, BlockStyles, BlockLayer> OnBlockStylesRemoved;
 
         // INVENTORIES
-        public event Action<WorldPosition, Inventory, BlockLayer> OnBlockInventoryCreated;
-        public event Action<WorldPosition, Inventory, BlockLayer> OnBlockInventoryRemoved;
+        public event Action<WorldPosition, BlockInventory, BlockLayer> OnBlockInventoryCreated;
+        public event Action<WorldPosition, BlockInventory, BlockLayer> OnBlockInventoryRemoved;
 
         // Храним делегаты, чтобы можно было корректно отписаться потом
         private readonly Dictionary<Chunk, Subscriptions> _subscriptions = new();
@@ -33,8 +47,8 @@ namespace World.Chunks
             public Action<BlockIndex, Block, BlockLayer> BlockBrokenByPlayer;
             public Action<BlockIndex, BlockStyles, BlockLayer> BlockStylesCreated;
             public Action<BlockIndex, BlockStyles, BlockLayer> BlockStylesRemoved;
-            public Action<BlockIndex, Inventory, BlockLayer> BlockInventoryCreated;
-            public Action<BlockIndex, Inventory, BlockLayer> BlockInventoryRemoved;
+            public Action<BlockIndex, BlockInventory, BlockLayer> BlockInventoryCreated;
+            public Action<BlockIndex, BlockInventory, BlockLayer> BlockInventoryRemoved;
         }
         private Action<BlockIndex, T, BlockLayer> Proxy<T>(Chunk chunk, Action<WorldPosition, T, BlockLayer> worldEvent)
         {

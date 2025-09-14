@@ -60,9 +60,13 @@ namespace World.Chunks.Blocks
         }
         public bool RemoveInventory(BlockIndex index, BlockLayer layer)
         {
-            bool result = _RemoveInventory(index, layer, out BlockInventory removedInventory);
-            _events.InvokeBlockInventoryRemoved(index, removedInventory, layer);
-            return result;
+            if (_RemoveInventory(index, layer, out BlockInventory removedInventory))
+            {
+                _events.InvokeBlockInventoryRemoved(index, removedInventory, layer);
+                return true;
+            }
+            
+            return false;
         }
         #endregion
 

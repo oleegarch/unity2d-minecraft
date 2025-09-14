@@ -4,6 +4,7 @@ using UnityEngine;
 using World.Blocks;
 using World.Blocks.Atlases;
 using World.Chunks.Generator;
+using World.Chunks.Storage;
 using World.Entities;
 using World.Items;
 
@@ -24,9 +25,11 @@ namespace World.Chunks
         private string _currentWorldGeneratorName;
         private WorldGeneratorConfig _currentWorldGeneratorConfig;
         private IWorldGenerator _currentWorldGenerator;
+        private IChunksStorage _currentChunksStorage;
 
         public WorldGeneratorConfig CurrentWorldGeneratorConfig => _currentWorldGeneratorConfig;
         public IWorldGenerator CurrentWorldGenerator => _currentWorldGenerator;
+        public IChunksStorage CurrentChunksStorage => _currentChunksStorage;
         public string CurrentWorldGeneratorName
         {
             get
@@ -45,6 +48,7 @@ namespace World.Chunks
                 _currentWorldGeneratorName = value;
                 _currentWorldGeneratorConfig = _environment.GetWorldGeneratorConfig(value);
                 _currentWorldGenerator = _currentWorldGeneratorConfig.GetWorldGenerator(_environment, _seed);
+                _currentChunksStorage = new ChunksStorage(_currentWorldGeneratorName, _seed);
 
                 OnWorldGeneratorChanged?.Invoke();
             }
