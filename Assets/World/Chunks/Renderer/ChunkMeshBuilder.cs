@@ -1,13 +1,15 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using R3;
+using UnityEngine;
 using World.Blocks.Atlases;
 using World.Blocks;
 using World.Chunks.Blocks;
 
 namespace World.Chunks
 {
-    public class ChunkMeshBuilder
+    public class ChunkMeshBuilder : IDisposable
     {
         private struct RenderInfo
         {
@@ -26,6 +28,7 @@ namespace World.Chunks
         private readonly ChunkMeshesRefresher _refresher = new();
 
         private Chunk _chunk;
+        private readonly List<IDisposable> _subscriptions = new();
 
         public ChunkMeshBuilder(GameObject gameObject, BlockDatabase blockDatabase, BlockAtlasDatabase blockAtlasDatabase)
         {
@@ -38,11 +41,9 @@ namespace World.Chunks
 
         public ChunkMeshBuilder BuildMesh(Chunk chunk)
         {
-            UnsubscribeFromChunkChanges();
-
             _chunk = chunk;
-
             ClearAll();
+            DisposeSubscriptions();
             SubscribeToChunkChanges();
 
             for (byte x = 0; x < chunk.Size; x++)
@@ -226,40 +227,28 @@ namespace World.Chunks
             foreach (var md in affected) _refresher.ScheduleRefresh(md);
         }
 
-        private void OnChunkBlockSet(BlockIndex index, Block block, BlockLayer layer)
-        {
-            DrawBlock(index);
-        }
-        private void OnChunkBlockBroken(BlockIndex index, Block block, BlockLayer layer)
-        {
-            EraseBlock(index);
-        }
         private void SubscribeToChunkChanges()
         {
-            if (_chunk == null) return;
-            _chunk.Events.OnBlockSet += OnChunkBlockSet;
-            _chunk.Events.OnBlockBroken += OnChunkBlockBroken;
+            _subscriptions.Add(_chunk.Events.BlockSet.Subscribe(be => DrawBlock(be.Index)));
+            _subscriptions.Add(_chunk.Events.BlockBroken.Subscribe(be => EraseBlock(be.Index)));
         }
-        private void UnsubscribeFromChunkChanges()
+        private void DisposeSubscriptions()
         {
-            if (_chunk == null) return;
-            _chunk.Events.OnBlockSet -= OnChunkBlockSet;
-            _chunk.Events.OnBlockBroken -= OnChunkBlockBroken;
+            foreach (var sub in _subscriptions) sub.Dispose();
+            _subscriptions.Clear();
         }
-
         public void ClearAll()
         {
             _refresher.UnscheduleAll();
-            _categoryObjects.ForEach(Object.DestroyImmediate);
+            _categoryObjects.ForEach(UnityEngine.Object.DestroyImmediate);
             _categoryObjects.Clear();
             _blockIndexes.Clear();
             _meshDatas.Clear();
         }
         public void Dispose()
         {
-            UnsubscribeFromChunkChanges();
-            _refresher.UnscheduleAll();
             ClearAll();
+            DisposeSubscriptions();
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using R3;
 using World.Blocks;
 using World.Chunks.Blocks;
 using World.Chunks.Blocks.Storages;
@@ -44,7 +45,6 @@ namespace World.Chunks.Storage
         #region Конструктор и поля
         private Chunk _chunk;
         private bool _isApplied = false;
-        private bool _isSubscribedToEvents = false;
         public bool IsLinked => _chunk != null;
         public bool IsApplied => _isApplied;
         public bool IsSubscribedToEvents => _isSubscribedToEvents;
@@ -118,65 +118,65 @@ namespace World.Chunks.Storage
         #endregion
 
         #region Подписка на события
+        private readonly List<IDisposable> _subscriptions = new();
+        private bool _isSubscribedToEvents = false;
+
         public void SubscribeToChunkEvents()
         {
-            if (_isSubscribedToEvents == false)
-            {
-                _chunk.Events.OnBlockSet += HandleBlockSet;
-                _chunk.Events.OnBlockBroken += HandleBlockBroken;
-                _chunk.Events.OnBlockStylesCreated += HandleBlockStylesCreated;
-                _chunk.Events.OnBlockStylesRemoved += HandleBlockStylesRemoved;
-                _chunk.Events.OnBlockInventoryCreated += HandleBlockInventoryCreated;
-                _chunk.Events.OnBlockInventoryRemoved += HandleBlockInventoryRemoved;
-                _isSubscribedToEvents = true;
-            }
+            if (_isSubscribedToEvents) return;
+
+            _subscriptions.Add(_chunk.Events.BlockSet.Subscribe(HandleBlockSet));
+            _subscriptions.Add(_chunk.Events.BlockBroken.Subscribe(HandleBlockBroken));
+            _subscriptions.Add(_chunk.Events.BlockStylesCreated.Subscribe(HandleBlockStylesCreated));
+            _subscriptions.Add(_chunk.Events.BlockStylesRemoved.Subscribe(HandleBlockStylesRemoved));
+            _subscriptions.Add(_chunk.Events.BlockInventoryCreated.Subscribe(HandleBlockInventoryCreated));
+            _subscriptions.Add(_chunk.Events.BlockInventoryRemoved.Subscribe(HandleBlockInventoryRemoved));
+
+            _isSubscribedToEvents = true;
         }
+
         public void UnsubscribeFromChunkEvents()
         {
-            if (_isSubscribedToEvents == true)
-            {
-                _chunk.Events.OnBlockSet -= HandleBlockSet;
-                _chunk.Events.OnBlockBroken -= HandleBlockBroken;
-                _chunk.Events.OnBlockStylesCreated -= HandleBlockStylesCreated;
-                _chunk.Events.OnBlockStylesRemoved -= HandleBlockStylesRemoved;
-                _chunk.Events.OnBlockInventoryCreated -= HandleBlockInventoryCreated;
-                _chunk.Events.OnBlockInventoryRemoved -= HandleBlockInventoryRemoved;
-                _isSubscribedToEvents = false;
-            }
+            if (!_isSubscribedToEvents) return;
+
+            foreach (var sub in _subscriptions)
+                sub.Dispose();
+            _subscriptions.Clear();
+
+            _isSubscribedToEvents = false;
         }
         #endregion
 
         #region Обработка событмй
-        private void HandleBlockSet(BlockIndex index, Block block, BlockLayer layer)
+        private void HandleBlockSet(BlockEvent e)
         {
-            Data.ModifiedBlockLayers[(byte)layer].Set(index, block);
+            Data.ModifiedBlockLayers[(byte)e.Layer].Set(e.Index, e.Block);
             OnDataChanged?.Invoke();
         }
-        private void HandleBlockBroken(BlockIndex index, Block oldBlock, BlockLayer layer)
+        private void HandleBlockBroken(BlockEvent e)
         {
-            Data.ModifiedBlockLayers[(byte)layer].Set(index, Block.Air);
+            Data.ModifiedBlockLayers[(byte)e.Layer].Set(e.Index, Block.Air);
             OnDataChanged?.Invoke();
         }
-
-        private void HandleBlockStylesCreated(BlockIndex index, BlockStyles styles, BlockLayer layer)
+        private void HandleBlockStylesCreated(BlockStylesEvent e)
         {
-            Data.ModifiedBlockStyleOverrides.GetOrCreate(layer).Add(index, styles);
+            Data.ModifiedBlockStyleOverrides.GetOrCreate(e.Layer).Add(e.Index, e.Styles);
             OnDataChanged?.Invoke();
         }
-        private void HandleBlockStylesRemoved(BlockIndex index, BlockStyles styles, BlockLayer layer)
+        private void HandleBlockStylesRemoved(BlockStylesEvent e)
         {
-            if (Data.ModifiedBlockStyleOverrides.TryGetValue(layer, out var overrides)) overrides.Remove(index);
+            if (Data.ModifiedBlockStyleOverrides.TryGetValue(e.Layer, out var overrides))
+                overrides.Remove(e.Index);
             OnDataChanged?.Invoke();
         }
-
-        private void HandleBlockInventoryCreated(BlockIndex index, BlockInventory inventory, BlockLayer layer)
+        private void HandleBlockInventoryCreated(BlockInventoryEvent e)
         {
-            Data.ModifiedInventoriesByLayer.GetOrCreate(layer).Add(index, inventory);
+            Data.ModifiedInventoriesByLayer.GetOrCreate(e.Layer).Add(e.Index, e.Inventory);
             OnDataChanged?.Invoke();
         }
-        private void HandleBlockInventoryRemoved(BlockIndex index, BlockInventory inventory, BlockLayer layer)
+        private void HandleBlockInventoryRemoved(BlockInventoryEvent e)
         {
-            if (Data.ModifiedInventoriesByLayer.TryGetValue(layer, out var overrides)) overrides.Remove(index);
+            if (Data.ModifiedInventoriesByLayer.TryGetValue(e.Layer, out var overrides)) overrides.Remove(e.Index);
             OnDataChanged?.Invoke();
         }
         #endregion

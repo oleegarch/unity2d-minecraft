@@ -1,12 +1,14 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
+using R3;
+using UnityEngine;
 using World.Blocks;
 using World.Chunks.Blocks;
 using World.Blocks.Atlases;
 
 namespace World.Chunks
 {
-    public class ChunkColliderBuilder
+    public class ChunkColliderBuilder : IDisposable
     {
         private struct Edge
         {
@@ -22,7 +24,6 @@ namespace World.Chunks
 
         private readonly PolygonCollider2D _collider;
         private readonly BlockDatabase _blockDatabase;
-        private readonly BlockAtlasDatabase _blockAtlasDatabase;
 
         private List<Vector2[]> _paths;
         private Chunk _chunk;
@@ -32,7 +33,6 @@ namespace World.Chunks
         {
             _collider = collider;
             _blockDatabase = blockDatabase;
-            _blockAtlasDatabase = blockAtlasDatabase;
             _paths = new List<Vector2[]>();
         }
 
@@ -47,7 +47,6 @@ namespace World.Chunks
         public ChunkColliderBuilder BuildCollider(Chunk chunk)
         {
             _chunk = chunk;
-
             Dispose();
             SubscribeToChunkChanges();
 
@@ -227,29 +226,20 @@ namespace World.Chunks
             BuildCollider(_chunk);
         }
 
-        private void OnChunkBlockSet(BlockIndex index, Block block, BlockLayer layer)
-        {
-            AddSquare(index);
-        }
-        private void OnChunkBlockBroken(BlockIndex index, Block block, BlockLayer layer)
-        {
-            RemoveSquare(index);
-        }
+        private readonly List<IDisposable> _subscriptions = new();
         private void SubscribeToChunkChanges()
         {
-            _chunk.Events.OnBlockSet += OnChunkBlockSet;
-            _chunk.Events.OnBlockBroken += OnChunkBlockBroken;
+            _subscriptions.Add(_chunk.Events.BlockSet.Subscribe(be => AddSquare(be.Index)));
+            _subscriptions.Add(_chunk.Events.BlockBroken.Subscribe(be => RemoveSquare(be.Index)));
         }
-        private void UnsubscribeFromChunkChanges()
+        private void DisposeSubscriptions()
         {
-            _chunk.Events.OnBlockSet -= OnChunkBlockSet;
-            _chunk.Events.OnBlockBroken -= OnChunkBlockBroken;
+            foreach (var sub in _subscriptions) sub.Dispose();
+            _subscriptions.Clear();
         }
-
         public void Dispose()
         {
-            UnsubscribeFromChunkChanges();
-
+            DisposeSubscriptions();
             _paths.Clear();
         }
     }

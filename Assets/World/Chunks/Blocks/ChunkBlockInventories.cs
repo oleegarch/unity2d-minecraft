@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using R3;
 using World.Blocks;
 using World.Inventories;
 
@@ -26,11 +27,16 @@ namespace World.Chunks.Blocks
         #region Конструктор
         private readonly Dictionary<BlockLayer, Dictionary<BlockIndex, BlockInventory>> _inventoriesByLayer = new();
         private readonly ChunkBlockEvents _events;
+        private readonly IDisposable _blockBrokenSub;
 
         public ChunkBlockInventories(ChunkBlockEvents events)
         {
             _events = events;
-            _events.OnBlockBroken += HandleBlockBroken;
+
+            _blockBrokenSub = _events.BlockBroken.Subscribe(be =>
+            {
+                RemoveInventory(be.Index, be.Layer);
+            });
         }
         #endregion
 
@@ -93,17 +99,10 @@ namespace World.Chunks.Blocks
         }
         #endregion
 
-        #region События
-        private void HandleBlockBroken(BlockIndex index, Block block, BlockLayer layer)
-        {
-            RemoveInventory(index, layer);
-        }
-        #endregion
-
         #region Очистка
         public void Dispose()
         {
-            _events.OnBlockBroken -= HandleBlockBroken;
+            _blockBrokenSub.Dispose();
         }
         #endregion
     }

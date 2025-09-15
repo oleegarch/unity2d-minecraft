@@ -1,7 +1,9 @@
 using UnityEngine;
-using World.Blocks;
+using System.Collections.Generic;
+using R3;
 using World.Chunks;
 using World.Inventories;
+using System;
 
 namespace World.Items
 {
@@ -12,35 +14,39 @@ namespace World.Items
         [SerializeField] private GameObject _itemDroppedPrefab;
         [SerializeField] private Transform _itemsDroppedParent;
 
+        private readonly List<IDisposable> _subscriptions = new();
+
         private void Start()
         {
-            _manager.Events.OnBlockBroken += HandleWorldBlockBroken;
-            _manager.Events.OnBlockInventoryRemoved += HandleWorldBlockInventoryDropped;
-        }
-        private void OnDestroy()
-        {
-            _manager.Events.OnBlockBroken -= HandleWorldBlockBroken;
-            _manager.Events.OnBlockInventoryRemoved -= HandleWorldBlockInventoryDropped;
+            _subscriptions.Add(_manager.Events.BlockBroken.Subscribe(OnBlockBroken));
+            _subscriptions.Add(_manager.Events.BlockInventoryRemoved.Subscribe(OnBlockInventoryRemoved));
         }
 
-        private void HandleWorldBlockBroken(WorldPosition position, Block block, BlockLayer blockLayer)
+        private void OnDestroy()
         {
-            ItemInfo info = _environment.ItemDatabase.GetByBlockId(block.Id);
-            ItemStack stack = new ItemStack(info);
-            DropItemAt(position, stack);
+            foreach (var sub in _subscriptions) sub.Dispose();
+            _subscriptions.Clear();
         }
-        private void HandleWorldBlockInventoryDropped(WorldPosition position, BlockInventory inventory, BlockLayer layer)
+
+        private void OnBlockBroken(WorldBlockEvent e)
         {
-            Debug.Log($"HandleWorldBlockInventoryDropped: {inventory.Capacity}");
-            foreach (var stack in inventory.GetNonEmptySlots())
-                DropItemAt(position, stack);
+            var info = _environment.ItemDatabase.GetByBlockId(e.Block.Id);
+            var stack = new ItemStack(info);
+            DropItemAt(e.Position, stack);
         }
-        
+
+        private void OnBlockInventoryRemoved(WorldBlockInventoryEvent e)
+        {
+            foreach (var stack in e.Inventory.GetNonEmptySlots())
+                DropItemAt(e.Position, stack);
+        }
+
         public ItemDropped DropItemAt(WorldPosition worldPosition, ItemStack stack)
         {
-            Vector3 position = worldPosition.ToVector3Int();
-            return DropItemAt(position, stack);
+            Vector3 pos = worldPosition.ToVector3Int();
+            return DropItemAt(pos, stack);
         }
+
         public ItemDropped DropItemAt(Vector3 position, ItemStack stack)
         {
             if (stack.IsEmpty) return null;

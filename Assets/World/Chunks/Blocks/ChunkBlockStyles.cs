@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using R3;
 using World.Blocks;
 
 namespace World.Chunks.Blocks
@@ -38,11 +39,17 @@ namespace World.Chunks.Blocks
         private readonly Dictionary<BlockLayer, Dictionary<BlockIndex, BlockStyles>> _styleOverrides = new();
         private readonly IChunkBlockModifier _blocks;
         private readonly ChunkBlockEvents _events;
+        private readonly IDisposable _blockBrokenSub;
 
         public ChunkBlockStyles(ChunkBlockEvents events, IChunkBlockModifier blocks)
         {
             _events = events;
-            _events.OnBlockBroken += HandleBlockBroken;
+
+            _blockBrokenSub = _events.BlockBroken.Subscribe(be =>
+            {
+                RemoveOverrideBlockStyles(be.Index, be.Layer);
+            });
+
             _blocks = blocks;
         }
         #endregion
@@ -182,17 +189,10 @@ namespace World.Chunks.Blocks
         }
         #endregion
 
-        #region События
-        private void HandleBlockBroken(BlockIndex index, Block block, BlockLayer layer)
-        {
-            RemoveOverrideBlockStyles(index, layer);
-        }
-        #endregion
-
         #region Очистка
         public void Dispose()
         {
-            _events.OnBlockBroken -= HandleBlockBroken;
+            _blockBrokenSub.Dispose();
         }
         #endregion
     }

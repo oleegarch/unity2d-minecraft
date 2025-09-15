@@ -1,114 +1,120 @@
 using System;
 using System.Collections.Generic;
+using R3;
 using World.Blocks;
 using World.Chunks.Blocks;
 using World.Inventories;
 
 namespace World.Chunks
 {
+    public readonly struct WorldBlockEvent
+    {
+        public readonly WorldPosition Position;
+        public readonly Block Block;
+        public readonly BlockLayer Layer;
+        public WorldBlockEvent(WorldPosition p, Block b, BlockLayer l) { Position = p; Block = b; Layer = l; }
+    }
+
+    public readonly struct WorldBlockStylesEvent
+    {
+        public readonly WorldPosition Position;
+        public readonly BlockStyles Styles;
+        public readonly BlockLayer Layer;
+        public WorldBlockStylesEvent(WorldPosition p, BlockStyles s, BlockLayer l) { Position = p; Styles = s; Layer = l; }
+    }
+
+    public readonly struct WorldBlockInventoryEvent
+    {
+        public readonly WorldPosition Position;
+        public readonly BlockInventory Inventory;
+        public readonly BlockLayer Layer;
+        public WorldBlockInventoryEvent(WorldPosition p, BlockInventory i, BlockLayer l) { Position = p; Inventory = i; Layer = l; }
+    }
+
     public class WorldBlockEvents : IDisposable
     {
-        // Подписка на создание и удаление чанка
-        private IChunksAccessor _creator;
+        private readonly IChunksAccessor _creator;
+        private readonly Dictionary<Chunk, IDisposable[]> _subscriptions = new();
 
-        public WorldBlockEvents(ChunksCreator creator)
+        public readonly Subject<WorldBlockEvent> BlockSet = new();
+        public readonly Subject<WorldBlockEvent> BlockSetByPlayer = new();
+        public readonly Subject<WorldBlockEvent> BlockBroken = new();
+        public readonly Subject<WorldBlockEvent> BlockBrokenByPlayer = new();
+
+        public readonly Subject<WorldBlockStylesEvent> BlockStylesCreated = new();
+        public readonly Subject<WorldBlockStylesEvent> BlockStylesRemoved = new();
+
+        public readonly Subject<WorldBlockInventoryEvent> BlockInventoryCreated = new();
+        public readonly Subject<WorldBlockInventoryEvent> BlockInventoryRemoved = new();
+
+        public WorldBlockEvents(IChunksAccessor creator)
         {
             _creator = creator;
-            _creator.OnChunkCreated += SubscribeToChunkEvents;
-            _creator.OnChunkBeforeRemove += UnsubscribeFromChunkEvents;
+            _creator.OnChunkCreated += SubscribeToChunk;
+            _creator.OnChunkBeforeRemove += UnsubscribeFromChunk;
         }
+
         public void Dispose()
         {
-            _creator.OnChunkCreated -= SubscribeToChunkEvents;
-            _creator.OnChunkBeforeRemove -= UnsubscribeFromChunkEvents;
+            foreach (var sub in _subscriptions.Values) foreach (var d in sub) d.Dispose();
+            _subscriptions.Clear();
+
+            BlockSet.Dispose(); BlockSetByPlayer.Dispose();
+            BlockBroken.Dispose(); BlockBrokenByPlayer.Dispose();
+            BlockStylesCreated.Dispose(); BlockStylesRemoved.Dispose();
+            BlockInventoryCreated.Dispose(); BlockInventoryRemoved.Dispose();
+
+            _creator.OnChunkCreated -= SubscribeToChunk;
+            _creator.OnChunkBeforeRemove -= UnsubscribeFromChunk;
         }
 
-        // BLOCKS
-        public event Action<WorldPosition, Block, BlockLayer> OnBlockSet;
-        public event Action<WorldPosition, Block, BlockLayer> OnBlockSetByPlayer;
-        public event Action<WorldPosition, Block, BlockLayer> OnBlockBroken;
-        public event Action<WorldPosition, Block, BlockLayer> OnBlockBrokenByPlayer;
-
-        // BLOCK STYLES
-        public event Action<WorldPosition, BlockStyles, BlockLayer> OnBlockStylesCreated;
-        public event Action<WorldPosition, BlockStyles, BlockLayer> OnBlockStylesRemoved;
-
-        // INVENTORIES
-        public event Action<WorldPosition, BlockInventory, BlockLayer> OnBlockInventoryCreated;
-        public event Action<WorldPosition, BlockInventory, BlockLayer> OnBlockInventoryRemoved;
-
-        // Храним делегаты, чтобы можно было корректно отписаться потом
-        private readonly Dictionary<Chunk, Subscriptions> _subscriptions = new();
-        private class Subscriptions
+        private void SubscribeToChunk(Chunk chunk)
         {
-            public Action<BlockIndex, Block, BlockLayer> BlockSet;
-            public Action<BlockIndex, Block, BlockLayer> BlockSetByPlayer;
-            public Action<BlockIndex, Block, BlockLayer> BlockBroken;
-            public Action<BlockIndex, Block, BlockLayer> BlockBrokenByPlayer;
-            public Action<BlockIndex, BlockStyles, BlockLayer> BlockStylesCreated;
-            public Action<BlockIndex, BlockStyles, BlockLayer> BlockStylesRemoved;
-            public Action<BlockIndex, BlockInventory, BlockLayer> BlockInventoryCreated;
-            public Action<BlockIndex, BlockInventory, BlockLayer> BlockInventoryRemoved;
-        }
-        private Action<BlockIndex, T, BlockLayer> Proxy<T>(Chunk chunk, Action<WorldPosition, T, BlockLayer> worldEvent)
-        {
-            return (blockIndex, arg, layer) =>
+            if (chunk == null || chunk.Events == null || _subscriptions.ContainsKey(chunk)) return;
+
+            var subs = new IDisposable[]
             {
-                var worldPos = chunk.Index.ToWorldPosition(blockIndex, chunk.Size);
-                worldEvent?.Invoke(worldPos, arg, layer);
+                chunk.Events.BlockSet.Subscribe(be => {
+                    var pos = chunk.Index.ToWorldPosition(be.Index, chunk.Size);
+                    BlockSet.OnNext(new WorldBlockEvent(pos, be.Block, be.Layer));
+                }),
+                chunk.Events.BlockSetByPlayer.Subscribe(be => {
+                    var pos = chunk.Index.ToWorldPosition(be.Index, chunk.Size);
+                    BlockSetByPlayer.OnNext(new WorldBlockEvent(pos, be.Block, be.Layer));
+                }),
+                chunk.Events.BlockBroken.Subscribe(be => {
+                    var pos = chunk.Index.ToWorldPosition(be.Index, chunk.Size);
+                    BlockBroken.OnNext(new WorldBlockEvent(pos, be.Block, be.Layer));
+                }),
+                chunk.Events.BlockBrokenByPlayer.Subscribe(be => {
+                    var pos = chunk.Index.ToWorldPosition(be.Index, chunk.Size);
+                    BlockBrokenByPlayer.OnNext(new WorldBlockEvent(pos, be.Block, be.Layer));
+                }),
+                chunk.Events.BlockStylesCreated.Subscribe(se => {
+                    var pos = chunk.Index.ToWorldPosition(se.Index, chunk.Size);
+                    BlockStylesCreated.OnNext(new WorldBlockStylesEvent(pos, se.Styles, se.Layer));
+                }),
+                chunk.Events.BlockStylesRemoved.Subscribe(se => {
+                    var pos = chunk.Index.ToWorldPosition(se.Index, chunk.Size);
+                    BlockStylesRemoved.OnNext(new WorldBlockStylesEvent(pos, se.Styles, se.Layer));
+                }),
+                chunk.Events.BlockInventoryCreated.Subscribe(ie => {
+                    var pos = chunk.Index.ToWorldPosition(ie.Index, chunk.Size);
+                    BlockInventoryCreated.OnNext(new WorldBlockInventoryEvent(pos, ie.Inventory, ie.Layer));
+                }),
+                chunk.Events.BlockInventoryRemoved.Subscribe(ie => {
+                    var pos = chunk.Index.ToWorldPosition(ie.Index, chunk.Size);
+                    BlockInventoryRemoved.OnNext(new WorldBlockInventoryEvent(pos, ie.Inventory, ie.Layer));
+                })
             };
-        }
-        private Subscriptions CreateProxySubscriptions(Chunk chunk)
-        {
-            var subs = new Subscriptions();
-            subs.BlockSet = Proxy(chunk, OnBlockSet);
-            subs.BlockSetByPlayer = Proxy(chunk, OnBlockSetByPlayer);
-            subs.BlockBroken = Proxy(chunk, OnBlockBroken);
-            subs.BlockBrokenByPlayer = Proxy(chunk, OnBlockBrokenByPlayer);
-            subs.BlockStylesCreated = Proxy(chunk, OnBlockStylesCreated);
-            subs.BlockStylesRemoved = Proxy(chunk, OnBlockStylesRemoved);
-            subs.BlockInventoryCreated = Proxy(chunk, OnBlockInventoryCreated);
-            subs.BlockInventoryRemoved = Proxy(chunk, OnBlockInventoryRemoved);
-            return subs;
+
+            _subscriptions[chunk] = subs;
         }
 
-        public void SubscribeToChunkEvents(Chunk chunk)
+        private void UnsubscribeFromChunk(Chunk chunk)
         {
-            if (chunk == null) throw new ArgumentNullException(nameof(chunk));
-            if (chunk.Events == null) throw new ArgumentException("chunk.Events is null", nameof(chunk));
-            if (_subscriptions.ContainsKey(chunk)) return; // уже подписаны
-
-            var subs = CreateProxySubscriptions(chunk);
-
-            // Подписываемся на события чанка
-            chunk.Events.OnBlockSet += subs.BlockSet;
-            chunk.Events.OnBlockSetByPlayer += subs.BlockSetByPlayer;
-            chunk.Events.OnBlockBroken += subs.BlockBroken;
-            chunk.Events.OnBlockBrokenByPlayer += subs.BlockBrokenByPlayer;
-            chunk.Events.OnBlockStylesCreated += subs.BlockStylesCreated;
-            chunk.Events.OnBlockStylesRemoved += subs.BlockStylesRemoved;
-            chunk.Events.OnBlockInventoryCreated += subs.BlockInventoryCreated;
-            chunk.Events.OnBlockInventoryRemoved += subs.BlockInventoryRemoved;
-
-            _subscriptions.Add(chunk, subs);
-        }
-
-        public void UnsubscribeFromChunkEvents(Chunk chunk)
-        {
-            if (chunk == null) throw new ArgumentNullException(nameof(chunk));
             if (!_subscriptions.TryGetValue(chunk, out var subs)) return;
-            if (chunk.Events != null)
-            {
-                chunk.Events.OnBlockSet -= subs.BlockSet;
-                chunk.Events.OnBlockSetByPlayer -= subs.BlockSetByPlayer;
-                chunk.Events.OnBlockBroken -= subs.BlockBroken;
-                chunk.Events.OnBlockBrokenByPlayer -= subs.BlockBrokenByPlayer;
-                chunk.Events.OnBlockStylesCreated -= subs.BlockStylesCreated;
-                chunk.Events.OnBlockStylesRemoved -= subs.BlockStylesRemoved;
-                chunk.Events.OnBlockInventoryCreated -= subs.BlockInventoryCreated;
-                chunk.Events.OnBlockInventoryRemoved -= subs.BlockInventoryRemoved;
-            }
-
+            foreach (var d in subs) d.Dispose();
             _subscriptions.Remove(chunk);
         }
     }
