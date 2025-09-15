@@ -1,3 +1,4 @@
+— Переезд на R3 d WorldManager
 — Реализую автосохранение с дебаунсом на основе OnDataChanged в ChunksStorage
 — Как буду хранить инвентари?
 — Реализую слежку за изменениями в ChunkBlockInventories слотов инвентарей.

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using R3;
 using UnityEngine;
 using World.Blocks;
 using World.Blocks.Atlases;
@@ -14,6 +15,9 @@ namespace World.Chunks
     {
         [SerializeField] private WorldEnvironment _environment;
         [SerializeField] private int _seed;
+
+        public BehaviorSubject<bool> OnLoaded = new(false);
+        public BehaviorSubject<string> OnWorldGeneratorChanged = new(null);
 
         public WorldEnvironment Environment => _environment;
         public BlockDatabase BlockDatabase => _environment.BlockDatabase;
@@ -50,15 +54,20 @@ namespace World.Chunks
                 _currentWorldGenerator = _currentWorldGeneratorConfig.GetWorldGenerator(_environment, _seed);
                 _currentChunksStorage = new ChunksStorage(_currentWorldGeneratorName, _seed);
 
-                OnWorldGeneratorChanged?.Invoke();
+                OnWorldGeneratorChanged.OnNext(_currentWorldGeneratorName);
             }
         }
 
-        public event Action OnWorldGeneratorChanged;
-
-        public void Initialize()
+        private void Awake()
         {
             CurrentWorldGeneratorName = _environment.DefaultWorldGeneratorName;
+            
+            OnLoaded.OnNext(true);
+        }
+        private void OnDestroy()
+        {
+            OnLoaded.Dispose();
+            OnWorldGeneratorChanged.Dispose();
         }
     }
 }

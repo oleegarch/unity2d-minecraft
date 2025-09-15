@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using R3;
 using UnityEngine;
 using World.Chunks.Blocks;
 using World.Chunks.Generator;
@@ -21,8 +22,8 @@ namespace World.Chunks
         public void DisposeAll();
         public void RerenderAll();
         
-        public event Action<Chunk> OnChunkCreated;
-        public event Action<Chunk> OnChunkBeforeRemove;
+        public Subject<Chunk> OnChunkCreated { get; }
+        public Subject<Chunk> OnChunkBeforeRemove { get; }
 
         public IEnumerable<ChunkIndex> AllCoords { get; }
         public IEnumerable<Chunk> AllChunks { get; }
@@ -44,8 +45,8 @@ namespace World.Chunks
 
         public event Action OnOutChunksUpdated;
 
-        public event Action<Chunk> OnChunkCreated;
-        public event Action<Chunk> OnChunkBeforeRemove;
+        public Subject<Chunk> OnChunkCreated { get; private set; } = new();
+        public Subject<Chunk> OnChunkBeforeRemove { get; private set; } = new();
 
         [NonSerialized] public bool Loaded = false;
 
@@ -89,7 +90,7 @@ namespace World.Chunks
             Chunk chunk;
             if (TryGetChunk(index, out chunk))
             {
-                OnChunkBeforeRemove?.Invoke(chunk);
+                OnChunkBeforeRemove.OnNext(chunk);
                 chunk.Dispose();
                 _chunks.Remove(index);
                 _outChunks.Remove(index);
@@ -209,7 +210,7 @@ namespace World.Chunks
                     writeChunk[index] = chunk;
 
                     // Уведомляем о создании чанка
-                    OnChunkCreated?.Invoke(chunk);
+                    OnChunkCreated.OnNext(chunk);
 
                     // Ждём асинхронный рендер
                     await renderer.RenderAsync(chunk);

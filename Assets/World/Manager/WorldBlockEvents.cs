@@ -34,7 +34,8 @@ namespace World.Chunks
     public class WorldBlockEvents : IDisposable
     {
         private readonly IChunksAccessor _creator;
-        private readonly Dictionary<Chunk, IDisposable[]> _subscriptions = new();
+        private readonly Dictionary<Chunk, CompositeDisposable> _subscriptions = new();
+        private readonly CompositeDisposable _disposables = new();
 
         public readonly Subject<WorldBlockEvent> BlockSet = new();
         public readonly Subject<WorldBlockEvent> BlockSetByPlayer = new();
@@ -50,22 +51,20 @@ namespace World.Chunks
         public WorldBlockEvents(IChunksAccessor creator)
         {
             _creator = creator;
-            _creator.OnChunkCreated += SubscribeToChunk;
-            _creator.OnChunkBeforeRemove += UnsubscribeFromChunk;
+            _disposables.Add(_creator.OnChunkCreated.Subscribe(SubscribeToChunk));
+            _disposables.Add(_creator.OnChunkBeforeRemove.Subscribe(UnsubscribeFromChunk));
         }
 
         public void Dispose()
         {
-            foreach (var sub in _subscriptions.Values) foreach (var d in sub) d.Dispose();
+            foreach (var composite in _subscriptions.Values) composite.Dispose();
             _subscriptions.Clear();
+            _disposables.Dispose();
 
             BlockSet.Dispose(); BlockSetByPlayer.Dispose();
             BlockBroken.Dispose(); BlockBrokenByPlayer.Dispose();
             BlockStylesCreated.Dispose(); BlockStylesRemoved.Dispose();
             BlockInventoryCreated.Dispose(); BlockInventoryRemoved.Dispose();
-
-            _creator.OnChunkCreated -= SubscribeToChunk;
-            _creator.OnChunkBeforeRemove -= UnsubscribeFromChunk;
         }
 
         private void SubscribeToChunk(Chunk chunk)
@@ -108,13 +107,13 @@ namespace World.Chunks
                 })
             };
 
-            _subscriptions[chunk] = subs;
+            _subscriptions[chunk] = new CompositeDisposable(subs);
         }
 
         private void UnsubscribeFromChunk(Chunk chunk)
         {
-            if (!_subscriptions.TryGetValue(chunk, out var subs)) return;
-            foreach (var d in subs) d.Dispose();
+            if (!_subscriptions.TryGetValue(chunk, out var composite)) return;
+            composite.Dispose();
             _subscriptions.Remove(chunk);
         }
     }

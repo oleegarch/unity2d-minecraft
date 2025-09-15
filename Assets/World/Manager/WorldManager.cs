@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+using R3;
 using UnityEngine;
 using World.Chunks.Generator;
 using World.Chunks.Storage;
@@ -15,6 +15,8 @@ namespace World.Chunks
         [SerializeField] private ChunksVisible _visibility;
         [SerializeField] private ChunksPreloader _chunksPreloader;
 
+        private readonly CompositeDisposable _disposables = new();
+
         public WorldEnvironmentAccessor EnvironmentAccessor => _environment;
         public WorldBlockEvents Events { get; private set; }
         public IWorldGenerator Generator { get; private set; }
@@ -22,19 +24,15 @@ namespace World.Chunks
 
         private void Awake()
         {
-            _ = Startup();
+            _disposables.Add(_storage.OnChunksStorageLoaded.Subscribe(e => Startup()));
         }
-        private async UniTask Startup()
+        private void Startup()
         {
-            _environment.Initialize();
-            _storage.Initialize();
-
-            await _storage.Load();
-            await UniTask.SwitchToMainThread();
-
             Generator = _environment.CurrentWorldGenerator;
             Events = new WorldBlockEvents(_creator);
             Blocks = new WorldBlockModifier(_creator, Generator);
+
+            _disposables.Add(Events);
 
             EnableAll();
         }
@@ -56,7 +54,7 @@ namespace World.Chunks
         }
         private void OnDestroy()
         {
-            Events.Dispose();
+            _disposables.Dispose();
             DisableAll();
         }
     }

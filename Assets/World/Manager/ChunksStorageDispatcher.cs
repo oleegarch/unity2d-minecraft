@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using R3;
 using UnityEngine;
 
 namespace World.Chunks.Storage
@@ -9,29 +10,36 @@ namespace World.Chunks.Storage
         [SerializeField] private WorldEnvironmentAccessor _environment;
         [SerializeField] private ChunksCreator _creator;
 
-        public event Action OnChunksStorageLoaded;
+        private CompositeDisposable _chunksDisposables;
+        private IDisposable _subToWorldGenerator;
+        public BehaviorSubject<IChunksStorage> OnChunksStorageLoaded = new(null);
+
+        private void Awake()
+        {
+            _chunksDisposables = new();
+            _subToWorldGenerator = _environment.OnWorldGeneratorChanged.Subscribe(name => _ = HandleChunksStorageChanged());
+        }
 
         private void OnDestroy()
         {
             Dispose();
         }
 
-        public void Initialize()
-        {
-            _creator.OnChunkCreated += _environment.CurrentChunksStorage.CreateDiffForChunk;
-            _creator.OnChunkBeforeRemove += _environment.CurrentChunksStorage.RemoveDiffFromChunk;
-        }
-
-        public async UniTask Load()
+        public async UniTask HandleChunksStorageChanged()
         {
             await _environment.CurrentChunksStorage.Load();
-            OnChunksStorageLoaded?.Invoke();
+
+            _chunksDisposables.Dispose();
+            _chunksDisposables.Add(_creator.OnChunkCreated.Subscribe(_environment.CurrentChunksStorage.CreateDiffForChunk));
+            _chunksDisposables.Add(_creator.OnChunkBeforeRemove.Subscribe(_environment.CurrentChunksStorage.RemoveDiffFromChunk));
+
+            OnChunksStorageLoaded.OnNext(_environment.CurrentChunksStorage);
         }
 
         public void Dispose()
         {
-            _creator.OnChunkCreated -= _environment.CurrentChunksStorage.CreateDiffForChunk;
-            _creator.OnChunkBeforeRemove -= _environment.CurrentChunksStorage.RemoveDiffFromChunk;
+            _subToWorldGenerator?.Dispose();
+            _chunksDisposables.Dispose();
         }
     }
 }
