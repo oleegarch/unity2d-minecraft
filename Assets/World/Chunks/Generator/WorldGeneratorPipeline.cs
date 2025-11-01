@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using World.Systems;
@@ -101,8 +102,19 @@ namespace World.Chunks.Generator
 
         public async UniTask<Chunk> GenerateChunkAsync(ChunkIndex index)
         {
-            Debug.Log($"GenerateChunkAsync started {index}");
-            return await UniTask.RunOnThreadPool(() => GenerateChunk(index));
+            return await UniTask.RunOnThreadPool(() =>
+            {
+                try
+                {
+                    UniTask.Post(() => Debug.Log($"GenerateChunkAsync started {index}"));
+                    return GenerateChunk(index);
+                }
+                catch (Exception ex)
+                {
+                    UniTask.Post(() => Debug.LogError($"[Chunk {index}] {ex}"));
+                    return null;
+                }
+            });
         }
     }
 }
