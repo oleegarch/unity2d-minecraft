@@ -101,6 +101,7 @@ namespace World.Chunks.Generator
 
         public async UniTask<Chunk> GenerateChunkAsync(ChunkIndex index)
         {
+            Debug.Log($"GenerateChunkAsync started {index}");
             return await UniTask.RunOnThreadPool(() => GenerateChunk(index));
         }
     }

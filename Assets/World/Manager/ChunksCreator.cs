@@ -183,6 +183,7 @@ namespace World.Chunks
                 try
                 {
                     // Генерация чанка
+                    Debug.Log($"{index} generation started");
                     chunk = await _generator.GenerateChunkAsync(index);
                     Debug.Log($"{index} generated successfully");
 
