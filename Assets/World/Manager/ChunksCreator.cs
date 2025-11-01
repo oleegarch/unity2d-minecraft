@@ -112,9 +112,9 @@ namespace World.Chunks
         #region Слушатели
         private void HandleVisibleChanged(RectInt rect)
         {
-            Debug.Log($"HandleVisibleChanged {rect}");
             _generator.CacheComputation(_visibility.BlocksVisibleRect);
             RefreshVisibleChunksAsync(rect).Forget();
+            Debug.Log($"HandleVisibleChanged {rect}");
         }
         public void HandleOutChanged(HashSet<ChunkIndex> newVisible)
         {
@@ -132,6 +132,7 @@ namespace World.Chunks
                     newVisible.Add(new ChunkIndex(x, y));
 
             await RefreshChunksInIndexesAsync(newVisible, _chunks, _renderers);
+            Debug.Log("RefreshChunksInIndexesAsync executed");
 
             if (Loaded == false)
             {
