@@ -40,6 +40,7 @@ namespace World.Blocks.Atlases
         public static implicit operator BlockAtlasCategory(string name) => new(name);
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(BlockAtlasCategory))]
     public class BlockAtlasCategoryDrawer : PropertyDrawer
     {
@@ -53,4 +54,5 @@ namespace World.Blocks.Atlases
             EditorGUI.EndProperty();
         }
     }
+#endif
 }
