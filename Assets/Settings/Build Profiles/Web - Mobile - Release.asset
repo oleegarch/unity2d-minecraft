@@ -584,7 +584,7 @@ MonoBehaviour:
     - line: '|   webGLMemorySize: 32'
     - line: '|   webGLExceptionSupport: 1'
     - line: '|   webGLNameFilesAsHashes: 0'
-    - line: '|   webGLShowDiagnostics: 0'
+    - line: '|   webGLShowDiagnostics: 1'
     - line: '|   webGLDataCaching: 1'
     - line: '|   webGLDebugSymbols: 0'
     - line: '|   webGLEmscriptenArgs: '
