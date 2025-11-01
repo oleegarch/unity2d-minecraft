@@ -40,11 +40,7 @@ namespace World.Utils.Serialization
             string payload = Serialize(data);
 
             // Асинхронная файловая операция в пуле потоков
-#if UNITY_WEBGL && !UNITY_EDITOR
-            File.WriteAllText(fullPath, payload);
-#else
-            await UniTask.RunOnThreadPool(() => File.WriteAllText(fullPath, payload));
-#endif
+            await ThreadingUtil.RunSmart(() => File.WriteAllText(fullPath, payload));
 
             Logger.DevLog($"DataFileSystemSaver: saved {typeof(T).Name} -> {fullPath}");
         }
@@ -62,11 +58,7 @@ namespace World.Utils.Serialization
                 return default;
             }
 
-#if UNITY_WEBGL && !UNITY_EDITOR
-            string json = File.ReadAllText(fullPath);
-#else
-            string json = await UniTask.RunOnThreadPool(() => File.ReadAllText(fullPath));
-#endif
+            string json = await ThreadingUtil.RunSmart(() => File.ReadAllText(fullPath));
             if (string.IsNullOrEmpty(json)) return default;
 
             T result = Deserialize<T>(json);

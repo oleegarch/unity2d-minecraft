@@ -43,10 +43,11 @@ namespace World.Chunks
         // Асинхронный рендер с UniTask
         public async UniTask<bool> RenderAsync(Chunk chunk)
         {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            Render(chunk);
-            return true;
-#endif
+            if (!ThreadingUtil.UsingAsync)
+            {
+                Render(chunk);
+                return true;
+            }
 
             // Отменяем предыдущую задачу рендера
             _cts?.Cancel();

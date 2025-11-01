@@ -102,9 +102,11 @@ namespace World.Chunks.Generator
 
         public async UniTask<Chunk> GenerateChunkAsync(ChunkIndex index)
         {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            return GenerateChunk(index);
-#else
+            if (!ThreadingUtil.UsingAsync)
+            {
+                return GenerateChunk(index);
+            }
+
             return await UniTask.RunOnThreadPool(() =>
             {
                 try
@@ -118,7 +120,6 @@ namespace World.Chunks.Generator
                     return null;
                 }
             });
-#endif
         }
     }
 }

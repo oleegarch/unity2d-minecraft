@@ -45,9 +45,13 @@ namespace World.Items
         {
             if (stack.IsEmpty) return null;
 
+            Debug.Log($"DropItemAt called {position} {stack}");
+
             GameObject item = Instantiate(_itemDroppedPrefab, position, Quaternion.identity, _itemsDroppedParent);
             ItemDropped dropped = item.GetComponent<ItemDropped>();
             dropped.SetUp(stack, _environment.ItemDatabase);
+
+            Debug.Log($"DropItemAt instantiated {item}");
 
             return dropped;
         }

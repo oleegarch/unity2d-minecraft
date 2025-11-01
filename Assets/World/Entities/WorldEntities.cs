@@ -21,6 +21,7 @@ namespace World.Entities
         private List<GameObject> _spawnedEntities = new();
         private List<GameObject> _currentActiveEntities = new();
         private List<EntityActivityToggler> _activatorsEntities = new();
+        private bool _spawned = false;
 
         public void Enable()
         {
@@ -35,7 +36,8 @@ namespace World.Entities
 
         private void HandleVisibleChanged(RectInt chunksVisibleRect)
         {
-            SpawnEntities(chunksVisibleRect);
+            if (_spawned == false) SpawnEntities(chunksVisibleRect); // test
+            _spawned = true;
             ToggleEntities(_visibility.BlocksVisibleRect);
         }
         private void HandleChunksVisibleLoaded()
@@ -58,7 +60,7 @@ namespace World.Entities
                     activator.Enable();
                     _currentActiveEntities.Add(activator.gameObject);
                 }
-                if(activator.Activated == true && !activate)
+                if (activator.Activated == true && !activate)
                 {
                     activator.Disable();
                     _currentActiveEntities.Remove(activator.gameObject);

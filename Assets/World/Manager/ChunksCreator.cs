@@ -183,9 +183,7 @@ namespace World.Chunks
                 try
                 {
                     // Генерация чанка
-                    Debug.Log($"{index} generation started");
                     chunk = await _generator.GenerateChunkAsync(index);
-                    Debug.Log($"{index} generated successfully");
 
                     // Инстантиируем префаб и инициализируем рендерер — это должно быть в main thread
                     await UniTask.SwitchToMainThread();
@@ -214,7 +212,6 @@ namespace World.Chunks
 
                     // Ждём асинхронный рендер
                     await renderer.RenderAsync(chunk);
-                    Debug.Log($"{index} rendered successfully");
                 }
                 catch (Exception ex)
                 {
